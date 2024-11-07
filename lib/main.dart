@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_besar/login_page.dart';
-
+import 'package:tugas_besar/pembayaran.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
@@ -11,8 +10,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: LoginView(),
+    return MaterialApp(
+      home: PembayaranPage(),
     );
   }
 }
