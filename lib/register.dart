@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:tugas_besar/login.dart';
+import 'package:tugas_besar/login_page.dart';
 import 'package:tugas_besar/form_component.dart';
 
 class RegisterView extends StatefulWidget {
@@ -41,7 +41,7 @@ class _RegisterViewState extends State<RegisterView> {
                 }
                 return null;
               }),
-                  controller: nikController,
+                  controller: nameController,
                   hintTxt: "Nama",
                   helperTxt: "Luis Gonzaga",
                   iconData: Icons.person),
@@ -84,17 +84,17 @@ class _RegisterViewState extends State<RegisterView> {
                   iconData: Icons.phone_android),
               ElevatedButton(
                   onPressed: () {
-                    // if (_formKey.currentState!.validate()) {
-                    //   Map<String, dynamic> formData = {};
-                    //   formData['email'] = emailController.text;
-                    //   formData['password'] = passwordController.text;
-                    //   Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //           builder: (_) => LoginView(
-                    //                 data: formData,
-                    //               )));
-                    // }
+                    if (_formKey.currentState!.validate()) {
+                      Map<String, dynamic> formData = {};
+                      formData['email'] = emailController.text;
+                      formData['password'] = passwordController.text;
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => LoginView(
+                                    data: formData,
+                                  )));
+                    }
                   },
                   child: const Text('Register'))
             ],
