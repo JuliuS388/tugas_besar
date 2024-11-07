@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  dotted_line: ^3.0.1
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
