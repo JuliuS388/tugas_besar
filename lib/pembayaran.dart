@@ -1,171 +1,180 @@
 import 'package:flutter/material.dart';
 
-class PembayaranPage extends StatefulWidget {
+class MyWidget extends StatefulWidget {
   @override
-  _PembayaranPageState createState() => _PembayaranPageState();
+  State<MyWidget> createState() => _MyWidgetState();
 }
 
-class _PembayaranPageState extends State<PembayaranPage> {
-  // Variabel untuk menyimpan status pemilihan metode pembayaran
-  bool _bcaSelected = true;
-  bool _mandiriSelected = false;
-  bool _briSelected = false;
+class _MyWidgetState extends State<MyWidget> {
+  String? _selectedBank;
+
+  final List<String> dateTimes = [
+    "Pergi Rabu, 16 Okt 2024 - 14:55",
+    "Yogyakarta -> Jakarta",
+    "Handoyo Bus"
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            // Navigasi kembali atau tutup layar
-            Navigator.pop(context);
-          },
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: const Color.fromARGB(255, 198, 237, 255),
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          title: Text("Lanjutkan Pembayaran"),
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {}), // logika tombol appbar
         ),
-        title: const Text('Lanjutkan Pembayaran'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(
-              child: const Text(
-                '1 Pilih Metode - 2 Bayar - 3 Selesai',
-                style: TextStyle(
-                  fontSize: 12.0,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        body: Column(
           children: [
-            // Detail Tiket
             Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.blue[50],
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              margin: EdgeInsets.only(top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  // Gunakan TextButton untuk tombol "Pergi"
-                  TextButton(
-                    onPressed: () {
-                      // Aksi ketika tombol "Pergi" ditekan
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 4, 6, 7),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 12.0),
-                      textStyle: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    child: const Text('Pergi Rab, 16 Okt 2024 • 14:55'),
-                  ),
-                  const SizedBox(height: 8.0),
-                  const Text(
-                    'Yogyakarta -> Jakarta',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  const Text(
-                    'Handoyo Bus',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  const Text(
-                    'Kursi D5',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Icon(Icons.circle),
+                  Text("Pilih Metode - "),
+                  Icon(Icons.circle),
+                  Text("Bayar - "),
+                  Icon(Icons.circle),
+                  Text("Selesai"),
                 ],
               ),
             ),
-            const SizedBox(height: 20.0),
-            const Text(
-              'Pilih Metode Pembayaran',
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
+            Container(
+              width: 300,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: EdgeInsets.all(5),
+              margin: EdgeInsets.only(top: 20),
+              child: Column(
+                children: dateTimes.map((dateTime) {
+                  return Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color.fromARGB(255, 213, 213, 213)),
+                    width: 245,
+                    margin: EdgeInsets.all(5),
+                    child: Center(
+                      // Menambahkan Center untuk meratakan teks
+                      child: Text(dateTime),
+                    ),
+                  );
+                }).toList(), // Mengonversi iterable ke list
               ),
             ),
-            Column(
-              children: [
-                ListTile(
-                  title: const Text('BCA'),
-                  leading: Radio(
-                    value: true,
-                    groupValue: _bcaSelected,
-                    onChanged: (value) {
-                      setState(() {
-                        _bcaSelected = value!;
-                        _mandiriSelected = false;
-                        _briSelected = false;
-                      });
-                    },
+            Container(
+              width: 300,
+              margin: EdgeInsets.all(10),
+              padding: EdgeInsets.fromLTRB(0, 10, 0, 25),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.all(5),
+                    width: 245,
+                    child: Text(
+                      "Metode Pembayaran",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                ListTile(
-                  title: const Text('Mandiri'),
-                  leading: Radio(
-                    value: true,
-                    groupValue: _mandiriSelected,
-                    onChanged: (value) {
-                      setState(() {
-                        _mandiriSelected = value!;
-                        _bcaSelected = false;
-                        _briSelected = false;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: const Text('BRI'),
-                  leading: Radio(
-                    value: true,
-                    groupValue: _briSelected,
-                    onChanged: (value) {
-                      setState(() {
-                        _briSelected = value!;
-                        _bcaSelected = false;
-                        _mandiriSelected = false;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20.0),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Tangani konfirmasi pembayaran
-                },
-                child: const Text('Konfirmasi Pembayaran'),
+                  _buildBankOption("BCA Virtual Account"),
+                  _buildBankOption("Mandiri Virtual Account"),
+                  _buildBankOption("BRI Virtual Account"),
+                ],
               ),
             ),
+            Container(
+              margin: EdgeInsets.only(top: 135),
+              color: Colors.white,
+              width: double.infinity,
+              height: 80,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(left: 30),
+                    margin: EdgeInsets.only(bottom: 5),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text("IDR 200.000"),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      // Action to perform when the button is pressed
+                      print("Button pressed!");
+                    },
+                    child: Container(
+                      width: 300,
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.blue,
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Bayar Sekarang",
+                          style: TextStyle(
+                            color:
+                                Colors.white, // Change text color for contrast
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            )
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildBankOption(String bankName) {
+    return Container(
+      margin: EdgeInsets.all(5),
+      padding: EdgeInsets.all(5),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: const Color.fromARGB(255, 213, 213, 213)),
+      width: 245,
+      child: Row(
+        mainAxisAlignment:
+            MainAxisAlignment.spaceBetween, // Mengatur jarak antara elemen
+        children: [
+          Row(
+            children: [
+              Icon(Icons.account_balance),
+              SizedBox(width: 8), // Jarak antara icon dan teks
+              Text(bankName),
+            ],
+          ),
+          Radio<String>(
+            value:
+                bankName, // Nilai yang akan disimpan saat radio button dipilih
+            groupValue: _selectedBank, // Grup yang sama untuk radio button
+            onChanged: (String? value) {
+              setState(() {
+                _selectedBank = value; // Mengupdate nilai yang dipilih
+              });
+            },
+          ),
+        ],
       ),
     );
   }
 }
 
 void main() {
-  runApp(MaterialApp(
-    home: PembayaranPage(),
-  ));
+  runApp(MyWidget());
 }
