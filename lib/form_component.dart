@@ -16,7 +16,7 @@ Padding inputForm(
       child: TextFormField(
         validator: (value) => validasi(value),
         controller: controller,
-        obscureText: obscureText,
+        obscureText: obscureText && !isVisible,
         decoration: InputDecoration(
           hintText: hintTxt,
           filled: true,

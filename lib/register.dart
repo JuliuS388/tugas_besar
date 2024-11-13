@@ -26,10 +26,25 @@ class _RegisterViewState extends State<RegisterView> {
       Map<String, dynamic> formData = {};
       formData['email'] = emailController.text;
       formData['password'] = passwordController.text;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => LoginView(data: formData),
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Registrasi Berhasil'),
+          content: const Text('Akun Anda telah terdaftar. Silakan login.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => LoginView(data: formData),
+                  ),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
         ),
       );
     }
@@ -38,6 +53,25 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: Container(
+          margin: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.3),
+            shape: BoxShape.circle,
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (_) => const LoginView()));
+            },
+            padding: EdgeInsets.zero,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -45,7 +79,7 @@ class _RegisterViewState extends State<RegisterView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'REGISTER',
+                  'DAFTAR',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -97,13 +131,13 @@ class _RegisterViewState extends State<RegisterView> {
                           },
                           controller: passwordController,
                           hintTxt: "Password",
+                          //Visibilitas password
                           iconData: Icons.lock,
-                          obscureText: true, // Menyembunyikan teks
-                          isVisible: _isPasswordVisible, // Status visibility
+                          obscureText: true,
+                          isVisible: _isPasswordVisible,
                           onToggleVisibility: () {
                             setState(() {
-                              _isPasswordVisible =
-                                  !_isPasswordVisible; // Toggle visibility
+                              _isPasswordVisible = !_isPasswordVisible;
                             });
                           },
                         ),
@@ -118,15 +152,15 @@ class _RegisterViewState extends State<RegisterView> {
                             return null;
                           },
                           controller: confirmPasswordController,
-                          hintTxt: "Confirm Password",
+                          hintTxt: "Konfirmasi Password",
+                          //Visibilitas password
                           iconData: Icons.lock_outline,
-                          obscureText: true, // Menyembunyikan teks
-                          isVisible:
-                              _isConfirmPasswordVisible, // Status visibility
+                          obscureText: true,
+                          isVisible: _isConfirmPasswordVisible,
                           onToggleVisibility: () {
                             setState(() {
                               _isConfirmPasswordVisible =
-                                  !_isConfirmPasswordVisible; // Toggle visibility
+                                  !_isConfirmPasswordVisible;
                             });
                           },
                         ),
@@ -147,7 +181,6 @@ class _RegisterViewState extends State<RegisterView> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             shape: RoundedRectangleBorder(
-                              // Perbaikan di sini
                               borderRadius: BorderRadius.circular(30),
                             ),
                             padding: const EdgeInsets.symmetric(
@@ -157,7 +190,7 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                           onPressed: _register,
                           child: const Text(
-                            'REGISTER',
+                            'DAFTAR',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -166,7 +199,26 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        const Text('Sign Up With'),
+                        const Text('Daftar dengan Metode Lain'),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text('Sudah punya akun?'),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => const LoginView()));
+                              },
+                              child: const Text(
+                                'Masuk Sekarang!',
+                                style: TextStyle(color: Colors.blue),
+                              ),
+                            )
+                          ],
+                        )
                       ],
                     ),
                   ),
