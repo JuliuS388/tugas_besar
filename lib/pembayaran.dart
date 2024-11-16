@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/pembayaranNext.dart';
 
 class MyWidget extends StatefulWidget {
   @override
@@ -17,28 +18,30 @@ class _MyWidgetState extends State<MyWidget> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 198, 237, 255),
-        appBar: AppBar(
-          backgroundColor: Colors.blue,
-          title: Text("Lanjutkan Pembayaran"),
-          leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {}), // logika tombol appbar
-        ),
-        body: Column(
+        home: Scaffold(
+      backgroundColor: const Color.fromARGB(255, 198, 237, 255),
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        title: Text("Lanjutkan Pembayaran"),
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {}), // logika tombol appbar
+      ),
+      body: SingleChildScrollView(
+        // Tambahkan SingleChildScrollView di sini
+        child: Column(
           children: [
+            // Konten lainnya tetap sama
             Container(
               margin: EdgeInsets.only(top: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Icon(Icons.circle),
-                  Text("Pilih Metode - "),
-                  Icon(Icons.circle),
-                  Text("Bayar - "),
-                  Icon(Icons.circle),
-                  Text("Selesai"),
+                  Text("1. Pilih Metode"),
+                  Text("  - "),
+                  Text("2. Bayar"),
+                  Text("  -  "),
+                  Text("3. Selesai"),
                 ],
               ),
             ),
@@ -85,9 +88,12 @@ class _MyWidgetState extends State<MyWidget> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                  _buildBankOption("BCA Virtual Account"),
-                  _buildBankOption("Mandiri Virtual Account"),
-                  _buildBankOption("BRI Virtual Account"),
+                  _buildBankOption(
+                      "assets/images/BCA.png", "BCA Virtual Account"),
+                  _buildBankOption(
+                      "assets/images/Mandiri.png", "Mandiri Virtual Account"),
+                  _buildBankOption(
+                      "assets/images/BRI.png", "BRI Virtual Account"),
                 ],
               ),
             ),
@@ -108,24 +114,33 @@ class _MyWidgetState extends State<MyWidget> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {
-                      // Action to perform when the button is pressed
-                      print("Button pressed!");
-                    },
+                    onTap: _selectedBank != null
+                        ? () {
+                            // Navigate to the next payment page with the selected bank
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    Pembayarannext(selectedBank: _selectedBank),
+                              ),
+                            );
+                          }
+                        : null, // Disable the button if no bank is selected
                     child: Container(
                       width: 300,
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Colors.blue,
+                        color: _selectedBank != null
+                            ? Colors.blue
+                            : Colors.grey, // Change color based on selection
                       ),
                       child: Align(
                         alignment: Alignment.center,
                         child: Text(
                           "Bayar Sekarang",
                           style: TextStyle(
-                            color:
-                                Colors.white, // Change text color for contrast
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -137,10 +152,10 @@ class _MyWidgetState extends State<MyWidget> {
           ],
         ),
       ),
-    );
+    ));
   }
 
-  Widget _buildBankOption(String bankName) {
+  Widget _buildBankOption(String img, String bankName) {
     return Container(
       margin: EdgeInsets.all(5),
       padding: EdgeInsets.all(5),
@@ -154,8 +169,12 @@ class _MyWidgetState extends State<MyWidget> {
         children: [
           Row(
             children: [
-              Icon(Icons.account_balance),
-              SizedBox(width: 8), // Jarak antara icon dan teks
+              Image.asset(
+                img,
+                width: 25,
+                height: 35,
+              ),
+              SizedBox(width: 8),
               Text(bankName),
             ],
           ),
