@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:guidedlayout2_1843/view/view_list.dart';
+import 'package:tugas_besar/view_list.dart';
+import 'package:tugas_besar/profile.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -20,19 +21,15 @@ class _HomeViewState extends State<HomeView> {
   static const List<Widget> _widgetOptions = <Widget>[
     Center(
         child: Image(image: NetworkImage('https://picsum.photos/1000/1920'))),
-    Center(
-      child: Text('Index 2: list'),
-    ),
-    Center(
-      child: Text('Index 3: Profile'),
-    ),
+  
+   ListNamaView(),
+   ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
         iconSize: 40,
@@ -51,9 +48,8 @@ class _HomeViewState extends State<HomeView> {
             label: 'Profile',
           ),
         ],
-        onTap: (index) {
-          // Handle navigation based on index
-        },
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped, 
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guidedlayout2_1881/data/people.dart';
+import 'package:tugas_besar/people.dart';
 
 class ListNamaView extends StatelessWidget {
   const ListNamaView({super.key});
