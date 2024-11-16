@@ -9,8 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  provider: ^6.0.0
   camera: ^0.10.5+2
   path_provider: ^2.0.15
+
 
 dev_dependencies:
   flutter_test:
@@ -20,5 +23,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+
+    - assets/images/BCA.png
+    - assets/images/Mandiri.png
+    - assets/images/BRI.png
     - assets/logoTravel.png
     - assets/bus-picture.jpg
