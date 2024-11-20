@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_besar/TicketList.dart';
-
+import 'package:tugas_besar/detailBus.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
@@ -11,8 +10,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: TicketList(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false, // Menghilangkan banner debug
+      home: DetailBus(), // Hapus 'const' di sini
     );
   }
 }
