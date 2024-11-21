@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/detailProfil.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -12,39 +13,18 @@ class ProfileScreen extends StatelessWidget {
           Center(
             child: Column(
               children: [
-                SizedBox(height: 60), 
-                Stack(
+                const SizedBox(height: 60),
+                const Stack(
                   children: [
                     CircleAvatar(
                       radius: 50,
                       backgroundImage: NetworkImage(
                           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNuMtV6voiMGgINSW_PbviV6ecO3nMab9uVw&s'),
                     ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: () {
-                          
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          padding: EdgeInsets.all(4),
-                          child: Icon(
-                            Icons.camera_alt,
-                            color: Colors.black,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   'panjianugrah',
                   style: TextStyle(
                     fontSize: 22,
@@ -59,14 +39,19 @@ class ProfileScreen extends StatelessWidget {
                     color: Colors.grey[700],
                   ),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 TextButton.icon(
                   onPressed: () {
-                    
+                    // Navigasi ke halaman Detail Profil ketika tombol Detail Akun diklik
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProfileDetailScreen()),
+                    );
                   },
-                  icon: Icon(Icons.edit, size: 16, color: Colors.black),
-                  label: Text(
-                    'Detail Akun',
+                  icon: const Icon(Icons.person, size: 16, color: Colors.black),
+                  label: const Text(
+                    'Detail Profil',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.black,
@@ -77,28 +62,33 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Expanded(
             child: Container(
-              color: Colors.white, 
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
                   ListTile(
-                    leading: Icon(Icons.help_outline, color: Colors.black),
-                    title: Text('Bantuan', style: TextStyle(color: Colors.black)),
-                    trailing: Icon(Icons.chevron_right, color: Colors.grey),
+                    leading:
+                        const Icon(Icons.help_outline, color: Colors.black),
+                    title: const Text('Bantuan',
+                        style: TextStyle(color: Colors.black)),
+                    trailing:
+                        const Icon(Icons.chevron_right, color: Colors.grey),
                     onTap: () {
-                      
+                      // Implementasi untuk Bantuan
                     },
                   ),
-                  Divider(),
+                  const Divider(),
                   ListTile(
-                    leading: Icon(Icons.logout, color: Colors.black),
-                    title: Text('Keluar', style: TextStyle(color: Colors.black)),
-                    trailing: Icon(Icons.chevron_right, color: Colors.grey),
+                    leading: const Icon(Icons.logout, color: Colors.black),
+                    title: const Text('Keluar',
+                        style: TextStyle(color: Colors.black)),
+                    trailing:
+                        const Icon(Icons.chevron_right, color: Colors.grey),
                     onTap: () {
-                      
+                      // Implementasi untuk Keluar
                     },
                   ),
                 ],
