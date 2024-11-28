@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/pembayaran.dart';
 
 class DetailBus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail Bus'),
+        backgroundColor: Colors.blue.shade900,
+        title: const Text(
+          'Detail Bus',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -29,9 +36,7 @@ class DetailBus extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 16),
-
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Column(
@@ -65,9 +70,7 @@ class DetailBus extends StatelessWidget {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 16),
-
                       Card(
                         elevation: 2,
                         shape: RoundedRectangleBorder(
@@ -79,16 +82,15 @@ class DetailBus extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: const [
                               FacilityIcon(icon: Icons.chair, label: '30'),
-                              FacilityIcon(icon: Icons.ac_unit, label: 'Selimut'),
+                              FacilityIcon(
+                                  icon: Icons.ac_unit, label: 'Selimut'),
                               FacilityIcon(icon: Icons.usb, label: 'USB'),
                               FacilityIcon(icon: Icons.wc, label: 'Toilet'),
                             ],
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 16),
-
                       Card(
                         elevation: 2,
                         shape: RoundedRectangleBorder(
@@ -111,16 +113,14 @@ class DetailBus extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.blue,
+                                  color: Color.fromARGB(255, 13, 71, 161),
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 24),
-
                       const SectionTitle(title: 'Keberangkatan'),
                       InformationCard(
                         content:
@@ -129,9 +129,7 @@ class DetailBus extends StatelessWidget {
                             '2. Penumpang diwajibkan untuk menunjukkan e-ticket dan identitas yang berlaku (KTP).\n\n'
                             '3. Waktu keberangkatan yang tertera di aplikasi adalah waktu lokal di titik keberangkatan.',
                       ),
-
                       const SizedBox(height: 16),
-
                       const SectionTitle(title: 'Barang Bawaan'),
                       InformationCard(
                         content:
@@ -146,7 +144,6 @@ class DetailBus extends StatelessWidget {
               ],
             ),
           ),
-
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -155,9 +152,13 @@ class DetailBus extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   print("Detail Tiket button pressed");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyWidget()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Colors.blue.shade900,
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -190,7 +191,7 @@ class FacilityIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(icon, size: 32, color: Colors.blue),
+        Icon(icon, size: 32, color: Colors.blue.shade900),
         const SizedBox(height: 4),
         Text(label, style: const TextStyle(fontSize: 14)),
       ],

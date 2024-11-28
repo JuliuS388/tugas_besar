@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:intl/intl.dart';
+import 'package:tugas_besar/detailBus.dart';
 
 class TicketList extends StatefulWidget {
   final Map? data;
@@ -73,7 +74,7 @@ class _TicketListState extends State<TicketList> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blue.shade900,
         title: Text(
           'Cari Tiket',
           style: TextStyle(color: Colors.white),
@@ -92,6 +93,10 @@ class _TicketListState extends State<TicketList> {
           return GestureDetector(
             onTap: () {
               print("Tiket ${ticket.name} diklik");
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => DetailBus()),
+              // );
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -104,6 +109,10 @@ class _TicketListState extends State<TicketList> {
                   onTap: () {
                     // Tambahkan aksi ketika tiket diklik
                     print("Tiket ${ticket.name} diklik");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DetailBus()),
+                    );
                   },
                   splashColor: Colors.blue.withOpacity(0.2),
                   highlightColor: Colors.blue.withOpacity(0.1),
@@ -117,7 +126,8 @@ class _TicketListState extends State<TicketList> {
                       children: [
                         Text(
                           ticket.name,
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 8),
                         Row(
@@ -141,7 +151,8 @@ class _TicketListState extends State<TicketList> {
                             ),
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
                                 child: Column(
                                   children: [
                                     DottedLine(
@@ -153,7 +164,8 @@ class _TicketListState extends State<TicketList> {
                                     SizedBox(height: 4),
                                     Text(
                                       'Durasi: ${_calculateDuration(ticket.departureTime, ticket.arrivalTime)} jam',
-                                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 12),
                                       textAlign: TextAlign.center,
                                     ),
                                   ],
@@ -187,18 +199,20 @@ class _TicketListState extends State<TicketList> {
                               'IDR ${ticket.price}',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.blue,
+                                color: Colors.blue.shade900,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Row(
                               children: [
-                                Icon(Icons.star, color: Colors.orange, size: 16),
+                                Icon(Icons.star,
+                                    color: Colors.orange, size: 16),
                                 SizedBox(width: 4),
                                 Text(
                                   ticket.rating.toString(),
                                   style: TextStyle(
-                                      fontSize: 14, fontWeight: FontWeight.bold),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
