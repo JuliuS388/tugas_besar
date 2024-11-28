@@ -4,6 +4,7 @@ import 'package:tugas_besar/pembayaran.dart';
 import 'package:tugas_besar/ticketList.dart';
 import 'package:tugas_besar/view_list.dart';
 import 'package:tugas_besar/profile.dart';
+import 'package:tugas_besar/histori_page.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -21,16 +22,13 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    HomeContent(),
-    Center(
+  static List<Widget> _widgetOptions = <Widget>[
+    const HomeContent(),
+    const Center(
       child: Image(image: NetworkImage('https://picsum.photos/1000/1920')),
     ),
-    Center(
-      child: Text("Test"),
-    ),
-    // Assuming these are other views you want to include
-    ProfileScreen(),
+    HistoriPage(),
+    const ProfileScreen(),
 
     // Add any additional views here as needed
   ];
