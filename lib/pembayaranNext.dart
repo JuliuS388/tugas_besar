@@ -16,7 +16,7 @@ class CountdownContainer extends StatefulWidget {
 }
 
 class _CountdownContainerState extends State<CountdownContainer> {
-  int _start = 300; // 5 menit dalam detik
+  int _start = 1; // 5 menit dalam detik
   Timer? _timer;
 
   @override
@@ -87,10 +87,13 @@ class _MyWidgetState extends State<Pembayarannext> {
         home: Scaffold(
       backgroundColor: const Color.fromARGB(255, 198, 237, 255),
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: Text("Lanjutkan Pembayaran"),
+        backgroundColor: Colors.blue.shade900,
+        title: Text(
+          "Lanjutkan Pembayaran",
+          style: TextStyle(color: Colors.white),
+        ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context); // Kembali ke halaman sebelumnya
           },
@@ -106,7 +109,7 @@ class _MyWidgetState extends State<Pembayarannext> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text("1. Pilih Metode"),
+                  Text("  1. Pilih Metode"),
                   Text("  - "),
                   Text("2. Bayar"),
                   Text("  -  "),

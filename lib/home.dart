@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/detailBus.dart';
+import 'package:tugas_besar/pembayaran.dart';
+import 'package:tugas_besar/ticketList.dart';
 import 'package:tugas_besar/view_list.dart';
 import 'package:tugas_besar/profile.dart';
 
@@ -194,7 +197,13 @@ class HomeContent extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => TicketList()),
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.yellow,
                                 shape: RoundedRectangleBorder(

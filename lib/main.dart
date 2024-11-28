@@ -14,9 +14,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false, // Menghilangkan banner debug
-      home: DetailBus(), // Hapus 'const' di sini
-    return const MaterialApp(
-      home: LoginView(),
+      home: HomeView(), // Hapus 'const' di sini
     );
   }
 }

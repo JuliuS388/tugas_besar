@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/detailBus.dart';
 import 'package:tugas_besar/pembayaranNext.dart';
 
 class MyWidget extends StatefulWidget {
@@ -21,11 +22,14 @@ class _MyWidgetState extends State<MyWidget> {
         home: Scaffold(
       backgroundColor: const Color.fromARGB(255, 198, 237, 255),
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: Text("Lanjutkan Pembayaran"),
+        backgroundColor: Colors.blue.shade900,
+        title:
+            Text("Lanjutkan Pembayaran", style: TextStyle(color: Colors.white)),
         leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {}), // logika tombol appbar
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.pop(context);
+            }), // logika tombol appbar
       ),
       body: SingleChildScrollView(
         // Tambahkan SingleChildScrollView di sini
@@ -37,7 +41,7 @@ class _MyWidgetState extends State<MyWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text("1. Pilih Metode"),
+                  Text("  1. Pilih Metode"),
                   Text("  - "),
                   Text("2. Bayar"),
                   Text("  -  "),
@@ -97,43 +101,53 @@ class _MyWidgetState extends State<MyWidget> {
                 ],
               ),
             ),
+
             Container(
-              margin: EdgeInsets.only(top: 135),
-              color: Colors.white,
-              width: double.infinity,
-              height: 80,
+              width: 300,
+              margin: EdgeInsets.only(top: 100),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              alignment: Alignment.bottomCenter,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize
+                    .min, // Mengatur ukuran kolom agar tidak mengambil ruang penuh
                 children: [
+                  // Menampilkan informasi IDR
                   Container(
-                    padding: EdgeInsets.only(left: 30),
-                    margin: EdgeInsets.only(bottom: 5),
+                    padding: EdgeInsets.only(left: 30, top: 20),
+                    margin: EdgeInsets.only(bottom: 1),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text("IDR 200.000"),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: _selectedBank != null
-                        ? () {
-                            // Navigate to the next payment page with the selected bank
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    Pembayarannext(selectedBank: _selectedBank),
-                              ),
-                            );
-                          }
-                        : null, // Disable the button if no bank is selected
-                    child: Container(
-                      width: 300,
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: _selectedBank != null
-                            ? Colors.blue
+                  // Tombol Bayar Sekarang
+                  Container(
+                    width: 300,
+                    margin: const EdgeInsets.all(16.0),
+                    child: ElevatedButton(
+                      onPressed: _selectedBank != null
+                          ? () {
+                              // Navigate to the next payment page with the selected bank
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Pembayarannext(
+                                      selectedBank: _selectedBank),
+                                ),
+                              );
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _selectedBank != null
+                            ? Colors.blue.shade900
                             : Colors.grey, // Change color based on selection
+                        padding: const EdgeInsets.all(8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                       child: Align(
                         alignment: Alignment.center,
@@ -145,7 +159,7 @@ class _MyWidgetState extends State<MyWidget> {
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             )
