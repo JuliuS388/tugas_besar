@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/home.dart';
 import 'package:tugas_besar/login_page.dart';
 import 'package:tugas_besar/ticket_preview.dart';
 import 'package:tugas_besar/ticketList.dart';
@@ -26,7 +27,7 @@ void main() {
 //   Widget build(BuildContext context) {
 //     return MaterialApp(
 //       debugShowCheckedModeBanner: false,
-//       home: TicketPreview(), 
+//       home: TicketPreview(),
 //     );
 //   }
 // }
@@ -38,7 +39,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeView(), 
+      home: HomeView(),
     );
   }
 }
