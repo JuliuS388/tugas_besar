@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/detailBus.dart';
+import 'package:tugas_besar/pembayaran.dart';
+import 'package:tugas_besar/ticketList.dart';
 import 'package:tugas_besar/view_list.dart';
 import 'package:tugas_besar/profile.dart';
 
@@ -72,6 +75,8 @@ class HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController dateController = TextEditingController();
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -82,7 +87,6 @@ class HomeContent extends StatelessWidget {
                 // Background bus image
                 Container(
                   height: 375, // Set height for header area
-                  width: double.infinity,
                   child: Image.asset(
                     'assets/bus-picture.jpg',
                     fit: BoxFit.cover,
@@ -144,15 +148,35 @@ class HomeContent extends StatelessWidget {
                             Row(
                               children: [
                                 Expanded(
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      hintText: 'Tanggal Berangkat',
-                                      filled: true,
-                                      fillColor: Colors.white,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      DateTime? pickedDate =
+                                          await showDatePicker(
+                                        context: context,
+                                        initialDate: DateTime.now(),
+                                        firstDate: DateTime(2000),
+                                        lastDate: DateTime(2101),
+                                      );
+                                      if (pickedDate != null) {
+                                        dateController.text =
+                                            "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                                      }
+                                    },
+                                    child: AbsorbPointer(
+                                      child: TextFormField(
+                                        controller: dateController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Tanggal Berangkat',
+                                          filled: true,
+                                          fillColor: Colors.white,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          prefixIcon:
+                                              Icon(Icons.calendar_today),
+                                        ),
                                       ),
-                                      prefixIcon: Icon(Icons.calendar_today),
                                     ),
                                   ),
                                 ),
@@ -173,7 +197,13 @@ class HomeContent extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => TicketList()),
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.yellow,
                                 shape: RoundedRectangleBorder(
