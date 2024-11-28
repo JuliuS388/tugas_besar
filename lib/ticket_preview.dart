@@ -2,32 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:intl/intl.dart';
+import 'package:tugas_besar/ticketList.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: TicketPreview(),
-    );
-  }
-}
 
 class TicketPreview extends StatelessWidget {
-  final String companyName = "Handoyo";
-  final String departureTime = "13:00";
-  final String departureLocation = "Pulo Gadung";
-  final String arrivalTime = "03:00";
-  final String arrivalLocation = "Terminal Jombor";
-  final String price = "IDR 200,000";
-  final String seatCode = "D5";
-  final double rating = 4.5;
+  final Ticket ticket;
+
+  const TicketPreview({Key? key, required this.ticket}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Preview")),
+      appBar: AppBar(title: Text("Preview Tiket")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -44,12 +31,12 @@ class TicketPreview extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          companyName,
+                          ticket.name,
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          price + "/kursi",
+                          "IDR ${ticket.price}/kursi",
                           style: TextStyle(
                               fontSize: 16,
                               color: Colors.blue,
@@ -60,17 +47,17 @@ class TicketPreview extends StatelessWidget {
                     SizedBox(height: 8),
                     Row(
                       children: [
-                        Text("$departureTime - "),
-                        Text(departureLocation),
+                        Text("${ticket.departureTime} - "),
+                        Text(ticket.departureLocation),
                       ],
                     ),
                     SizedBox(height: 4),
-                    Text("14 jam"),
+                    Text("Durasi: ${_calculateDuration(ticket.departureTime, ticket.arrivalTime)} jam"),
                     SizedBox(height: 8),
                     Row(
                       children: [
-                        Text("$arrivalTime - "),
-                        Text(arrivalLocation),
+                        Text("${ticket.arrivalTime} - "),
+                        Text(ticket.arrivalLocation),
                       ],
                     ),
                     SizedBox(height: 8),
@@ -78,31 +65,31 @@ class TicketPreview extends StatelessWidget {
                       children: [
                         Icon(Icons.star, color: Colors.yellow, size: 16),
                         SizedBox(width: 4),
-                        Text("$rating/5"),
+                        Text("${ticket.rating}/5"),
                       ],
                     ),
                     Divider(),
-                    Text("Harga/Kursi : $price"),
+                    Text("Harga/Kursi : IDR ${ticket.price}"),
                     SizedBox(height: 4),
-                    Text("Total Harga: $price"),
+                    Text("Total Harga: IDR ${ticket.price}"),
                     SizedBox(height: 4),
-                    Text("Kode Kursi : $seatCode"),
+                    Text("Kode Kursi : D5"), // Replace this if you have seat information
                   ],
                 ),
               ),
             ),
             Spacer(),
             ElevatedButton(
-              onPressed: () => _generatePdf(context),
+              onPressed: () => _generatePdf(context, ticket),
               child: Text("Cetak PDF"),
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> _generatePdf(BuildContext context) async {
+  Future<void> _generatePdf(BuildContext context, Ticket ticket) async {
     final pdf = pw.Document();
 
     pdf.addPage(
@@ -116,10 +103,10 @@ class TicketPreview extends StatelessWidget {
                 pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
-                    pw.Text(companyName,
+                    pw.Text(ticket.name,
                         style: pw.TextStyle(
                             fontSize: 18, fontWeight: pw.FontWeight.bold)),
-                    pw.Text(price + "/kursi",
+                    pw.Text("IDR ${ticket.price}/kursi",
                         style: pw.TextStyle(
                             fontSize: 16,
                             color: PdfColors.blue,
@@ -127,19 +114,19 @@ class TicketPreview extends StatelessWidget {
                   ],
                 ),
                 pw.SizedBox(height: 8),
-                pw.Text("$departureTime - $departureLocation"),
+                pw.Text("${ticket.departureTime} - ${ticket.departureLocation}"),
                 pw.SizedBox(height: 4),
-                pw.Text("14 jam"),
+                pw.Text("Durasi: ${_calculateDuration(ticket.departureTime, ticket.arrivalTime)} jam"),
                 pw.SizedBox(height: 8),
-                pw.Text("$arrivalTime - $arrivalLocation"),
+                pw.Text("${ticket.arrivalTime} - ${ticket.arrivalLocation}"),
                 pw.SizedBox(height: 8),
-                pw.Text("Rating: $rating/5"),
+                pw.Text("Rating: ${ticket.rating}/5"),
                 pw.Divider(),
-                pw.Text("Harga/Kursi : $price"),
+                pw.Text("Harga/Kursi : IDR ${ticket.price}"),
                 pw.SizedBox(height: 4),
-                pw.Text("Total Harga: $price"),
+                pw.Text("Total Harga: IDR ${ticket.price}"),
                 pw.SizedBox(height: 4),
-                pw.Text("Kode Kursi : $seatCode"),
+                pw.Text("Kode Kursi : D5"), // Replace if you have seat info
               ],
             ),
           );
@@ -147,7 +134,23 @@ class TicketPreview extends StatelessWidget {
       ),
     );
 
-    // Print or save the PDF
     await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
+  }
+
+  // Helper function for duration calculation
+  String _calculateDuration(String departure, String arrival) {
+    try {
+      final format = DateFormat("HH:mm");
+      final departureTime = format.parse(departure);
+      final arrivalTime = format.parse(arrival);
+      var duration = arrivalTime.difference(departureTime);
+
+      if (duration.isNegative) {
+        duration += Duration(hours: 24);
+      }
+      return duration.inHours.toString();
+    } catch (e) {
+      return '-';
+    }
   }
 }

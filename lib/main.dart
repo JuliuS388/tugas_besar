@@ -3,6 +3,7 @@ import 'package:tugas_besar/detailBus.dart';
 import 'package:tugas_besar/home.dart';
 import 'package:tugas_besar/login_page.dart';
 import 'package:tugas_besar/ticket_preview.dart';
+import 'package:tugas_besar/ticketList.dart';
 
 void main() {
   runApp(MainApp());
@@ -20,6 +21,18 @@ void main() {
 //   }
 // }
 
+// class MainApp extends StatelessWidget {
+//   const MainApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: TicketPreview(), 
+//     );
+//   }
+// }
+
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
@@ -27,7 +40,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: TicketPreview(), 
+      home: TicketList(),
     );
   }
 }
