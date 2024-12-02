@@ -255,7 +255,6 @@
 //   });
 // }
 
-
 import 'package:flutter/material.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:intl/intl.dart';
@@ -369,16 +368,10 @@ class _TicketListState extends State<TicketList> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(12),
                   onTap: () {
+                    print("Tiket ${ticket.name} diklik");
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => TicketPreview(ticket: ticket),
-                      ),
-                    // Tambahkan aksi ketika tiket diklik
-//                     print("Tiket ${ticket.name} diklik");
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(builder: (context) => DetailBus()),
+                      MaterialPageRoute(builder: (context) => DetailBus()),
                     );
                   },
                   splashColor: Colors.blue.withOpacity(0.2),

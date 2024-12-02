@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tugas_besar/detailBus.dart';
 import 'package:tugas_besar/pembayaran.dart';
 import 'package:tugas_besar/ticketList.dart';
+import 'package:tugas_besar/ticket_preview.dart';
 import 'package:tugas_besar/view_list.dart';
 import 'package:tugas_besar/profile.dart';
 import 'package:tugas_besar/histori_page.dart';
@@ -24,8 +25,16 @@ class _HomeViewState extends State<HomeView> {
 
   static List<Widget> _widgetOptions = <Widget>[
     const HomeContent(),
-    const Center(
-      child: Image(image: NetworkImage('https://picsum.photos/1000/1920')),
+    TicketPreview(
+      ticket: Ticket(
+        name: 'Contoh Tiket',
+        price: 100000.toString(),
+        departureTime: '08:00',
+        departureLocation: 'Jakarta',
+        arrivalTime: '10:00',
+        arrivalLocation: 'Bandung',
+        rating: 4.5,
+      ),
     ),
     HistoriPage(),
     const ProfileScreen(),
@@ -84,7 +93,7 @@ class HomeContent extends StatelessWidget {
               children: [
                 // Background bus image
                 Container(
-                  height: 375, // Set height for header area
+                  height: 450, // Set height for header area
                   child: Image.asset(
                     'assets/bus-picture.jpg',
                     fit: BoxFit.cover,
@@ -92,9 +101,9 @@ class HomeContent extends StatelessWidget {
                 ),
                 // Overlay logo and search form
                 Positioned(
-                  top: 20,
-                  left: 16,
-                  right: 16,
+                  top: 50,
+                  left: 20,
+                  right: 20,
                   child: Column(
                     children: [
                       // Atma Travel logo
@@ -102,17 +111,26 @@ class HomeContent extends StatelessWidget {
                         'assets/logoTravel.png',
                         height: 80,
                       ),
-                      const SizedBox(height: 16),
-                      // Search form
+                      const SizedBox(height: 20),
                       Container(
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
                           color: Colors.blue
                               .shade900, // Background color for better readability
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(25),
                         ),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Text(
+                              'Cari Tiket',
+                              style: TextStyle(
+                                color: Colors.white, // Warna teks
+                                fontSize: 20, // Ukuran font
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
                             Row(
                               children: [
                                 Expanded(
@@ -122,7 +140,7 @@ class HomeContent extends StatelessWidget {
                                       filled: true,
                                       fillColor: Colors.white,
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(25),
                                       ),
                                     ),
                                   ),
@@ -135,7 +153,7 @@ class HomeContent extends StatelessWidget {
                                       filled: true,
                                       fillColor: Colors.white,
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(25),
                                       ),
                                     ),
                                   ),
@@ -169,7 +187,7 @@ class HomeContent extends StatelessWidget {
                                           fillColor: Colors.white,
                                           border: OutlineInputBorder(
                                             borderRadius:
-                                                BorderRadius.circular(8),
+                                                BorderRadius.circular(25),
                                           ),
                                           prefixIcon:
                                               Icon(Icons.calendar_today),
@@ -186,7 +204,7 @@ class HomeContent extends StatelessWidget {
                                       filled: true,
                                       fillColor: Colors.white,
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(25),
                                       ),
                                     ),
                                   ),
@@ -194,22 +212,24 @@ class HomeContent extends StatelessWidget {
                               ],
                             ),
                             const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => TicketList()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.yellow,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                            Center(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => TicketList()),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.yellow,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
                                 ),
+                                child: const Text('Cari',
+                                    style: TextStyle(color: Colors.black)),
                               ),
-                              child: const Text('Cari',
-                                  style: TextStyle(color: Colors.black)),
                             ),
                           ],
                         ),
