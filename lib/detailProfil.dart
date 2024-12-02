@@ -8,7 +8,7 @@ class ProfileDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blue.shade900,
         foregroundColor: Colors.white,
         title: const Text('Detail Profil'),
       ),
@@ -90,7 +90,7 @@ class ProfileDetailScreen extends StatelessWidget {
                   label: const Text('Edit Profil'),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(200, 50),
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.blue.shade900,
                     foregroundColor: Colors.white,
                   ),
                 ),
@@ -109,7 +109,9 @@ class ProfileDetailScreen extends StatelessWidget {
       child: Text(
         title,
         style: const TextStyle(
-            fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 13, 71, 161)),
       ),
     );
   }
@@ -120,7 +122,7 @@ class ProfileDetailScreen extends StatelessWidget {
       required String title,
       required String subtitle}) {
     return ListTile(
-      leading: Icon(icon, color: Colors.blue),
+      leading: Icon(icon, color: Colors.blue.shade900),
       title: Text(
         title,
         style: const TextStyle(fontWeight: FontWeight.bold),

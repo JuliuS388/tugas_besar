@@ -331,7 +331,7 @@ class _TicketListState extends State<TicketList> {
       appBar: AppBar(
         backgroundColor: Colors.blue.shade900,
         title: Text(
-          'Cari Tiket',
+          'Cetak Tiket',
           style: TextStyle(color: Colors.white),
         ),
         leading: IconButton(
@@ -371,7 +371,8 @@ class _TicketListState extends State<TicketList> {
                     print("Tiket ${ticket.name} diklik");
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => DetailBus()),
+                      MaterialPageRoute(
+                          builder: (context) => TicketPreview(ticket: ticket)),
                     );
                   },
                   splashColor: Colors.blue.withOpacity(0.2),
