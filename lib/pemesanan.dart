@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/pembayaran.dart';
 
 class PemesananTiket extends StatefulWidget {
   @override
@@ -42,7 +43,7 @@ class _PemesananTiketState extends State<PemesananTiket> {
       backgroundColor: Colors.blue[50],
       appBar: AppBar(
         title: Text('Detail Penumpang'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blue.shade900,
         foregroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -168,15 +169,16 @@ class _PemesananTiketState extends State<PemesananTiket> {
               width: double.infinity,
               height: 50,
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.blue.shade900,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: TextButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => MyWidget()));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Pemesanan berhasil!')),
-                    );
+                        SnackBar(content: Text('Pemesanan berhasil!')));
                   }
                 },
                 child: Text(

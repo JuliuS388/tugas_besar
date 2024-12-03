@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tugas_besar/pembayaran.dart';
+import 'package:tugas_besar/pemesanan.dart';
 
 class DetailBus extends StatelessWidget {
   @override
@@ -154,7 +155,7 @@ class DetailBus extends StatelessWidget {
                   print("Detail Tiket button pressed");
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MyWidget()),
+                    MaterialPageRoute(builder: (context) => PemesananTiket()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -165,7 +166,7 @@ class DetailBus extends StatelessWidget {
                   ),
                 ),
                 child: const Text(
-                  'Detail Tiket',
+                  'Tambah Penumpang',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

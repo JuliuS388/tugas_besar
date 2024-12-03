@@ -5,7 +5,6 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:intl/intl.dart';
 import 'package:tugas_besar/ticketList.dart';
 
-
 class TicketPreview extends StatelessWidget {
   final Ticket ticket;
 
@@ -52,7 +51,8 @@ class TicketPreview extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 4),
-                    Text("Durasi: ${_calculateDuration(ticket.departureTime, ticket.arrivalTime)} jam"),
+                    Text(
+                        "Durasi: ${_calculateDuration(ticket.departureTime, ticket.arrivalTime)} jam"),
                     SizedBox(height: 8),
                     Row(
                       children: [
@@ -73,7 +73,8 @@ class TicketPreview extends StatelessWidget {
                     SizedBox(height: 4),
                     Text("Total Harga: IDR ${ticket.price}"),
                     SizedBox(height: 4),
-                    Text("Kode Kursi : D5"), // Replace this if you have seat information
+                    Text(
+                        "Kode Kursi : D5"), // Replace this if you have seat information
                   ],
                 ),
               ),
@@ -114,9 +115,11 @@ class TicketPreview extends StatelessWidget {
                   ],
                 ),
                 pw.SizedBox(height: 8),
-                pw.Text("${ticket.departureTime} - ${ticket.departureLocation}"),
+                pw.Text(
+                    "${ticket.departureTime} - ${ticket.departureLocation}"),
                 pw.SizedBox(height: 4),
-                pw.Text("Durasi: ${_calculateDuration(ticket.departureTime, ticket.arrivalTime)} jam"),
+                pw.Text(
+                    "Durasi: ${_calculateDuration(ticket.departureTime, ticket.arrivalTime)} jam"),
                 pw.SizedBox(height: 8),
                 pw.Text("${ticket.arrivalTime} - ${ticket.arrivalLocation}"),
                 pw.SizedBox(height: 8),
@@ -134,7 +137,8 @@ class TicketPreview extends StatelessWidget {
       ),
     );
 
-    await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
+    await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdf.save());
   }
 
   // Helper function for duration calculation
