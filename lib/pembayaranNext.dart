@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 
+import 'package:tugas_besar/home.dart';
+
 class Pembayarannext extends StatefulWidget {
   final String? selectedBank;
 
@@ -16,7 +18,7 @@ class CountdownContainer extends StatefulWidget {
 }
 
 class _CountdownContainerState extends State<CountdownContainer> {
-  int _start = 1; // 5 menit dalam detik
+  int _start = 20; // 5 menit dalam detik
   Timer? _timer;
 
   @override
@@ -32,7 +34,9 @@ class _CountdownContainerState extends State<CountdownContainer> {
           _start--;
         });
       } else {
-        _timer?.cancel(); // Hentikan timer ketika mencapai 0
+        _timer?.cancel();
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => HomeView()));
       }
     });
   }
