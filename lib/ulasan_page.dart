@@ -9,7 +9,8 @@ class _UlasanPageState extends State<UlasanPage> {
   int ratingSupir = 4; // Default rating supir
   int ratingFasilitas = 4; // Default rating fasilitas
   final TextEditingController ulasanSupirController = TextEditingController();
-  final TextEditingController ulasanFasilitasController = TextEditingController();
+  final TextEditingController ulasanFasilitasController =
+      TextEditingController();
 
   Widget buildRatingRow(int currentRating, Function(int) onRatingSelected) {
     return Row(
@@ -32,8 +33,17 @@ class _UlasanPageState extends State<UlasanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ulasan'),
-        backgroundColor: Colors.lightBlue,
+        title: Text(
+          'Ulasan',
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: Colors.blue.shade900,
       ),
       body: Container(
         color: Colors.lightBlue[50],
@@ -124,7 +134,7 @@ class _UlasanPageState extends State<UlasanPage> {
               // Tombol Submit
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.lightBlue,
+                  backgroundColor: Colors.blue.shade900,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -141,7 +151,8 @@ class _UlasanPageState extends State<UlasanPage> {
                         TextButton(
                           onPressed: () {
                             Navigator.pop(context); // Tutup dialog
-                            Navigator.pop(context); // Kembali ke halaman sebelumnya
+                            Navigator.pop(
+                                context); // Kembali ke halaman sebelumnya
                           },
                           child: Text('OK'),
                         ),
@@ -151,7 +162,7 @@ class _UlasanPageState extends State<UlasanPage> {
                 },
                 child: Text(
                   'Submit',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
             ],

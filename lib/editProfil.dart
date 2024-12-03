@@ -122,7 +122,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blue.shade900,
         foregroundColor: Colors.white,
         title: const Text('Edit Profil'),
         leading: IconButton(
@@ -365,7 +365,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               // Tombol Simpan
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Colors.blue.shade900,
                   foregroundColor: Colors.white,
                 ),
                 onPressed: () {
@@ -390,7 +390,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: Colors.blue,
+        color: Color.fromARGB(255, 13, 71, 161),
       ),
     );
   }

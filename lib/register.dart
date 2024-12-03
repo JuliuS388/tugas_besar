@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tugas_besar/login_page.dart';
 import 'package:tugas_besar/form_component.dart';
+import 'package:tugas_besar/client/UserClientRegister.dart';
+import 'package:tugas_besar/entity/User.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -11,6 +13,7 @@ class RegisterView extends StatefulWidget {
 
 class _RegisterViewState extends State<RegisterView> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -20,33 +23,77 @@ class _RegisterViewState extends State<RegisterView> {
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
+  bool _isLoading = false;
 
-  void _register() {
+  void _register() async {
     if (_formKey.currentState!.validate()) {
-      Map<String, dynamic> formData = {};
-      formData['email'] = emailController.text;
-      formData['password'] = passwordController.text;
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Registrasi Berhasil'),
-          content: const Text('Akun Anda telah terdaftar. Silakan login.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => LoginView(data: formData),
-                  ),
-                );
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        // Create a new User object with the input data
+        User newUser = User(
+          id: 0, // The backend will likely generate the ID
+          nama: nameController.text,
+          username: usernameController.text,
+          email: emailController.text,
+          password: passwordController.text,
+          nomorTelepon: phoneController.text,
+        );
+
+        // Use UserClient to create the user
+        await UserClient.create(newUser);
+
+        // Show success dialog
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Registrasi Berhasil'),
+            content: const Text('Akun Anda telah terdaftar. Silakan login.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => LoginView(
+                        data: {
+                          'email': emailController.text,
+                          'password': passwordController.text,
+                        },
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      } catch (e) {
+        // Show error dialog if registration fails
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Registrasi Gagal'),
+            content: Text('Terjadi kesalahan: ${e.toString()}'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -101,19 +148,37 @@ class _RegisterViewState extends State<RegisterView> {
                         inputForm(
                           (value) {
                             if (value == null || value.isEmpty) {
-                              return "Username tidak boleh kosong";
+                              return "Nama tidak boleh kosong";
                             }
                             return null;
                           },
-                          controller: usernameController,
-                          hintTxt: "Username",
+                          controller: nameController,
+                          hintTxt: "Nama Lengkap",
                           iconData: Icons.person,
                         ),
                         const SizedBox(height: 15),
                         inputForm(
                           (value) {
                             if (value == null || value.isEmpty) {
+                              return "Username tidak boleh kosong";
+                            }
+                            return null;
+                          },
+                          controller: usernameController,
+                          hintTxt: "Username",
+                          iconData: Icons.account_circle,
+                        ),
+                        const SizedBox(height: 15),
+                        inputForm(
+                          (value) {
+                            if (value == null || value.isEmpty) {
                               return "Email tidak boleh kosong";
+                            }
+                            // Basic email validation
+                            final emailRegex =
+                                RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                            if (!emailRegex.hasMatch(value)) {
+                              return "Format email tidak valid";
                             }
                             return null;
                           },
@@ -127,13 +192,15 @@ class _RegisterViewState extends State<RegisterView> {
                             if (value == null || value.isEmpty) {
                               return "Password tidak boleh kosong";
                             }
+                            if (value.length < 6) {
+                              return "Password minimal 6 karakter";
+                            }
                             return null;
                           },
                           controller: passwordController,
                           hintTxt: "Password",
-                          //Visibilitas password
                           iconData: Icons.lock,
-                          obscureText: true,
+                          obscureText: !_isPasswordVisible,
                           isVisible: _isPasswordVisible,
                           onToggleVisibility: () {
                             setState(() {
@@ -153,9 +220,8 @@ class _RegisterViewState extends State<RegisterView> {
                           },
                           controller: confirmPasswordController,
                           hintTxt: "Konfirmasi Password",
-                          //Visibilitas password
                           iconData: Icons.lock_outline,
-                          obscureText: true,
+                          obscureText: !_isConfirmPasswordVisible,
                           isVisible: _isConfirmPasswordVisible,
                           onToggleVisibility: () {
                             setState(() {
@@ -170,34 +236,42 @@ class _RegisterViewState extends State<RegisterView> {
                             if (value == null || value.isEmpty) {
                               return "Nomor Telepon tidak boleh kosong";
                             }
+                            // Basic phone number validation
+                            final phoneRegex = RegExp(r'^[0-9]{10,13}$');
+                            if (!phoneRegex.hasMatch(value)) {
+                              return "Nomor Telepon tidak valid";
+                            }
                             return null;
                           },
                           controller: phoneController,
                           hintTxt: "Nomor Telepon",
                           iconData: Icons.phone,
+                          keyboardType: TextInputType.phone,
                         ),
                         const SizedBox(height: 20),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 50,
-                              vertical: 15,
-                            ),
-                          ),
-                          onPressed: _register,
-                          child: const Text(
-                            'DAFTAR',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                        _isLoading
+                            ? const CircularProgressIndicator()
+                            : ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 50,
+                                    vertical: 15,
+                                  ),
+                                ),
+                                onPressed: _register,
+                                child: const Text(
+                                  'DAFTAR',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                         const SizedBox(height: 10),
                         const Text('Daftar dengan Metode Lain'),
                         const SizedBox(height: 10),

@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:tugas_besar/entity/Bus.dart';
+import 'package:tugas_besar/entity/Penumpang.dart';
 
-class BusClient {
-  static final String url = '192.168.100.89';
-  static final String endpoint = '/API_Travel_C/public/api/bus';
+class PenumpangClient {
+  static final String url = '192.168.104.30';
+  static final String endpoint = '/API_Travel_C/public/api/penumpang';
 
-  static Future<List<Bus>> fetchAll() async {
+  static Future<List<Penumpang>> fetchAll() async {
     try {
       var response = await get(Uri.http(url, endpoint));
 
@@ -14,28 +14,29 @@ class BusClient {
 
       Iterable list = json.decode(response.body)['data'];
 
-      return list.map((e) => Bus.fromJson(e)).toList();
+      return list.map((e) => Penumpang.fromJson(e)).toList();
     } catch (e) {
       return Future.error(e.toString());
     }
   }
 
-  static Future<Bus> find(int id) async {
+  static Future<Penumpang> find(int id) async {
     try {
       var response = await get(Uri.http(url, '$endpoint/$id'));
 
       if (response.statusCode != 200) throw Exception(response.reasonPhrase);
 
-      return Bus.fromJson(json.decode(response.body)['data']);
+      return Penumpang.fromJson(json.decode(response.body)['data']);
     } catch (e) {
       return Future.error(e.toString());
     }
   }
 
-  static Future<Response> create(Bus bus) async {
+  static Future<Response> create(Penumpang penumpang) async {
     try {
       var response = await post(Uri.http(url, endpoint),
-          headers: {"Content-Type": "application/json"}, body: bus.toRawJson());
+          headers: {"Content-Type": "application/json"},
+          body: penumpang.toRawJson());
 
       if (response.statusCode != 201) throw Exception(response.reasonPhrase);
 
@@ -45,10 +46,12 @@ class BusClient {
     }
   }
 
-  static Future<Response> update(Bus bus) async {
+  static Future<Response> update(Penumpang penumpang) async {
     try {
-      var response = await put(Uri.http(url, '$endpoint/${bus.id}'),
-          headers: {"Content-Type": "application/json"}, body: bus.toRawJson());
+      var response = await put(
+          Uri.http(url, '$endpoint/${penumpang.idPenumpang}'),
+          headers: {"Content-Type": "application/json"},
+          body: penumpang.toRawJson());
 
       if (response.statusCode != 200) throw Exception(response.reasonPhrase);
 
