@@ -4,8 +4,13 @@ import 'package:tugas_besar/entity/Bus.dart'; // Pastikan Anda mengimpor entitas
 
 class DetailBus extends StatelessWidget {
   final Bus bus;
+  final int jumlahKursi; // Add this
 
-  const DetailBus({super.key, required this.bus});
+  const DetailBus(
+      {super.key,
+      required this.bus,
+      required this.jumlahKursi // Update constructor
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +101,11 @@ class DetailBus extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PemesananTiket()),
+            MaterialPageRoute(
+                builder: (context) => PemesananTiket(
+                      bus: bus, // Pass bus object
+                      jumlahKursi: jumlahKursi, // Pass jumlah kursi
+                    )),
           );
         },
         style: ElevatedButton.styleFrom(

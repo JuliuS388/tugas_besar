@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/entity/Bus.dart';
 import 'package:tugas_besar/pembayaran.dart';
 
 class PemesananTiket extends StatefulWidget {
+  final Bus bus; // Change from separate parameters to bus object
+  final int jumlahKursi;
+
+  const PemesananTiket({
+    Key? key,
+    required this.bus,
+    required this.jumlahKursi,
+  }) : super(key: key);
+
   @override
   _PemesananTiketState createState() => _PemesananTiketState();
 }
 
 class _PemesananTiketState extends State<PemesananTiket> {
   final _formKey = GlobalKey<FormState>();
-  int _jumlahPenumpang =
-      1; // Jumlah penumpang dibuat manual untuk sementara sebagai testing. Silakan diganti untuk melihat perubahan pada jumlah form
+  late int _jumlahPenumpang; // Remove initialization
   List<Map<String, dynamic>> _penumpangs = [];
 
   @override
   void initState() {
     super.initState();
+    _jumlahPenumpang = widget.jumlahKursi; // Use passed jumlahKursi
     _initializePenumpangs();
   }
 

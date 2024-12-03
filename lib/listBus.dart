@@ -8,8 +8,14 @@ import 'package:intl/intl.dart';
 class ListBus extends StatefulWidget {
   final String asal;
   final String tujuan;
+  final int jumlahKursi;
 
-  const ListBus({super.key, required this.asal, required this.tujuan});
+  const ListBus({
+    super.key,
+    required this.asal,
+    required this.tujuan,
+    required this.jumlahKursi,
+  });
 
   @override
   State<ListBus> createState() => _ListBusState();
@@ -73,7 +79,11 @@ class _ListBusState extends State<ListBus> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DetailBus(bus: bus),
+                            builder: (context) => DetailBus(
+                              bus: bus,
+                              jumlahKursi: widget
+                                  .jumlahKursi, // Pass the number of seats from the previous screen
+                            ),
                           ),
                         );
                       } else {
