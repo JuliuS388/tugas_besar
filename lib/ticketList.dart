@@ -259,7 +259,6 @@ import 'package:flutter/material.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:intl/intl.dart';
 import 'package:tugas_besar/ticket_preview.dart';
-import 'package:tugas_besar/detailBus.dart';
 
 class TicketList extends StatefulWidget {
   @override
@@ -333,12 +332,6 @@ class _TicketListState extends State<TicketList> {
         title: Text(
           'Cetak Tiket',
           style: TextStyle(color: Colors.white),
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
         ),
       ),
       body: ListView.builder(

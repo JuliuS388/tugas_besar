@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tugas_besar/cetakTiket.dart';
-import 'package:tugas_besar/detailBus.dart';
-import 'package:tugas_besar/pembayaran.dart';
 import 'package:tugas_besar/ticketList.dart';
-import 'package:tugas_besar/ticket_preview.dart';
-import 'package:tugas_besar/view_list.dart';
 import 'package:tugas_besar/profile.dart';
 import 'package:tugas_besar/histori_page.dart';
 
@@ -112,7 +108,7 @@ class HomeContent extends StatelessWidget {
                       children: [
                         // Atma Travel logo
                         Image.asset(
-                          'assets/logoTravel.png',
+                          'assets/logoTravel2.png',
                           height: 80,
                         ),
                         const SizedBox(height: 20),
@@ -279,7 +275,7 @@ class HomeContent extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Center(
-                              child: Text("Promo 1",
+                              child: Text("Diskon 20%",
                                   style: TextStyle(color: Colors.white))),
                         ),
                         Container(
@@ -296,7 +292,7 @@ class HomeContent extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Center(
-                              child: Text("Promo 2",
+                              child: Text("Diskon 10%",
                                   style: TextStyle(color: Colors.white))),
                         ),
                         Container(
@@ -313,7 +309,7 @@ class HomeContent extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Center(
-                              child: Text("Promo 3",
+                              child: Text("Diskon 5%",
                                   style: TextStyle(color: Colors.white))),
                         ),
                         // Add more promo items as needed
@@ -355,7 +351,7 @@ class HomeContent extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Center(
-                              child: Text("Tips 1",
+                              child: Text("Tips Nyaman Travel",
                                   style: TextStyle(color: Colors.white))),
                         ),
                         Container(
@@ -372,7 +368,7 @@ class HomeContent extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Center(
-                              child: Text("Tips 2",
+                              child: Text("Tips Supaya Hemat",
                                   style: TextStyle(color: Colors.white))),
                         ),
                         Container(
@@ -388,8 +384,9 @@ class HomeContent extends StatelessWidget {
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Center(
-                              child: Text("Tips 3",
+                          child: Container(
+                              alignment: Alignment.center,
+                              child: Text("Tips Perjalanan Aman",
                                   style: TextStyle(color: Colors.white))),
                         ),
                         // Add more tips items as needed
