@@ -18,7 +18,7 @@ class Bus {
   factory Bus.fromJson(Map<String, dynamic> json) => Bus(
         id: json["id_bus"],
         namaBus: json["nama_bus"],
-        sopirBus: json["sopir_bus"],
+        sopirBus: json["nama_sopir"],
         fasilitasBus: json["fasilitas_bus"],
       );
 
@@ -27,7 +27,7 @@ class Bus {
   Map<String, dynamic> toJson() => {
         "id_bus": id,
         "nama_bus": namaBus,
-        "sopir_bus": sopirBus,
+        "nama_sopir": sopirBus,
         "fasilitas_bus": fasilitasBus,
       };
 }
