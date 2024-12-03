@@ -3,7 +3,7 @@ import 'package:http/http.dart';
 import 'package:tugas_besar/entity/Bus.dart';
 
 class BusClient {
-  static final String url = '192.168.104.30';
+  static final String url = '192.168.100.89';
   static final String endpoint = '/API_Travel_C/public/api/bus';
 
   static Future<List<Bus>> fetchAll() async {
