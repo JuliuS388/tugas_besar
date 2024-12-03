@@ -43,7 +43,7 @@ class _RegisterViewState extends State<RegisterView> {
         );
 
         // Use UserClient to create the user
-        await UserClient.create(newUser);
+        await UserClientRegister.create(newUser);
 
         // Show success dialog
         await showDialog(

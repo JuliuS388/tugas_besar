@@ -3,31 +3,47 @@ import 'dart:convert';
 class Bus {
   int id;
   String namaBus;
-  String sopirBus;
+  String supirBus;
   String fasilitasBus;
+  String asalBus;
+  String tujuanBus;
 
   Bus({
-    required this.id,
-    required this.namaBus,
-    required this.sopirBus,
-    required this.fasilitasBus,
+    this.id = 0,
+    this.namaBus = 'Nama Bus Tidak Tersedia',
+    this.supirBus = 'Supir Tidak Tersedia',
+    this.fasilitasBus = 'Fasilitas Tidak Tersedia',
+    this.asalBus = 'Asal Tidak Tersedia',
+    this.tujuanBus = 'Tujuan Tidak Tersedia',
   });
 
   factory Bus.fromRawJson(String str) => Bus.fromJson(json.decode(str));
 
-  factory Bus.fromJson(Map<String, dynamic> json) => Bus(
-        id: json["id_bus"],
-        namaBus: json["nama_bus"],
-        sopirBus: json["nama_sopir"],
-        fasilitasBus: json["fasilitas_bus"],
-      );
+  factory Bus.fromJson(Map<String, dynamic> json) {
+    // Print out the incoming JSON for debugging
+    print('Processing Bus from JSON: $json');
+
+    return Bus(
+      id: json["id"] ?? json["id_bus"] ?? 0,
+      namaBus: json["nama"] ?? json["nama_bus"] ?? 'Nama Bus Tidak Tersedia',
+      supirBus: json["supir"] ?? json["nama_supir"] ?? 'Supir Tidak Tersedia',
+      fasilitasBus: json["fasilitas"] ??
+          json["fasilitas_bus"] ??
+          'Fasilitas Tidak Tersedia',
+      asalBus: json["asal"] ?? json["asal_bus"] ?? 'Asal Tidak Tersedia',
+      tujuanBus:
+          json["tujuan"] ?? json["tujuan_bus"] ?? 'Tujuan Tidak Tersedia',
+    );
+  }
 
   String toRawJson() => json.encode(toJson());
 
   Map<String, dynamic> toJson() => {
         "id_bus": id,
         "nama_bus": namaBus,
-        "nama_sopir": sopirBus,
+        "nama_supir": supirBus,
         "fasilitas_bus": fasilitasBus,
+        "asal_bus": asalBus,
+        "tujuan_bus": tujuanBus,
       };
 }
