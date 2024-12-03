@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tugas_besar/ulasan_page.dart';
 
 class HistoriPage extends StatelessWidget {
-
-  
   final List<Map<String, String>> histori = [
     {
       'nama': 'Handoyo',
@@ -29,8 +27,8 @@ class HistoriPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Riwayat Pemesanan'),
-        backgroundColor: const Color.fromARGB(255, 48, 169, 255),
+        title: Text('Riwayat Pemesanan', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blue.shade900,
       ),
       body: Container(
         color: Colors.lightBlue[50],

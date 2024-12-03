@@ -255,12 +255,10 @@
 //   });
 // }
 
-
 import 'package:flutter/material.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:intl/intl.dart';
 import 'package:tugas_besar/ticket_preview.dart';
-import 'package:tugas_besar/detailBus.dart';
 
 class TicketList extends StatefulWidget {
   @override
@@ -332,14 +330,8 @@ class _TicketListState extends State<TicketList> {
       appBar: AppBar(
         backgroundColor: Colors.blue.shade900,
         title: Text(
-          'Cari Tiket',
+          'Cetak Tiket',
           style: TextStyle(color: Colors.white),
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
         ),
       ),
       body: ListView.builder(
@@ -369,16 +361,11 @@ class _TicketListState extends State<TicketList> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(12),
                   onTap: () {
+                    print("Tiket ${ticket.name} diklik");
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TicketPreview(ticket: ticket),
-                      ),
-                    // Tambahkan aksi ketika tiket diklik
-//                     print("Tiket ${ticket.name} diklik");
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(builder: (context) => DetailBus()),
+                          builder: (context) => TicketPreview(ticket: ticket)),
                     );
                   },
                   splashColor: Colors.blue.withOpacity(0.2),
