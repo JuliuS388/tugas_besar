@@ -4,8 +4,8 @@ import 'package:tugas_besar/entity/Pemesanan.dart';
 import 'package:tugas_besar/tokenStorage.dart'; // Pastikan import TokenStorage
 
 class PemesananClient {
-  static final String url = '192.168.104.30';
-  static final String endpoint = '/API_Travel_C/public/api/pemesanan';
+  static final String url = '10.0.2.2:8000';
+  static final String endpoint = '/api/pemesanan';
 
   // Fungsi untuk mengambil Bearer Token
   static Future<Map<String, String>> _getHeaders() async {

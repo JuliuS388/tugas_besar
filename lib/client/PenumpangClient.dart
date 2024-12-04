@@ -3,8 +3,8 @@ import 'package:http/http.dart';
 import 'package:tugas_besar/entity/Penumpang.dart';
 
 class PenumpangClient {
-  static final String url = '192.168.104.30';
-  static final String endpoint = '/API_Travel_C/public/api/penumpang';
+  static final String url = '10.0.2.2:8000';
+  static final String endpoint = '/api/penumpang';
 
   static Future<List<Penumpang>> fetchAll() async {
     try {

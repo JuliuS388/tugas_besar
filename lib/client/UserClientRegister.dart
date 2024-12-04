@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:tugas_besar/entity/User.dart';
 
-class UserClientRegister {
+class UserClient {
   static final String url = '192.168.100.89';
   static final String endpoint = '/1_Travel_C_API/public/api/register';
 
