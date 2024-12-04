@@ -53,10 +53,10 @@ packages:
     dependency: transitive
     description:
       name: camera_android
-      sha256: d8b17e36353cca3fd37e92f3fce28e7249730e078c72e9b43ee7c7ad2e2f7082
+      sha256: "19b7226387218864cb2388e1ad5db7db50d065222f5511254b03fc397dd21a5e"
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.9+16"
+    version: "0.10.9+17"
   camera_avfoundation:
     dependency: transitive
     description:
@@ -252,10 +252,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker_android
-      sha256: "8faba09ba361d4b246dc0a17cb4289b3324c2b9f6db7b3d457ee69106a86bd32"
+      sha256: fa8141602fde3f7e2f81dbf043613eb44dfa325fa0bcf93c0f142c9f7a2c193e
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.12+17"
+    version: "0.8.12+18"
   image_picker_for_web:
     dependency: transitive
     description:
