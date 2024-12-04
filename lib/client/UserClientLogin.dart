@@ -2,16 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:tugas_besar/tokenStorage.dart';
 
-<<<<<<< HEAD
 class UserClientLogin{
   static const String url = '192.168.100.89';
   static const String loginEndpoint = '/1_Travel_C_API/public/api/login';
 
-=======
-class UserClientlogin {
-  static const String url = '192.168.146.22';
-  static const String loginEndpoint = '/Travel_API/public/api/login';
->>>>>>> 1f04bac8b38af03a38e4a42c96e4ab337ae8df43
 
   static Future<bool> login(String email, String password) async {
     try {
