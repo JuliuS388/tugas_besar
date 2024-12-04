@@ -1,23 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/entity/Bus.dart';
+import 'package:tugas_besar/entity/Pemesanan.dart';
+import 'package:tugas_besar/client/PemesananClient.dart';
 import 'package:tugas_besar/pembayaran.dart';
+import 'package:tugas_besar/tokenStorage.dart';
 
 class PemesananTiket extends StatefulWidget {
+  final Bus bus;
+  final int jumlahKursi;
+
+  const PemesananTiket({
+    Key? key,
+    required this.bus,
+    required this.jumlahKursi,
+  }) : super(key: key);
+
   @override
   _PemesananTiketState createState() => _PemesananTiketState();
 }
 
 class _PemesananTiketState extends State<PemesananTiket> {
   final _formKey = GlobalKey<FormState>();
-  int _jumlahPenumpang =
-      1; // Jumlah penumpang dibuat manual untuk sementara sebagai testing. Silakan diganti untuk melihat perubahan pada jumlah form
-  List<Map<String, dynamic>> _penumpangs = [];
+  late int _jumlahPenumpang;
+  late List<Map<String, dynamic>> _penumpangs;
 
   @override
   void initState() {
     super.initState();
+    _jumlahPenumpang = widget.jumlahKursi;
     _initializePenumpangs();
   }
 
+  // Inisialisasi daftar penumpang dengan jumlah yang sesuai
   void _initializePenumpangs() {
     _penumpangs = List.generate(
       _jumlahPenumpang,
@@ -29,12 +43,69 @@ class _PemesananTiketState extends State<PemesananTiket> {
     );
   }
 
-  void _updateJumlahPenumpang(String value) {
-    int newCount = int.tryParse(value) ?? 1;
-    setState(() {
-      _jumlahPenumpang = newCount;
-      _initializePenumpangs();
-    });
+  // Fungsi untuk mengambil id_user dari SharedPreferences
+  Future<int?> getUserId() async {
+    // Gunakan metode getUserId dari TokenStorage
+    final userId = await TokenStorage.getUserId();
+
+    // Print untuk debugging
+    print('Retrieved User ID: $userId');
+
+    return userId;
+  }
+
+  // Fungsi untuk mengirim pemesanan
+  void _buatPemesanan() async {
+    if (_formKey.currentState!.validate()) {
+      // Map the list of penumpang to a list of their IDs (assuming each penumpang has a unique ID)
+      List<int> penumpangIds = List.generate(
+        _penumpangs.length,
+        (index) => index + 1, // Replace with actual penumpang IDs if available
+      );
+
+      // Ambil id_user dari shared_preferences
+      int? userId = await getUserId();
+      if (userId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User tidak ditemukan. Harap login ulang.')),
+        );
+        return;
+      }
+
+      // Create the Pemesanan object
+      Pemesanan pemesanan = Pemesanan(
+        id: 1, // Unique ID for pemesanan
+        idUser: userId,
+        idBus: widget.bus.id,
+        namaDestinasi: widget.bus.tujuanBus,
+        harga: widget.bus.harga * _jumlahPenumpang,
+        tanggalPemesanan: DateTime.now(),
+        idPenumpang: penumpangIds, // Pass the list of penumpang IDs
+      );
+
+      try {
+        var response = await PemesananClient.create(pemesanan);
+
+        if (response.statusCode == 201) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Pemesanan berhasil!')),
+          );
+          // Navigate to payment page if needed
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => PembayaranPage()),
+          // );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Pemesanan gagal!')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
   }
 
   @override
@@ -69,17 +140,15 @@ class _PemesananTiketState extends State<PemesananTiket> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Judul untuk Detail Penumpang
                               Text(
                                 'Detail Penumpang ${index + 1}',
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                               SizedBox(height: 10),
-                              Text(
-                                'Nama:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
+                              Text('Nama:',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                               TextFormField(
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
@@ -99,10 +168,9 @@ class _PemesananTiketState extends State<PemesananTiket> {
                                 },
                               ),
                               SizedBox(height: 10),
-                              Text(
-                                'Jenis Kelamin:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
+                              Text('Jenis Kelamin:',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                               Row(
                                 children: [
                                   Radio<String>(
@@ -132,10 +200,9 @@ class _PemesananTiketState extends State<PemesananTiket> {
                                 ],
                               ),
                               SizedBox(height: 10),
-                              Text(
-                                'Umur:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
+                              Text('Umur:',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                               TextFormField(
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
@@ -173,20 +240,10 @@ class _PemesananTiketState extends State<PemesananTiket> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: TextButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => MyWidget()));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Pemesanan berhasil!')));
-                  }
-                },
+                onPressed: _buatPemesanan, // Mengirimkan pemesanan
                 child: Text(
                   'Pesan Tiket',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
             ),

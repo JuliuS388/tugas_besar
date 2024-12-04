@@ -58,25 +58,6 @@ class UserClient {
     }
   }
 
-  static Future<bool> login(String email, String password) async {
-    final response = await post(
-      Uri.http(url, endpoint),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'email': email,
-        'password': password,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      return true; // Login berhasil
-    } else {
-      return false; // Login gagal
-    }
-  }
-
   static Future<Response> update(User user) async {
     try {
       var response = await put(Uri.http(url, '$endpoint/${user.email}'),
