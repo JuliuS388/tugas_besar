@@ -1,0 +1,30 @@
+import 'dart:convert';
+
+class Profile {
+  final String? name;
+  final String? email;
+  final String? imageUrl;
+  final int? idUser;
+  final String? username;
+  final String? noTelp;
+  final String? tglUlt;
+  final String? tglJoin;
+  final String? pass;
+
+  Profile({this.name, this.email, this.imageUrl, this.idUser, this.username, this.noTelp, this.tglUlt, this.tglJoin, this.pass});
+
+  factory Profile.fromJson(Map<String, dynamic> json) {
+    return Profile(
+      name: json['nama'],
+      email: json['email'],
+      imageUrl: json['imageUrl'],
+      idUser: json['id_user'],
+      username: json['username'],
+      noTelp: json['nomor_telepon'],
+      tglUlt: json['tanggal_lahir'],
+      tglJoin: json['created_at'],
+      pass: json['password'],
+    );
+  }
+}
+

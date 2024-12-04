@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tugas_besar/home.dart';
 import 'package:tugas_besar/register.dart';
 import 'package:tugas_besar/form_component.dart';
+import 'package:tugas_besar/client/UserClientLogin.dart';
+import 'package:tugas_besar/tokenStorage.dart'; // Pastikan import ini ada
 
 class LoginView extends StatefulWidget {
   final Map<String, dynamic>? data;
@@ -17,10 +19,71 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController passwordController = TextEditingController();
 
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.data != null) {
+      emailController.text = widget.data?['email'] ?? '';
+      passwordController.text = widget.data?['password'] ?? '';
+    }
+  }
+
+  Future<void> _login() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        bool isLoginValid = await UserClientlogin.login(
+          emailController.text,
+          passwordController.text,
+        );
+
+        if (isLoginValid) {
+          // Ambil user ID setelah login berhasil
+          int? userId = await TokenStorage.getUserId();
+          print('Login Berhasil. User ID: $userId');
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const HomeView(),
+            ),
+          );
+        } else {
+          _showErrorDialog('Email atau Password salah.');
+        }
+      } catch (e) {
+        _showErrorDialog('Terjadi kesalahan: ${e.toString()}');
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Login Gagal'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic>? dataForm = widget.data;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -66,28 +129,22 @@ class _LoginViewState extends State<LoginView> {
                           child: Column(
                             children: [
                               inputForm(
-                                (p0) {
-                                  if (p0 == null || p0.isEmpty) {
-                                    return "Email tidak boleh kosong";
-                                  }
-                                  return null;
-                                },
+                                (p0) => p0 == null || p0.isEmpty
+                                    ? "Email tidak boleh kosong"
+                                    : null,
                                 controller: emailController,
                                 hintTxt: "Email",
                                 iconData: Icons.email,
                               ),
                               const SizedBox(height: 20),
                               inputForm(
-                                (p0) {
-                                  if (p0 == null || p0.isEmpty) {
-                                    return "Password tidak boleh kosong";
-                                  }
-                                  return null;
-                                },
+                                (p0) => p0 == null || p0.isEmpty
+                                    ? "Password tidak boleh kosong"
+                                    : null,
                                 controller: passwordController,
                                 hintTxt: "Password",
                                 iconData: Icons.lock,
-                                obscureText: true,
+                                obscureText: !_isPasswordVisible,
                                 isVisible: _isPasswordVisible,
                                 onToggleVisibility: () {
                                   setState(() {
@@ -96,58 +153,27 @@ class _LoginViewState extends State<LoginView> {
                                 },
                               ),
                               const SizedBox(height: 20),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 50,
-                                    vertical: 15,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    if (dataForm != null &&
-                                        dataForm['email'] ==
-                                            emailController.text &&
-                                        dataForm['password'] ==
-                                            passwordController.text) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const HomeView(),
+                              _isLoading
+                                  ? const CircularProgressIndicator()
+                                  : ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
                                         ),
-                                      );
-                                    } else {
-                                      showDialog(
-                                        context: context,
-                                        builder: (_) => AlertDialog(
-                                          title: const Text('Login Gagal'),
-                                          content: const Text(
-                                              'Email atau Password salah.'),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text('OK'),
-                                            ),
-                                          ],
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 50,
+                                          vertical: 15,
                                         ),
-                                      );
-                                    }
-                                  }
-                                },
-                                child: const Text(
-                                  'MASUK',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
+                                      ),
+                                      onPressed:
+                                          _login, // Gunakan metode _login yang sudah dibuat
+                                      child: const Text(
+                                        'Masuk',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
                               const SizedBox(height: 10),
                               const Text("Masuk dengan Metode Lain"),
                               const SizedBox(height: 10),
@@ -157,11 +183,12 @@ class _LoginViewState extends State<LoginView> {
                                   const Text("Belum Punya Akun? "),
                                   TextButton(
                                     onPressed: () {
-                                      Map<String, dynamic> formData = {
-                                        'email': emailController.text,
-                                        'password': passwordController.text,
-                                      };
-                                      pushRegister(context, formData);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const RegisterView(),
+                                        ),
+                                      );
                                     },
                                     child: const Text(
                                       'Daftar Sekarang!',
@@ -183,15 +210,6 @@ class _LoginViewState extends State<LoginView> {
         ),
       ),
       backgroundColor: Colors.blue.shade900.withOpacity(0.8),
-    );
-  }
-
-  void pushRegister(BuildContext context, Map<String, dynamic> formData) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => RegisterView(),
-      ),
     );
   }
 }
