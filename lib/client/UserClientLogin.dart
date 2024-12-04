@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:tugas_besar/tokenStorage.dart';
 
-class UserClient {
+class UserClientLogin{
   static const String url = '192.168.100.89';
   static const String loginEndpoint = '/1_Travel_C_API/public/api/login';
 
