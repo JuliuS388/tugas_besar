@@ -7,6 +7,7 @@ class Bus {
   String fasilitasBus;
   String asalBus;
   String tujuanBus;
+  double harga; // New field for price
 
   Bus({
     this.id = 0,
@@ -15,6 +16,7 @@ class Bus {
     this.fasilitasBus = 'Fasilitas Tidak Tersedia',
     this.asalBus = 'Asal Tidak Tersedia',
     this.tujuanBus = 'Tujuan Tidak Tersedia',
+    this.harga = 0.0, // Default value for price
   });
 
   factory Bus.fromRawJson(String str) => Bus.fromJson(json.decode(str));
@@ -33,6 +35,8 @@ class Bus {
       asalBus: json["asal"] ?? json["asal_bus"] ?? 'Asal Tidak Tersedia',
       tujuanBus:
           json["tujuan"] ?? json["tujuan_bus"] ?? 'Tujuan Tidak Tersedia',
+      harga: double.tryParse(json["harga"].toString()) ??
+          0.0, // New field for price
     );
   }
 
@@ -45,5 +49,6 @@ class Bus {
         "fasilitas_bus": fasilitasBus,
         "asal_bus": asalBus,
         "tujuan_bus": tujuanBus,
+        "harga": harga, // New field for price
       };
 }

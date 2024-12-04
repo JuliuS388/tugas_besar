@@ -7,6 +7,7 @@ class Pemesanan {
   final String namaDestinasi;
   final double harga;
   final DateTime tanggalPemesanan;
+  final List<int> idPenumpang; // Menyimpan daftar ID penumpang
 
   Pemesanan({
     required this.id,
@@ -15,28 +16,35 @@ class Pemesanan {
     required this.namaDestinasi,
     required this.harga,
     required this.tanggalPemesanan,
+    required this.idPenumpang,
   });
 
-  factory Pemesanan.fromRawJson(String str) =>
-      Pemesanan.fromJson(json.decode(str));
+  // Fungsi untuk mengubah Pemesanan menjadi JSON
+  Map<String, dynamic> toJson() {
+    return {
+      "id_pemesanan": id,
+      "id_user": idUser,
+      "id_bus": idBus,
+      "nama_destinasi": namaDestinasi,
+      "harga": harga,
+      "tanggal_pemesanan": tanggalPemesanan.toIso8601String(),
+      "id_penumpang": idPenumpang, // Kirim ID penumpang
+    };
+  }
 
-  factory Pemesanan.fromJson(Map<String, dynamic> json) => Pemesanan(
-        id: json["id_pemesanan"],
-        idUser: json["id_user"],
-        idBus: json["id_bus"],
-        namaDestinasi: json["nama_destinasi"],
-        harga: json["harga"].toDouble(),
-        tanggalPemesanan: DateTime.parse(json["tanggal_pemesanan"]),
-      );
+  // Fungsi untuk membuat Pemesanan dari JSON
+  factory Pemesanan.fromJson(Map<String, dynamic> json) {
+    return Pemesanan(
+      id: json["id_pemesanan"],
+      idUser: json["id_user"],
+      idBus: json["id_bus"],
+      namaDestinasi: json["nama_destinasi"],
+      harga: json["harga"].toDouble(),
+      tanggalPemesanan: DateTime.parse(json["tanggal_pemesanan"]),
+      idPenumpang: List<int>.from(json["id_penumpang"].map((x) => x)),
+    );
+  }
 
+  // Fungsi untuk mengubah Pemesanan menjadi raw JSON untuk dikirim
   String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        "id_pemesanan": id,
-        "id_user": idUser,
-        "id_bus": idBus,
-        "nama_destinasi": namaDestinasi,
-        "harga": harga,
-        "tanggal_pemesanan": tanggalPemesanan.toIso8601String(),
-      };
 }
