@@ -3,8 +3,9 @@ import 'package:http/http.dart' as http;
 import 'package:tugas_besar/tokenStorage.dart';
 
 class UserClient {
-  static const String url = '10.0.2.2:8000';
-  static const String endpoint = '/api/login';
+  static const String url = '192.168.100.89';
+  static const String loginEndpoint = '/1_Travel_C_API/public/api/login';
+
 
   static Future<bool> login(String email, String password) async {
     try {
@@ -14,11 +15,15 @@ class UserClient {
         body: json.encode({"email": email, "password": password}),
       );
 
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         String token = data['token']; // Misalkan token ada di respons API
         await TokenStorage.saveToken(token); // Simpan token
         print('Login successful, token saved');
+
         return true;
       } else {
         print('Login failed: ${response.body}');

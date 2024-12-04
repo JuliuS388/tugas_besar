@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_besar/cetakTiket.dart';
+import 'package:tugas_besar/listBus.dart';
 import 'package:tugas_besar/ticketList.dart';
 import 'package:tugas_besar/profile.dart';
 import 'package:tugas_besar/histori_page.dart';
@@ -69,7 +69,14 @@ class HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Tambahkan TextEditingController untuk "Asal" dan "Tujuan"
+    TextEditingController asalController = TextEditingController();
+    TextEditingController tujuanController = TextEditingController();
     TextEditingController dateController = TextEditingController();
+    TextEditingController seatController = TextEditingController();
+
+    String asal = '';
+    String tujuan = '';
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -82,7 +89,6 @@ class HomeContent extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  // Background bus image
                   Opacity(
                     opacity: 1.0,
                     child: Container(
@@ -99,14 +105,12 @@ class HomeContent extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Overlay logo and search form
                   Positioned(
                     top: 50,
                     left: 20,
                     right: 20,
                     child: Column(
                       children: [
-                        // Atma Travel logo
                         Image.asset(
                           'assets/logoTravel2.png',
                           height: 80,
@@ -115,8 +119,7 @@ class HomeContent extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(16.0),
                           decoration: BoxDecoration(
-                            color: Colors.blue
-                                .shade900, // Background color for better readability
+                            color: Colors.blue.shade900,
                             borderRadius: BorderRadius.circular(25),
                           ),
                           child: Column(
@@ -125,8 +128,8 @@ class HomeContent extends StatelessWidget {
                               Text(
                                 'Cari Tiket',
                                 style: TextStyle(
-                                  color: Colors.white, // Warna teks
-                                  fontSize: 20, // Ukuran font
+                                  color: Colors.white,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -135,6 +138,7 @@ class HomeContent extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: TextField(
+                                      controller: asalController,
                                       decoration: InputDecoration(
                                         hintText: 'Dari',
                                         filled: true,
@@ -149,6 +153,7 @@ class HomeContent extends StatelessWidget {
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: TextField(
+                                      controller: tujuanController,
                                       decoration: InputDecoration(
                                         hintText: 'Tujuan',
                                         filled: true,
@@ -201,6 +206,10 @@ class HomeContent extends StatelessWidget {
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: TextField(
+                                      controller:
+                                          seatController, // Add controller
+                                      keyboardType: TextInputType
+                                          .number, // Ensure numeric input
                                       decoration: InputDecoration(
                                         hintText: 'Kursi',
                                         filled: true,
@@ -218,10 +227,35 @@ class HomeContent extends StatelessWidget {
                               Center(
                                 child: ElevatedButton(
                                   onPressed: () {
+                                    // Simpan nilai input ke variabel
+                                    asal = asalController.text;
+                                    tujuan = tujuanController.text;
+
+                                    if (seatController.text.isEmpty) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Silakan masukkan jumlah kursi')),
+                                      );
+                                      return;
+                                    }
+
+                                    // Cetak untuk debugging
+                                    print(
+                                      'Asal: $asal, Tujuan: $tujuan',
+                                    );
+
+                                    // Navigasikan ke halaman berikutnya
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => Cetaktiket()),
+                                          builder: (context) => ListBus(
+                                                asal: asal,
+                                                tujuan: tujuan,
+                                                jumlahKursi: int.parse(
+                                                    seatController.text),
+                                              )),
                                     );
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -233,7 +267,7 @@ class HomeContent extends StatelessWidget {
                                   child: const Text('Cari',
                                       style: TextStyle(color: Colors.black)),
                                 ),
-                              ),
+                              )
                             ],
                           ),
                         ),

@@ -1,72 +1,40 @@
 import 'dart:convert';
-import 'package:http/http.dart';
-import 'package:tugas_besar/entity/Bus.dart';
+import 'package:http/http.dart' as http;
+import 'package:tugas_besar/tokenStorage.dart';
+import 'package:tugas_besar/entity/Bus.dart'; // Import TokenStorage
 
 class BusClient {
-  static final String url = '10.0.2.2:8000';
-  static final String endpoint = '/api/bus';
+  static const String url = '192.168.100.89';
+  static const String endpoint = '/1_Travel_C_API/public/api/bus';
 
-  static Future<List<Bus>> fetchAll() async {
+  static Future<List<Bus>> fetchFiltered(String asal, String tujuan) async {
     try {
-      var response = await get(Uri.http(url, endpoint));
+      String? token = await TokenStorage.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
 
-      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
+      var response = await http.get(
+        Uri.http(url, endpoint, {
+          'asal': asal, // Menambahkan asal dan tujuan sebagai query parameter
+          'tujuan': tujuan,
+        }),
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+      );
 
-      Iterable list = json.decode(response.body)['data'];
-
-      return list.map((e) => Bus.fromJson(e)).toList();
+      if (response.statusCode == 200) {
+        var decoded = json.decode(response.body);
+        return decoded.map<Bus>((e) => Bus.fromJson(e)).toList();
+      } else {
+        print('Failed to load buses: ${response.statusCode}');
+        throw Exception('Failed to load buses');
+      }
     } catch (e) {
-      return Future.error(e.toString());
-    }
-  }
-
-  static Future<Bus> find(int id) async {
-    try {
-      var response = await get(Uri.http(url, '$endpoint/$id'));
-
-      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
-
-      return Bus.fromJson(json.decode(response.body)['data']);
-    } catch (e) {
-      return Future.error(e.toString());
-    }
-  }
-
-  static Future<Response> create(Bus bus) async {
-    try {
-      var response = await post(Uri.http(url, endpoint),
-          headers: {"Content-Type": "application/json"}, body: bus.toRawJson());
-
-      if (response.statusCode != 201) throw Exception(response.reasonPhrase);
-
-      return response;
-    } catch (e) {
-      return Future.error(e.toString());
-    }
-  }
-
-  static Future<Response> update(Bus bus) async {
-    try {
-      var response = await put(Uri.http(url, '$endpoint/${bus.id}'),
-          headers: {"Content-Type": "application/json"}, body: bus.toRawJson());
-
-      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
-
-      return response;
-    } catch (e) {
-      return Future.error(e.toString());
-    }
-  }
-
-  static Future<Response> destroy(int id) async {
-    try {
-      var response = await delete(Uri.http(url, '$endpoint/$id'));
-
-      if (response.statusCode != 204) throw Exception(response.reasonPhrase);
-
-      return response;
-    } catch (e) {
-      return Future.error(e.toString());
+      print('Error fetching buses: $e');
+      rethrow;
     }
   }
 }

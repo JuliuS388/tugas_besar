@@ -1,201 +1,148 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_besar/pembayaran.dart';
 import 'package:tugas_besar/pemesanan.dart';
+import 'package:tugas_besar/entity/Bus.dart'; // Pastikan Anda mengimpor entitas Bus
 
 class DetailBus extends StatelessWidget {
+  final Bus bus;
+  final int jumlahKursi; // Add this
+
+  const DetailBus(
+      {super.key,
+      required this.bus,
+      required this.jumlahKursi // Update constructor
+      });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade900,
-        title: const Text(
-          'Detail Bus',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 80.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 200,
-                  child: PageView(
-                    children: [
-                      Image.asset('assets/bus_image_1.jpg', fit: BoxFit.cover),
-                      Image.asset('assets/bus_image_2.jpg', fit: BoxFit.cover),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Card(
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'Handoyo',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const Text(
-                                'Supir: Pak Supir',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Card(
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: const [
-                              FacilityIcon(icon: Icons.chair, label: '30'),
-                              FacilityIcon(
-                                  icon: Icons.ac_unit, label: 'Selimut'),
-                              FacilityIcon(icon: Icons.usb, label: 'USB'),
-                              FacilityIcon(icon: Icons.wc, label: 'Toilet'),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Card(
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Text(
-                                'Harga Tiket',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                'IDR 200.000',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 13, 71, 161),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      const SectionTitle(title: 'Keberangkatan'),
-                      InformationCard(
-                        content:
-                            '1. Penumpang sudah siap setidaknya 60 menit sebelum keberangkatan di titik keberangkatan yang telah ditentukan oleh agen. '
-                            'Keterlambatan penumpang dapat menyebabkan tiket dibatalkan secara sepihak dan tidak mendapatkan pengembalian dana.\n\n'
-                            '2. Penumpang diwajibkan untuk menunjukkan e-ticket dan identitas yang berlaku (KTP).\n\n'
-                            '3. Waktu keberangkatan yang tertera di aplikasi adalah waktu lokal di titik keberangkatan.',
-                      ),
-                      const SizedBox(height: 16),
-                      const SectionTitle(title: 'Barang Bawaan'),
-                      InformationCard(
-                        content:
-                            '1. Penumpang dilarang membawa barang terlarang/ilegal dan menyertakan seperti senjata tajam, bahan terbakar, dan obat-obatan terlarang. '
-                            'Barang-barang ini akan ditolak oleh pihak keperluan angkutan.\n\n'
-                            '2. Untuk barang yang melebihi kapasitas yang telah ditentukan akan dikenakan biaya tambahan sesuai peraturan masing-masing agen bus.\n\n'
-                            '3. Penumpang diminta untuk menjaga barang pribadi mereka selama perjalanan.',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              width: double.infinity,
-              margin: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  print("Detail Tiket button pressed");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PemesananTiket()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade900,
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'Tambah Penumpang',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 250.0,
+            floating: false,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                bus.namaBus ?? 'Bus Details',
+                style: TextStyle(color: Colors.white, fontSize: 22),
               ),
             ),
+            backgroundColor: Colors.blue.shade900,
+            foregroundColor: Colors.white,
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate([
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Bus Information',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  'Supir: ${bus.supirBus ?? 'Unknown'}',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                            Divider(height: 20),
+                            _buildDetailRow('Asal', bus.asalBus ?? '-'),
+                            _buildDetailRow('Tujuan', bus.tujuanBus ?? '-'),
+                            _buildDetailRow(
+                                'Fasilitas', bus.fasilitasBus ?? '-'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const SectionTitle(title: 'Keberangkatan'),
+                    InformationCard(
+                      content:
+                          '1. Penumpang sudah siap setidaknya 60 menit sebelum keberangkatan di titik keberangkatan yang telah ditentukan oleh agen. '
+                          'Keterlambatan penumpang dapat menyebabkan tiket dibatalkan secara sepihak dan tidak mendapatkan pengembalian dana.\n\n'
+                          '2. Penumpang diwajibkan untuk menunjukkan e-ticket dan identitas yang berlaku (KTP).\n\n'
+                          '3. Waktu keberangkatan yang tertera di aplikasi adalah waktu lokal di titik keberangkatan.',
+                    ),
+                    const SizedBox(height: 16),
+                    const SectionTitle(title: 'Barang Bawaan'),
+                    InformationCard(
+                      content:
+                          '1. Penumpang dilarang membawa barang terlarang/ilegal dan menyertakan seperti senjata tajam, bahan terbakar, dan obat-obatan terlarang. '
+                          'Barang-barang ini akan ditolak oleh pihak keperluan angkutan.\n\n'
+                          '2. Untuk barang yang melebihi kapasitas yang telah ditentukan akan dikenakan biaya tambahan sesuai peraturan masing-masing agen bus.\n\n'
+                          '3. Penumpang diminta untuk menjaga barang pribadi mereka selama perjalanan.',
+                    ),
+                  ],
+                ),
+              ),
+            ]),
           ),
         ],
       ),
+      floatingActionButton: ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PemesananTiket(
+                      bus: bus, // Pass bus object
+                      jumlahKursi: jumlahKursi, // Pass jumlah kursi
+                    )),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue.shade900,
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+        ),
+        child: const Text(
+          'Pesan Tiket',
+          style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
     );
   }
-}
 
-class FacilityIcon extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const FacilityIcon({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, size: 32, color: Colors.blue.shade900),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(fontSize: 14)),
-      ],
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          Text(
+            value,
+            style: TextStyle(color: Colors.grey.shade700),
+          ),
+        ],
+      ),
     );
   }
 }
