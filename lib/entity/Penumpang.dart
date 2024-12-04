@@ -1,34 +1,40 @@
 import 'dart:convert';
 
 class Penumpang {
-  int idPenumpang;
-  String namaPenumpang;
-  String jenisKelamin;
-  int umur;
+  final int? idPenumpang;
+  final String nama;
+  final String jenisKelamin;
+  final int umur;
 
   Penumpang({
-    required this.idPenumpang,
-    required this.namaPenumpang,
+    this.idPenumpang, // Changed to optional
+    required this.nama,
     required this.jenisKelamin,
     required this.umur,
   });
 
-  factory Penumpang.fromRawJson(String str) =>
-      Penumpang.fromJson(json.decode(str));
+  factory Penumpang.fromRawJson(String srt) =>
+      Penumpang.fromJson(json.decode(srt));
 
-  factory Penumpang.fromJson(Map<String, dynamic> json) => Penumpang(
-        idPenumpang: json["id_penumpang"],
-        namaPenumpang: json["nama"],
-        jenisKelamin: json["jenis_kelamin"],
-        umur: json["umur"],
-      );
+  factory Penumpang.fromJson(Map<String, dynamic> json) {
+    return Penumpang(
+      idPenumpang: json['id_penumpang'],
+      nama: json['nama_penumpang'] ?? json['nama'], // Handle both possible keys
+      jenisKelamin: json['jenis_kelamin'],
+      umur: json['umur'],
+    );
+  }
 
-  String toRawJson() => json.encode(toJson());
+  Map<String, dynamic> toJson() {
+    // For creation, omit idPenumpang
+    return {
+      'nama_penumpang': nama,
+      'jenis_kelamin': jenisKelamin,
+      'umur': umur,
+    };
+  }
 
-  Map<String, dynamic> toJson() => {
-        "id_penumpang": idPenumpang,
-        "nama": namaPenumpang,
-        "jenis_kelamin": jenisKelamin,
-        "umur": umur,
-      };
+  String toRawJson() {
+    return json.encode(toJson());
+  }
 }

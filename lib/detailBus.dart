@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:tugas_besar/pemesanan.dart';
-import 'package:tugas_besar/entity/Bus.dart'; // Pastikan Anda mengimpor entitas Bus
+import 'package:tugas_besar/entity/Bus.dart';
+import 'package:tugas_besar/entity/Jadwal.dart'; // Pastikan Anda mengimpor entitas Bus
 
 class DetailBus extends StatelessWidget {
   final Bus bus;
+  final Jadwal jadwal;
   final int jumlahKursi; // Add this
 
   const DetailBus(
       {super.key,
       required this.bus,
+      required this.jadwal,
       required this.jumlahKursi // Update constructor
       });
 
@@ -64,8 +67,8 @@ class DetailBus extends StatelessWidget {
                               ],
                             ),
                             Divider(height: 20),
-                            _buildDetailRow('Asal', bus.asalBus ?? '-'),
-                            _buildDetailRow('Tujuan', bus.tujuanBus ?? '-'),
+                            _buildDetailRow('Asal', jadwal.asal ?? '-'),
+                            _buildDetailRow('Tujuan', jadwal.tujuan ?? '-'),
                             _buildDetailRow(
                                 'Fasilitas', bus.fasilitasBus ?? '-'),
                           ],
@@ -103,7 +106,8 @@ class DetailBus extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => PemesananTiket(
-                      bus: bus, // Pass bus object
+                      bus: bus,
+                      jadwal: jadwal, // Pass bus object
                       jumlahKursi: jumlahKursi, // Pass jumlah kursi
                     )),
           );
