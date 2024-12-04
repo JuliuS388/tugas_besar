@@ -3,8 +3,8 @@ import 'package:http/http.dart';
 import 'package:tugas_besar/entity/Riwayat.dart';
 
 class RiwayatClient {
-  static final String url = '192.168.104.30';
-  static final String endpoint = '/API_Travel_C/public/api/riwayat';
+  static final String url = '10.0.2.2:8000';
+  static final String endpoint = '/api/riwayat';
 
   static Future<List<Riwayat>> fetchAll() async {
     try {
