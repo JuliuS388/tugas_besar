@@ -3,8 +3,8 @@ import 'package:http/http.dart';
 import 'package:tugas_besar/entity/User.dart';
 
 class UserClientRegister {
-  static final String url = '192.168.146.22';
-  static final String endpoint = '/Travel_API/public/api/register';
+  static final String url = '10.0.2.2:8000';
+  static final String endpoint = '/api/register';
 
   static Future<List<User>> fetchAll() async {
     try {
