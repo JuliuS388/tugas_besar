@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_besar/listBus.dart';
+import 'package:tugas_besar/jadwalList.dart';
 import 'package:tugas_besar/ticketList.dart';
 import 'package:tugas_besar/profile.dart';
 import 'package:tugas_besar/histori_page.dart';
+import 'package:tugas_besar/entity/Jadwal.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -64,20 +65,23 @@ class _HomeViewState extends State<HomeView> {
   }
 }
 
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
 
   @override
+  State<HomeContent> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
+  TextEditingController asalController = TextEditingController();
+  TextEditingController tujuanController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController seatController = TextEditingController();
+
+  late List<Jadwal> jadwalList = [];
+
+  @override
   Widget build(BuildContext context) {
-    // Tambahkan TextEditingController untuk "Asal" dan "Tujuan"
-    TextEditingController asalController = TextEditingController();
-    TextEditingController tujuanController = TextEditingController();
-    TextEditingController dateController = TextEditingController();
-    TextEditingController seatController = TextEditingController();
-
-    String asal = '';
-    String tujuan = '';
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -182,7 +186,8 @@ class HomeContent extends StatelessWidget {
                                         );
                                         if (pickedDate != null) {
                                           dateController.text =
-                                              "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                                              "${pickedDate.toLocal()}"
+                                                  .split(' ')[0];
                                         }
                                       },
                                       child: AbsorbPointer(
@@ -206,10 +211,8 @@ class HomeContent extends StatelessWidget {
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: TextField(
-                                      controller:
-                                          seatController, // Add controller
-                                      keyboardType: TextInputType
-                                          .number, // Ensure numeric input
+                                      controller: seatController,
+                                      keyboardType: TextInputType.number,
                                       decoration: InputDecoration(
                                         hintText: 'Kursi',
                                         filled: true,
@@ -226,37 +229,55 @@ class HomeContent extends StatelessWidget {
                               const SizedBox(height: 16),
                               Center(
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    // Simpan nilai input ke variabel
-                                    asal = asalController.text;
-                                    tujuan = tujuanController.text;
+                                  onPressed: () async {
+                                    String asal = asalController.text;
+                                    String tujuan = tujuanController.text;
+                                    String tanggal = dateController.text;
+                                    String kursi = seatController.text;
 
-                                    if (seatController.text.isEmpty) {
+                                    if (asal.isEmpty ||
+                                        tujuan.isEmpty ||
+                                        tanggal.isEmpty ||
+                                        kursi.isEmpty) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                'Silakan masukkan jumlah kursi')),
+                                        const SnackBar(
+                                          content:
+                                              Text('Semua data harus diisi!'),
+                                        ),
                                       );
                                       return;
                                     }
 
-                                    // Cetak untuk debugging
-                                    print(
-                                      'Asal: $asal, Tujuan: $tujuan',
-                                    );
+                                    try {
+                                      // Navigasi ke halaman JadwalList dan kirim data
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => JadwalList(
+                                            asal: asal,
+                                            tujuan: tujuan,
+                                            jumlahKursi: int.parse(kursi),
+                                            tanggal:
+                                                tanggal, // Pass tanggal here
+                                          ),
+                                        ),
+                                      );
 
-                                    // Navigasikan ke halaman berikutnya
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ListBus(
-                                                asal: asal,
-                                                tujuan: tujuan,
-                                                jumlahKursi: int.parse(
-                                                    seatController.text),
-                                              )),
-                                    );
+                                      // Debugging: print the values being passed
+                                      print('asal: $asal');
+                                      print('tujuan: $tujuan');
+                                      print('jumlahKursi: ${int.parse(kursi)}');
+                                      print('tanggal: $tanggal');
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content:
+                                              Text('Gagal memuat jadwal: $e'),
+                                        ),
+                                      );
+                                    }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.yellow,
