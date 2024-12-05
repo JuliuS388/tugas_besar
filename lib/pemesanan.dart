@@ -1,17 +1,24 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:tugas_besar/entity/Bus.dart';
+import 'package:tugas_besar/entity/Jadwal.dart';
 import 'package:tugas_besar/entity/Pemesanan.dart';
+import 'package:tugas_besar/entity/Penumpang.dart';
 import 'package:tugas_besar/client/PemesananClient.dart';
+import 'package:tugas_besar/client/PenumpangClient.dart';
 import 'package:tugas_besar/pembayaran.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 
 class PemesananTiket extends StatefulWidget {
   final Bus bus;
+  final Jadwal jadwal;
   final int jumlahKursi;
 
   const PemesananTiket({
     Key? key,
     required this.bus,
+    required this.jadwal,
     required this.jumlahKursi,
   }) : super(key: key);
 
@@ -31,7 +38,7 @@ class _PemesananTiketState extends State<PemesananTiket> {
     _initializePenumpangs();
   }
 
-  // Inisialisasi daftar penumpang dengan jumlah yang sesuai
+  // Initialize the list of passengers
   void _initializePenumpangs() {
     _penumpangs = List.generate(
       _jumlahPenumpang,
@@ -43,27 +50,92 @@ class _PemesananTiketState extends State<PemesananTiket> {
     );
   }
 
-  // Fungsi untuk mengambil id_user dari SharedPreferences
+  // Function to get the user id from SharedPreferences
   Future<int?> getUserId() async {
-    // Gunakan metode getUserId dari TokenStorage
     final userId = await TokenStorage.getUserId();
-
-    // Print untuk debugging
-    print('Retrieved User ID: $userId');
-
     return userId;
   }
 
-  // Fungsi untuk mengirim pemesanan
-  void _buatPemesanan() async {
-    if (_formKey.currentState!.validate()) {
-      // Map the list of penumpang to a list of their IDs (assuming each penumpang has a unique ID)
-      List<int> penumpangIds = List.generate(
-        _penumpangs.length,
-        (index) => index + 1, // Replace with actual penumpang IDs if available
-      );
+  // Function to create the booking
+  // Fungsi untuk membuat penumpang terlebih dahulu
+  Future<List<int>> _buatPenumpang() async {
+    List<int> penumpangIds = [];
 
-      // Ambil id_user dari shared_preferences
+    for (var penumpang in _penumpangs) {
+      // Validate passenger data before creating
+      if (penumpang['nama'] == null || penumpang['nama'].isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Nama penumpang tidak boleh kosong')),
+        );
+        return [];
+      }
+
+      if (penumpang['jenisKelamin'] == null ||
+          penumpang['jenisKelamin'].isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Jenis kelamin harus dipilih')),
+        );
+        return [];
+      }
+
+      if (penumpang['umur'] == null || penumpang['umur'] <= 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Umur penumpang tidak valid')),
+        );
+        return [];
+      }
+
+      var penumpangData = {
+        "nama": penumpang['nama'],
+        "jenis_kelamin": penumpang['jenisKelamin'],
+        "umur": penumpang['umur'],
+      };
+
+      Penumpang newPenumpang = Penumpang.fromJson(penumpangData);
+
+      try {
+        var response = await PenumpangClient.create(newPenumpang);
+
+        if (response.statusCode == 201) {
+          var responseData = json.decode(response.body)['data'];
+          penumpangIds.add(responseData['id_penumpang']);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Gagal membuat penumpang: ${response.body}')),
+          );
+          return [];
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error saat membuat penumpang: $e')),
+        );
+        return [];
+      }
+    }
+
+    return penumpangIds;
+  }
+
+// Fungsi untuk membuat pemesanan
+  void _buatPemesanan() async {
+    print("Pesan Tiket button clicked"); // Debugging line
+
+    if (_formKey.currentState!.validate()) {
+      // Hitung total harga
+      double totalPrice = widget.jadwal.harga * _jumlahPenumpang;
+
+      // Membuat penumpang terlebih dahulu dan mendapatkan ID penumpang
+      List<int> penumpangIds = await _buatPenumpang();
+
+      if (penumpangIds.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal membuat penumpang')),
+        );
+        return;
+      }
+
+      // Mendapatkan ID user
       int? userId = await getUserId();
       if (userId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -72,29 +144,26 @@ class _PemesananTiketState extends State<PemesananTiket> {
         return;
       }
 
-      // Create the Pemesanan object
+      // Membuat objek Pemesanan
       Pemesanan pemesanan = Pemesanan(
-        id: 1, // Unique ID for pemesanan
+        id: null, // ID akan di-generate oleh database
         idUser: userId,
-        idBus: widget.bus.id,
-        namaDestinasi: widget.bus.tujuanBus,
-        harga: widget.bus.harga * _jumlahPenumpang,
+        idJadwal: widget.jadwal.idJadwal,
+        namaDestinasi: widget.jadwal.tujuan,
+        harga: totalPrice,
         tanggalPemesanan: DateTime.now(),
-        idPenumpang: penumpangIds, // Pass the list of penumpang IDs
+        idPenumpang: penumpangIds,
       );
 
       try {
+        // Membuat pemesanan
         var response = await PemesananClient.create(pemesanan);
 
         if (response.statusCode == 201) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Pemesanan berhasil!')),
           );
-          // Navigate to payment page if needed
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => PembayaranPage()),
-          // );
+          // Navigasi ke halaman pembayaran jika diperlukan
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Pemesanan gagal!')),
@@ -240,7 +309,7 @@ class _PemesananTiketState extends State<PemesananTiket> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: TextButton(
-                onPressed: _buatPemesanan, // Mengirimkan pemesanan
+                onPressed: _buatPemesanan, // Trigger the booking
                 child: Text(
                   'Pesan Tiket',
                   style: TextStyle(color: Colors.white, fontSize: 16),
