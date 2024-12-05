@@ -4,8 +4,8 @@ import 'package:tugas_besar/entity/Profile.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 
 class ProfilClient {
-  static final String url = '10.0.2.2:8000';
-  static final String endpoint = '/api/profile';
+  static const String url = '192.168.94.233';
+  static const String endpoint = 'Travel_API/public/api/profile';
 
   static Future<Profile> getProfile() async {
     try {
