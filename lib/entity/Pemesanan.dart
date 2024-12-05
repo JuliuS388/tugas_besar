@@ -1,18 +1,18 @@
 import 'dart:convert';
 
 class Pemesanan {
-  final int id;
+  final int? id; // ID bisa nullable, karena di-generate oleh database
   final int idUser;
-  final int idBus;
+  final int idJadwal;
   final String namaDestinasi;
   final double harga;
   final DateTime tanggalPemesanan;
   final List<int> idPenumpang; // Menyimpan daftar ID penumpang
 
   Pemesanan({
-    required this.id,
+    this.id, // Tidak perlu required, bisa null karena auto-increment
     required this.idUser,
-    required this.idBus,
+    required this.idJadwal,
     required this.namaDestinasi,
     required this.harga,
     required this.tanggalPemesanan,
@@ -22,9 +22,8 @@ class Pemesanan {
   // Fungsi untuk mengubah Pemesanan menjadi JSON
   Map<String, dynamic> toJson() {
     return {
-      "id_pemesanan": id,
       "id_user": idUser,
-      "id_bus": idBus,
+      "id_jadwal": idJadwal,
       "nama_destinasi": namaDestinasi,
       "harga": harga,
       "tanggal_pemesanan": tanggalPemesanan.toIso8601String(),
@@ -35,9 +34,10 @@ class Pemesanan {
   // Fungsi untuk membuat Pemesanan dari JSON
   factory Pemesanan.fromJson(Map<String, dynamic> json) {
     return Pemesanan(
-      id: json["id_pemesanan"],
+      id: json[
+          "id_pemesanan"], // ID akan diterima dari API setelah pemesanan dibuat
       idUser: json["id_user"],
-      idBus: json["id_bus"],
+      idJadwal: json["id_jadwal"],
       namaDestinasi: json["nama_destinasi"],
       harga: json["harga"].toDouble(),
       tanggalPemesanan: DateTime.parse(json["tanggal_pemesanan"]),
