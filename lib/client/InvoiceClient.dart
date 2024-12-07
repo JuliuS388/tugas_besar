@@ -3,8 +3,8 @@ import 'package:http/http.dart';
 import 'package:tugas_besar/entity/Invoice.dart';
 
 class InvoiceClient {
-  static final String url = '10.0.2.2:8000';
-  static final String endpoint = '/api/invoice';
+  static const String url = '192.168.94.233';
+  static const String endpoint = 'Travel_API/public/api/invoice';
 
   static Future<List<Invoice>> fetchAll() async {
     try {

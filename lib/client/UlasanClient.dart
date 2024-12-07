@@ -3,8 +3,8 @@ import 'package:http/http.dart';
 import 'package:tugas_besar/entity/Ulasan.dart';
 
 class UlasanClient {
-  static final String url = '10.0.2.2:8000';
-  static final String endpoint = '/api/ulasan';
+  static const String url = '192.168.94.233';
+  static const String endpoint = 'Travel_API/public/api/ulasan';
 
   static Future<List<Ulasan>> fetchAll() async {
     try {

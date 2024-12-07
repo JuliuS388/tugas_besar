@@ -37,7 +37,7 @@ class _LoginViewState extends State<LoginView> {
       });
 
       try {
-        bool isLoginValid = await UserClientlogin.login(
+        bool isLoginValid = await UserClientLogin.login(
           emailController.text,
           passwordController.text,
         );

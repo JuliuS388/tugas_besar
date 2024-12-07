@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:tugas_besar/tokenStorage.dart';
 
-class UserClientlogin {
-  static const String url = '192.168.100.89';
-  static const String loginEndpoint = '/1_Travel_C_API/public/api/login';
+class UserClientLogin{
+  static const String url = '192.168.94.233';
+  static const String endpoint = 'Travel_API/public/api/login';
 
   static Future<bool> login(String email, String password) async {
     try {
       var response = await http.post(
-        Uri.http(url, loginEndpoint),
+        Uri.http(url, endpoint),
         headers: {"Content-Type": "application/json"},
         body: json.encode({"email": email, "password": password}),
       );
