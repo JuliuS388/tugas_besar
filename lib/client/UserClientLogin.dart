@@ -6,7 +6,6 @@ class UserClientLogin{
   static const String url = '192.168.94.233';
   static const String endpoint = 'Travel_API/public/api/login';
 
-
   static Future<bool> login(String email, String password) async {
     try {
       var response = await http.post(
@@ -22,7 +21,7 @@ class UserClientLogin{
         var data = json.decode(response.body);
         String token = data['token']; // Misalkan token ada di respons API
         await TokenStorage.saveToken(token); // Simpan token
-        print('Login successful, token saved');
+        print('Login successful, token and user ID saved');
 
         return true;
       } else {
@@ -32,6 +31,15 @@ class UserClientLogin{
     } catch (e) {
       print('Error logging in: $e');
       return false;
+    }
+  }
+
+  static Future<void> logout() async {
+    try {
+      await TokenStorage.clearStorage();
+      print('Logout successful');
+    } catch (e) {
+      print('Error Logout');
     }
   }
 }
