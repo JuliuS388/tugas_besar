@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:tugas_besar/entity/Bus.dart';
 import 'package:tugas_besar/entity/Jadwal.dart';
@@ -7,26 +6,23 @@ import 'package:tugas_besar/entity/Pemesanan.dart';
 import 'package:tugas_besar/entity/Penumpang.dart';
 import 'package:tugas_besar/client/PemesananClient.dart';
 import 'package:tugas_besar/client/PenumpangClient.dart';
-import 'package:tugas_besar/pembayaran.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 
-class PemesananTiket extends StatefulWidget {
-  final Bus bus;
-  final Jadwal jadwal;
+class DetailPenumpang extends StatefulWidget {
+  final int idPemesanan;
   final int jumlahKursi;
 
-  const PemesananTiket({
-    Key? key,
-    required this.bus,
-    required this.jadwal,
+  const DetailPenumpang({
+    super.key,
+    required this.idPemesanan,
     required this.jumlahKursi,
-  }) : super(key: key);
+  });
 
   @override
-  _PemesananTiketState createState() => _PemesananTiketState();
+  _DetailPenumpangState createState() => _DetailPenumpangState();
 }
 
-class _PemesananTiketState extends State<PemesananTiket> {
+class _DetailPenumpangState extends State<DetailPenumpang> {
   final _formKey = GlobalKey<FormState>();
   late int _jumlahPenumpang;
   late List<Map<String, dynamic>> _penumpangs;
@@ -56,16 +52,15 @@ class _PemesananTiketState extends State<PemesananTiket> {
     return userId;
   }
 
-  // Function to create the booking
-  // Fungsi untuk membuat penumpang terlebih dahulu
-  Future<List<int>> _buatPenumpang() async {
+  // Fungsi untuk membuat penumpang
+  Future<List<int>> _buatPenumpang(int pemesananId) async {
     List<int> penumpangIds = [];
 
     for (var penumpang in _penumpangs) {
-      // Validate passenger data before creating
+      // Validasi data penumpang
       if (penumpang['nama'] == null || penumpang['nama'].isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Nama penumpang tidak boleh kosong')),
+          const SnackBar(content: Text('Nama penumpang tidak boleh kosong')),
         );
         return [];
       }
@@ -73,33 +68,34 @@ class _PemesananTiketState extends State<PemesananTiket> {
       if (penumpang['jenisKelamin'] == null ||
           penumpang['jenisKelamin'].isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Jenis kelamin harus dipilih')),
+          const SnackBar(content: Text('Jenis kelamin harus dipilih')),
         );
         return [];
       }
 
       if (penumpang['umur'] == null || penumpang['umur'] <= 0) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Umur penumpang tidak valid')),
+          const SnackBar(content: Text('Umur penumpang tidak valid')),
         );
         return [];
       }
 
       var penumpangData = {
-        "nama": penumpang['nama'],
+        "nama_penumpang": penumpang['nama'],
         "jenis_kelamin": penumpang['jenisKelamin'],
         "umur": penumpang['umur'],
+        "id_pemesanan": pemesananId,
       };
 
-      Penumpang newPenumpang = Penumpang.fromJson(penumpangData);
-
       try {
-        var response = await PenumpangClient.create(newPenumpang);
+        var response =
+            await PenumpangClient.create(Penumpang.fromJson(penumpangData));
 
         if (response.statusCode == 201) {
           var responseData = json.decode(response.body)['data'];
           penumpangIds.add(responseData['id_penumpang']);
         } else {
+          print("Error response: ${response.body}");
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
                 content: Text('Gagal membuat penumpang: ${response.body}')),
@@ -107,6 +103,7 @@ class _PemesananTiketState extends State<PemesananTiket> {
           return [];
         }
       } catch (e) {
+        print("Exception occurred: $e");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error saat membuat penumpang: $e')),
         );
@@ -115,66 +112,6 @@ class _PemesananTiketState extends State<PemesananTiket> {
     }
 
     return penumpangIds;
-  }
-
-// Fungsi untuk membuat pemesanan
-  void _buatPemesanan() async {
-    print("Pesan Tiket button clicked"); // Debugging line
-
-    if (_formKey.currentState!.validate()) {
-      // Hitung total harga
-      double totalPrice = widget.jadwal.harga * _jumlahPenumpang;
-
-      // Membuat penumpang terlebih dahulu dan mendapatkan ID penumpang
-      List<int> penumpangIds = await _buatPenumpang();
-
-      if (penumpangIds.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal membuat penumpang')),
-        );
-        return;
-      }
-
-      // Mendapatkan ID user
-      int? userId = await getUserId();
-      if (userId == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('User tidak ditemukan. Harap login ulang.')),
-        );
-        return;
-      }
-
-      // Membuat objek Pemesanan
-      Pemesanan pemesanan = Pemesanan(
-        id: null, // ID akan di-generate oleh database
-        idUser: userId,
-        idJadwal: widget.jadwal.idJadwal,
-        namaDestinasi: widget.jadwal.tujuan,
-        harga: totalPrice,
-        tanggalPemesanan: DateTime.now(),
-        idPenumpang: penumpangIds,
-      );
-
-      try {
-        // Membuat pemesanan
-        var response = await PemesananClient.create(pemesanan);
-
-        if (response.statusCode == 201) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Pemesanan berhasil!')),
-          );
-          // Navigasi ke halaman pembayaran jika diperlukan
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Pemesanan gagal!')),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
-      }
-    }
   }
 
   @override
@@ -301,20 +238,26 @@ class _PemesananTiketState extends State<PemesananTiket> {
                 ),
               ),
             ),
-            Container(
-              width: double.infinity,
-              height: 50,
-              decoration: BoxDecoration(
-                color: Colors.blue.shade900,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: TextButton(
-                onPressed: _buatPemesanan, // Trigger the booking
-                child: Text(
-                  'Pesan Tiket',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
+            ElevatedButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  // If the form is valid, create passengers
+                  List<int> penumpangIds =
+                      await _buatPenumpang(widget.idPemesanan);
+
+                  if (penumpangIds.isNotEmpty) {
+                    // Navigate to the payment screen
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) =>
+                    //         PaymentScreen(penumpangIds: penumpangIds),
+                    //   ),
+                    // );
+                  }
+                }
+              },
+              child: Text('Lanjut Pembayaran'),
             ),
           ],
         ),
