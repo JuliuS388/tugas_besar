@@ -4,7 +4,7 @@ import 'package:tugas_besar/tokenStorage.dart';
 
 class UserClientlogin {
   static const String url = '10.0.2.2:8000';
-  static const String loginEndpoint = '/1_Travel_C_API/public/api/login';
+  static const String loginEndpoint = '/api/login';
 
   static Future<bool> login(String email, String password) async {
     try {
