@@ -5,8 +5,8 @@ import 'package:tugas_besar/tokenStorage.dart'; // Pastikan import TokenStorage
 
 class PemesananClient {
   
-  static final String url = '192.168.100.89';
-  static final String endpoint = '/1_Travel_C_API/public/api/pemesanan';
+  static final String url = '10.0.2.2:8000';
+  static final String endpoint = '/api/pemesanan';
 
   // Fetch All Pemesanan
   static Future<List<Pemesanan>> fetchAll() async {
