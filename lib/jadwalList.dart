@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:intl/intl.dart';
-import 'package:tugas_besar/detailBus.dart';
+import 'package:tugas_besar/detailBusDanPemesanan.dart';
 import 'package:tugas_besar/entity/Jadwal.dart';
 import 'package:tugas_besar/client/JadwalClient.dart';
 
@@ -109,7 +109,7 @@ class _JadwalListState extends State<JadwalList> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DetailBus(
+                            builder: (context) => DetailBusDanPemesanan(
                               jadwal: jadwal,
                               bus: jadwal.bus, // Pass the entire bus object
                               jumlahKursi: widget.jumlahKursi,
