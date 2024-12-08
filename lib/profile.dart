@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/client/UserClientLogin.dart';
 import 'package:tugas_besar/detailProfil.dart';
 import 'package:tugas_besar/entity/Profile.dart';
 import 'package:tugas_besar/client/profileClient.dart';
+import 'package:tugas_besar/login_page.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -111,6 +113,13 @@ class ProfileScreen extends StatelessWidget {
                         trailing:
                             const Icon(Icons.chevron_right, color: Colors.grey),
                         onTap: () {
+                          UserClientlogin.logout();
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginView()),
+                            (route) => false,
+                          );
                           // Implement action for Keluar (Logout)
                         },
                       ),
