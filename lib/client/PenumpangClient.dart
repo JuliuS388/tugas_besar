@@ -50,7 +50,7 @@ class PenumpangClient {
   }
 
   // Create a new Penumpang
-  static Future<Response> create(Penumpang penumpang) async {
+  static Future<Penumpang> create(Penumpang penumpang) async {
     try {
       String? token =
           await TokenStorage.getToken(); // Ambil token dari tokenStorage
@@ -65,7 +65,14 @@ class PenumpangClient {
 
       if (response.statusCode != 201) throw Exception(response.reasonPhrase);
 
-      return response;
+      print("Response Body: ${response.body}");
+      try {
+        var responseData = jsonDecode(response.body);
+        return Penumpang.fromJson(responseData);
+      } catch (e) {
+        print('Error while parsing JSON: $e');
+        return Future.error(e.toString());
+      }
     } catch (e) {
       return Future.error(e.toString());
     }

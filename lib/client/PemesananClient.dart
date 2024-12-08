@@ -93,20 +93,26 @@ class PemesananClient {
 
   static Future<Response> destroy(int id) async {
     try {
-      String? token =
-          await TokenStorage.getToken(); // Ambil token dari tokenStorage
+      String? token = await TokenStorage.getToken(); // Get token from storage
       var response = await delete(
         Uri.http(url, '$endpoint/$id'),
         headers: {
-          "Authorization": "Bearer $token", // Tambahkan header Authorization
+          "Authorization": "Bearer $token",
         },
       );
 
-      if (response.statusCode != 204) throw Exception(response.reasonPhrase);
+      print("Response Status: ${response.statusCode}");
+      print("Response Body: ${response.body}");
 
-      return response;
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        print("Error: ${response.statusCode} - ${response.body}");
+        throw Exception('Failed to delete pemesanan');
+      }
     } catch (e) {
-      return Future.error(e.toString());
+      print("Exception caught: $e");
+      return Future.error('Error during pemesanan deletion: $e');
     }
   }
 }
