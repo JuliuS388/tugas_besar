@@ -22,6 +22,8 @@ class UserClientlogin {
         String token = data['token']; // Misalkan token ada di respons API
         await TokenStorage.saveToken(token); // Simpan token
         print('Login successful, token and user ID saved');
+        await TokenStorage.saveUserId(data['id_user']); // Simpan ID user
+        print("ID User tersimpan: ${data['id_user']}");
 
         return true;
       } else {
