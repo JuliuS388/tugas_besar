@@ -5,8 +5,6 @@ class Bus {
   String namaBus;
   String supirBus;
   String fasilitasBus;
-  String asalBus;
-  String tujuanBus;
   double harga; // New field for price
 
   Bus({
@@ -14,8 +12,6 @@ class Bus {
     this.namaBus = 'Nama Bus Tidak Tersedia',
     this.supirBus = 'Supir Tidak Tersedia',
     this.fasilitasBus = 'Fasilitas Tidak Tersedia',
-    this.asalBus = 'Asal Tidak Tersedia',
-    this.tujuanBus = 'Tujuan Tidak Tersedia',
     this.harga = 0.0, // Default value for price
   });
 
@@ -32,11 +28,6 @@ class Bus {
       fasilitasBus: json["fasilitas"] ??
           json["fasilitas_bus"] ??
           'Fasilitas Tidak Tersedia',
-      asalBus: json["asal"] ?? json["asal_bus"] ?? 'Asal Tidak Tersedia',
-      tujuanBus:
-          json["tujuan"] ?? json["tujuan_bus"] ?? 'Tujuan Tidak Tersedia',
-      harga: double.tryParse(json["harga"].toString()) ??
-          0.0, // New field for price
     );
   }
 
@@ -47,8 +38,6 @@ class Bus {
         "nama_bus": namaBus,
         "nama_supir": supirBus,
         "fasilitas_bus": fasilitasBus,
-        "asal_bus": asalBus,
-        "tujuan_bus": tujuanBus,
         "harga": harga, // New field for price
       };
 }

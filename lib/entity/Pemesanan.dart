@@ -1,50 +1,43 @@
 import 'dart:convert';
 
 class Pemesanan {
-  final int id;
-  final int idUser;
-  final int idBus;
-  final String namaDestinasi;
-  final double harga;
-  final DateTime tanggalPemesanan;
-  final List<int> idPenumpang; // Menyimpan daftar ID penumpang
+  int? id; // Primary key dari tabel Pemesanan
+  int idUser; // Foreign key dari tabel User
+  int idJadwal; // Foreign key dari tabel Jadwal
+  DateTime tanggalPemesanan; // Tanggal pemesanan
+  double harga; // Harga pemesanan
 
+  // Constructor
   Pemesanan({
-    required this.id,
+    this.id, // Nullable, karena di-generate oleh database
     required this.idUser,
-    required this.idBus,
-    required this.namaDestinasi,
-    required this.harga,
+    required this.idJadwal,
     required this.tanggalPemesanan,
-    required this.idPenumpang,
+    required this.harga,
   });
 
-  // Fungsi untuk mengubah Pemesanan menjadi JSON
+  // Fungsi untuk mengubah Pemesanan menjadi JSON (untuk dikirim ke API)
   Map<String, dynamic> toJson() {
     return {
-      "id_pemesanan": id,
+      "id_pemesanan": id, // Bisa null saat membuat baru
       "id_user": idUser,
-      "id_bus": idBus,
-      "nama_destinasi": namaDestinasi,
-      "harga": harga,
+      "id_jadwal": idJadwal,
       "tanggal_pemesanan": tanggalPemesanan.toIso8601String(),
-      "id_penumpang": idPenumpang, // Kirim ID penumpang
+      "harga": harga,
     };
   }
 
-  // Fungsi untuk membuat Pemesanan dari JSON
+  // Fungsi untuk membuat Pemesanan dari JSON (response dari API)
   factory Pemesanan.fromJson(Map<String, dynamic> json) {
     return Pemesanan(
-      id: json["id_pemesanan"],
+      id: json["id_pemesanan"], // ID pemesanan dari API
       idUser: json["id_user"],
-      idBus: json["id_bus"],
-      namaDestinasi: json["nama_destinasi"],
-      harga: json["harga"].toDouble(),
+      idJadwal: json["id_jadwal"],
       tanggalPemesanan: DateTime.parse(json["tanggal_pemesanan"]),
-      idPenumpang: List<int>.from(json["id_penumpang"].map((x) => x)),
+      harga: json["harga"].toDouble(),
     );
   }
 
-  // Fungsi untuk mengubah Pemesanan menjadi raw JSON untuk dikirim
+  // Fungsi untuk mengubah Pemesanan menjadi raw JSON (string JSON)
   String toRawJson() => json.encode(toJson());
 }
