@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'package:tugas_besar/camera.dart';
-import 'package:camera/camera.dart';
-import 'package:intl/intl.dart';
+import 'package:tugas_besar/client/EditProfileClient.dart';
+import 'package:tugas_besar/entity/Profile.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:tugas_besar/tokenStorage.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -14,19 +16,16 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  XFile? _image; // Untuk menyimpan gambar
+  XFile? _image;
+  final String apiUrl = 'http://10.0.2.2:8000/api/user/update';
 
-  // Controller untuk setiap TextField
   final _namaLengkapController = TextEditingController();
   final _tanggalLahirController = TextEditingController();
   final _nomorTeleponController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _konfirmasiPasswordController = TextEditingController();
-
-  String _selectedGender = ''; // Untuk menyimpan pilihan gender
-
-  // Daftar pilihan gender
+  final _usernameController = TextEditingController();
 
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -36,7 +35,48 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
   }
 
-  // Fungsi untuk menampilkan date picker
+  Future<bool> updateProfile() async {
+    try {
+      final String? token = await TokenStorage.getToken(); // Replace with actual token from storage
+
+      if (token == null) {
+        print("Token is missing");
+        return false;
+      }
+
+      // Prepare the profile data from text fields
+      Map<String, dynamic> profileData = {
+        'nama': _namaLengkapController.text,
+        'username': _usernameController.text,
+        'nomor_telepon': _nomorTeleponController.text,
+        'tanggal_lahir': _tanggalLahirController.text,
+      };
+
+      // Send PUT request
+      final response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // Include the token for authentication
+        },
+        body: json.encode(profileData),
+      );
+
+      if (response.statusCode == 200) {
+        // Success
+        print('Profile updated successfully');
+        return true;
+      } else {
+        // Handle failure
+        print('Failed to update profile: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+      return false;
+    }
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -46,351 +86,120 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
     if (picked != null) {
       setState(() {
-        _tanggalLahirController.text = DateFormat('dd/MM/yyyy').format(picked);
+        _tanggalLahirController.text = picked.toIso8601String();
       });
     }
   }
-
-  void _showImageSourceOptions() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            //Ambil Foto Menggunakan Kamera Custom
-            ListTile(
-              leading: const Icon(Icons.camera),
-              title: const Text('Ambil Foto'),
-              onTap: () {
-                Navigator.pop(context);
-                _navigateToCustomCamera();
-              },
-            ),
-            //Memilih Foto dari Galeri Pengguna
-            ListTile(
-              leading: const Icon(Icons.photo),
-              title: const Text('Pilih dari Galeri'),
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.gallery);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _navigateToCustomCamera() async {
-    try {
-      // Dapatkan daftar kamera
-      final cameras = await availableCameras();
-
-      if (cameras.isNotEmpty) {
-        final result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CameraView(cameras: cameras),
-          ),
-        );
-
-        // Cek apakah ada hasil dari kamera
-        if (result != null) {
-          setState(() {
-            _image = result; // Simpan hasil foto dari kamera custom
-          });
-        }
-      } else {
-        // Tampilkan pesan jika tidak ada kamera yang tersedia
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tidak ada kamera yang tersedia')),
-        );
-      }
-    } catch (e) {
-      print('Kesalahan saat mengakses kamera: $e');
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal membuka kamera: $e')),
-      );
-    }
-  }
-
-  // Method _buildGenderRadioButtons() tetap sama seperti sebelumnya
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue.shade900,
-        foregroundColor: Colors.white,
-        title: const Text('Edit Profil'),
+        title: const Text('Profile Update'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop(); // Kembali ke halaman sebelumnya
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey,
           child: ListView(
             children: [
-              // Bagian foto profil (sama seperti sebelumnya)
+              // Avatar Image Picker
               Center(
-                child: Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    GestureDetector(
-                      onTap: _showImageSourceOptions,
-                      child: CircleAvatar(
-                        radius: 60, // Bisa disesuaikan ukurannya
-                        backgroundImage: _image != null
-                            ? FileImage(File(_image!.path))
-                            : const NetworkImage(
-                                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNuMtV6voiMGgINSW_PbviV6ecO3nMab9uVw&s'),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: _showImageSourceOptions,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          padding: const EdgeInsets.all(4),
-                          child: const Icon(
-                            Icons.camera_alt,
-                            color: Colors.black,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                child: GestureDetector(
+                  onTap: () => _pickImage(ImageSource.gallery),
+                  child: CircleAvatar(
+                    radius: 60,
+                    backgroundImage: _image != null
+                        ? FileImage(File(_image!.path))
+                        : const NetworkImage(
+                            'https://example.com/default-avatar.png') as ImageProvider,
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Section Data Pribadi
-              _buildSectionTitle('Data Pribadi'),
-              const SizedBox(height: 10),
-
-              // Field Nama Lengkap
+              
+              // Name Input
               _buildTextFormField(
                 controller: _namaLengkapController,
-                label: 'Nama Lengkap',
+                label: 'Name',
                 icon: Icons.person,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Nama lengkap tidak boleh kosong';
-                  }
-                  return null;
-                },
               ),
               const SizedBox(height: 20),
 
-              // Field Tanggal Lahir
+              // Email Input
+              _buildTextFormField(
+                controller: _usernameController,
+                label: 'Username',
+                icon: Icons.person,
+              ),
+              const SizedBox(height: 20),
+
+
+              // Phone Number Input
+              _buildTextFormField(
+                controller: _nomorTeleponController,
+                label: 'Phone Number',
+                icon: Icons.phone,
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 20),
+
+              // Date of Birth Input
               TextFormField(
                 controller: _tanggalLahirController,
                 decoration: InputDecoration(
-                  labelText: 'Tanggal Lahir',
+                  labelText: 'Date of Birth (YYYY-MM-DD)',
                   prefixIcon: const Icon(Icons.calendar_today),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
                 readOnly: true,
-                onTap: () => _selectDate(context),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Tanggal lahir tidak boleh kosong';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-
-              // Field Nomor Telepon
-              _buildTextFormField(
-                controller: _nomorTeleponController,
-                label: 'Nomor Telepon',
-                icon: Icons.phone,
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Nomor telepon tidak boleh kosong';
-                  }
-                  // Validasi format nomor telepon
-                  if (!RegExp(r'^[0-9]{10,12}$').hasMatch(value)) {
-                    return 'Nomor telepon tidak valid';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-
-              // Field Gender
-              FormField<String>(
-                validator: (value) {
-                  if (_selectedGender.isEmpty) {
-                    return 'Jenis kelamin harus dipilih';
-                  }
-                  return null;
-                },
-                builder: (FormFieldState<String> state) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: 'Jenis Kelamin',
-                          prefixIcon: const Icon(Icons.people),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          errorText: state.errorText,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Row(
-                              children: [
-                                Radio<String>(
-                                  value: 'Laki-laki',
-                                  groupValue: _selectedGender,
-                                  onChanged: (String? value) {
-                                    setState(() {
-                                      _selectedGender = value!;
-                                      state.didChange(value);
-                                    });
-                                  },
-                                ),
-                                const Text('Laki-laki'),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Radio<String>(
-                                  value: 'Perempuan',
-                                  groupValue: _selectedGender,
-                                  onChanged: (String? value) {
-                                    setState(() {
-                                      _selectedGender = value!;
-                                      state.didChange(value);
-                                    });
-                                  },
-                                ),
-                                const Text('Perempuan'),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                onTap: () async {
+                  final DateTime? picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime.now(),
                   );
+                  if (picked != null) {
+                    setState(() {
+                      _tanggalLahirController.text = picked.toIso8601String();
+                    });
+                  }
                 },
               ),
               const SizedBox(height: 20),
-
-              // Section Data Akun
-              _buildSectionTitle('Data Akun'),
-              const SizedBox(height: 10),
-
-              // Field Email
-              _buildTextFormField(
-                controller: _emailController,
-                label: 'Email',
-                icon: Icons.email,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Email tidak boleh kosong';
-                  }
-                  // Validasi format email
-                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return 'Format email tidak valid';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-
-              // Field Password
-              _buildTextFormField(
-                controller: _passwordController,
-                label: 'Password',
-                icon: Icons.lock,
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Password tidak boleh kosong';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-
-              // Field Konfirmasi Password
-              _buildTextFormField(
-                controller: _konfirmasiPasswordController,
-                label: 'Konfirmasi Password Baru',
-                icon: Icons.lock_outline,
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Konfirmasi password tidak boleh kosong';
-                  }
-                  // Cek apakah konfirmasi password sama dengan password baru
-                  if (value != _passwordController.text) {
-                    return 'Konfirmasi password tidak cocok';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-
-              // Tombol Simpan
+              // Update Profile Button
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue.shade900,
-                  foregroundColor: Colors.white,
                 ),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Simpan perubahan
-                    Navigator.pop(context);
-                  }
+                onPressed: () async {
+                  bool success = await updateProfile();
+                  String message = success ? 'Profile Updated!' : 'Profile Update Failed!';
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: Text(message),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
                 },
-                child: const Text('Simpan Perubahan'),
+                child: const Text('Update Profile'),
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-// Metode tambahan untuk membuat judul section
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: Color.fromARGB(255, 13, 71, 161),
       ),
     );
   }
@@ -400,8 +209,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     required String label,
     required IconData icon,
     bool obscureText = false,
-    TextInputType? keyboardType,
-    String? Function(String?)? validator,
+    TextInputType keyboardType = TextInputType.text,
   }) {
     return TextFormField(
       controller: controller,
@@ -410,17 +218,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         prefixIcon: Icon(icon),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: Colors.blue),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: Colors.blueAccent),
-        ),
-        hintText: 'Masukkan $label',
       ),
       obscureText: obscureText,
-      keyboardType: keyboardType,
-      validator: validator,
     );
   }
 }
