@@ -1,20 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_besar/detailBusDanPemesanan.dart';
 import 'package:tugas_besar/pembayaranNext.dart';
 
-class MyWidget extends StatefulWidget {
+class Pembayaran extends StatefulWidget {
+  final int idPemesanan; // Hanya menerima idPemesanan
+
+  // Konstruktor untuk menerima idPemesanan
+  const Pembayaran({
+    Key? key,
+    required this.idPemesanan,
+  }) : super(key: key);
+
   @override
-  State<MyWidget> createState() => _MyWidgetState();
+  State<Pembayaran> createState() => _PembayaranState();
 }
 
-class _MyWidgetState extends State<MyWidget> {
+class _PembayaranState extends State<Pembayaran> {
   String? _selectedBank;
+
+  // Variabel untuk menyimpan data penumpang berdasarkan idPemesanan
+  late String nama;
+  late String jenisKelamin;
+  late int umur;
+  late String nomorKursi;
 
   final List<String> dateTimes = [
     "Pergi Rabu, 16 Okt 2024 - 14:55",
     "Yogyakarta -> Jakarta",
     "Handoyo Bus"
   ];
+
+  // Fungsi untuk mengambil data penumpang berdasarkan idPemesanan
+  void _getPenumpangData() {
+    // Mengambil data berdasarkan idPemesanan
+    // Data ini bisa berasal dari API, database, atau sumber lokal
+    // Misalnya, jika idPemesanan = 1, kita bisa memberikan data dummy:
+    if (widget.idPemesanan == 1) {
+      nama = 'John Doe';
+      jenisKelamin = 'Laki-laki';
+      umur = 30;
+      nomorKursi = 'A1';
+    } else {
+      // Data lainnya bisa diambil dengan cara yang serupa
+      nama = 'Jane Smith';
+      jenisKelamin = 'Perempuan';
+      umur = 25;
+      nomorKursi = 'B2';
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getPenumpangData(); // Mengambil data penumpang berdasarkan idPemesanan
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +70,9 @@ class _MyWidgetState extends State<MyWidget> {
             }), // logika tombol appbar
       ),
       body: SingleChildScrollView(
-        // Tambahkan SingleChildScrollView di sini
         child: Column(
           children: [
-            // Konten lainnya tetap sama
+            // Menampilkan tahapan pembayaran
             Container(
               margin: EdgeInsets.only(top: 10),
               child: Row(
@@ -49,6 +86,8 @@ class _MyWidgetState extends State<MyWidget> {
                 ],
               ),
             ),
+
+            // Menampilkan informasi pemesanan
             Container(
               width: 300,
               decoration: BoxDecoration(
@@ -58,8 +97,8 @@ class _MyWidgetState extends State<MyWidget> {
               padding: EdgeInsets.all(5),
               margin: EdgeInsets.only(top: 20),
               child: Column(
-                children: dateTimes.map((dateTime) {
-                  return Container(
+                children: [
+                  Container(
                     padding: EdgeInsets.all(5),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
@@ -67,13 +106,47 @@ class _MyWidgetState extends State<MyWidget> {
                     width: 245,
                     margin: EdgeInsets.all(5),
                     child: Center(
-                      // Menambahkan Center untuk meratakan teks
-                      child: Text(dateTime),
+                      child: Text("Nama: $nama"),
                     ),
-                  );
-                }).toList(), // Mengonversi iterable ke list
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color.fromARGB(255, 213, 213, 213)),
+                    width: 245,
+                    margin: EdgeInsets.all(5),
+                    child: Center(
+                      child: Text("Jenis Kelamin: $jenisKelamin"),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color.fromARGB(255, 213, 213, 213)),
+                    width: 245,
+                    margin: EdgeInsets.all(5),
+                    child: Center(
+                      child: Text("Umur: $umur tahun"),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color.fromARGB(255, 213, 213, 213)),
+                    width: 245,
+                    margin: EdgeInsets.all(5),
+                    child: Center(
+                      child: Text("Nomor Kursi: $nomorKursi"),
+                    ),
+                  ),
+                ],
               ),
             ),
+
+            // Pilih metode pembayaran
             Container(
               width: 300,
               margin: EdgeInsets.all(10),
@@ -102,6 +175,7 @@ class _MyWidgetState extends State<MyWidget> {
               ),
             ),
 
+            // Menampilkan informasi tagihan dan tombol bayar
             Container(
               width: 300,
               margin: EdgeInsets.only(top: 100),
@@ -111,8 +185,7 @@ class _MyWidgetState extends State<MyWidget> {
               ),
               alignment: Alignment.bottomCenter,
               child: Column(
-                mainAxisSize: MainAxisSize
-                    .min, // Mengatur ukuran kolom agar tidak mengambil ruang penuh
+                mainAxisSize: MainAxisSize.min, // Mengatur ukuran kolom agar tidak mengambil ruang penuh
                 children: [
                   // Menampilkan informasi IDR
                   Container(
@@ -169,6 +242,7 @@ class _MyWidgetState extends State<MyWidget> {
     ));
   }
 
+  // Fungsi untuk membuat opsi bank
   Widget _buildBankOption(String img, String bankName) {
     return Container(
       margin: EdgeInsets.all(5),
@@ -178,8 +252,7 @@ class _MyWidgetState extends State<MyWidget> {
           color: const Color.fromARGB(255, 213, 213, 213)),
       width: 245,
       child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.spaceBetween, // Mengatur jarak antara elemen
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
@@ -193,12 +266,11 @@ class _MyWidgetState extends State<MyWidget> {
             ],
           ),
           Radio<String>(
-            value:
-                bankName, // Nilai yang akan disimpan saat radio button dipilih
-            groupValue: _selectedBank, // Grup yang sama untuk radio button
+            value: bankName,
+            groupValue: _selectedBank,
             onChanged: (String? value) {
               setState(() {
-                _selectedBank = value; // Mengupdate nilai yang dipilih
+                _selectedBank = value;
               });
             },
           ),
@@ -209,5 +281,7 @@ class _MyWidgetState extends State<MyWidget> {
 }
 
 void main() {
-  runApp(MyWidget());
+  runApp(Pembayaran(
+    idPemesanan: 1, // Contoh idPemesanan
+  ));
 }
