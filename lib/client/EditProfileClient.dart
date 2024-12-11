@@ -4,8 +4,8 @@ import 'package:tugas_besar/entity/Profile.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 
 class EditProfileClient {
-  static final String url = 'http://10.0.2.2:8000';  // Pastikan format URL dengan http://
-  static final String endpoint = '/api/user/update';  // Gunakan '/' untuk membuat URL penuh
+  static const String url = '192.168.139.233';
+  static const String endpoint = '/Travel_API/public/api/update';  // Gunakan '/' untuk membuat URL penuh
 
   
 }
