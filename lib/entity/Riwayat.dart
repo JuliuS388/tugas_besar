@@ -1,16 +1,15 @@
+import 'package:tugas_besar/entity/Pemesanan.dart';
 import 'dart:convert';
 
 class Riwayat {
-  final int id;
-  final int idUser;
-  final int idPemesanan;
-  final String tanggalTransaksi;
+  int? id;
+  int idUser;
+  int idPemesanan;
 
   Riwayat({
-    required this.id,
+    this.id,
     required this.idUser,
     required this.idPemesanan,
-    required this.tanggalTransaksi,
   });
 
   factory Riwayat.fromRawJson(String str) => Riwayat.fromJson(json.decode(str));
@@ -19,7 +18,6 @@ class Riwayat {
         id: json["id_riwayat"],
         idUser: json["id_user"],
         idPemesanan: json["id_pemesanan"],
-        tanggalTransaksi: json["tanggal_transaksi"],
       );
 
   String toRawJson() => json.encode(toJson());
@@ -28,6 +26,5 @@ class Riwayat {
         "id_riwayat": id,
         "id_user": idUser,
         "id_pemesanan": idPemesanan,
-        "tanggal_transaksi": tanggalTransaksi,
       };
 }

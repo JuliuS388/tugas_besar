@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/client/RiwayatClient.dart';
 import 'package:tugas_besar/detailPenumpang.dart';
 import 'package:tugas_besar/entity/Pemesanan.dart';
+import 'package:tugas_besar/entity/Riwayat.dart';
 import 'package:tugas_besar/entity/Bus.dart';
 import 'package:tugas_besar/entity/Jadwal.dart';
 import 'package:tugas_besar/client/PemesananClient.dart';
@@ -125,7 +127,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                       final userId = await getUserId();
                       print(userId);
                       if (userId == null) {
-                        throw 'User ID tidak ditemukan. Harap login ulang.';
+                        throw 'User  ID tidak ditemukan. Harap login ulang.';
                       }
 
                       // Buat pemesanan
@@ -136,44 +138,98 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                         harga: totalPrice,
                       );
 
-                      // Kirim ke server
-                      var pemesananBaru =
-                          await PemesananClient.create(pemesanan);
-                      var pemesananId = pemesananBaru.id!;
+                      // Kirim ke server dan tangani exception untuk pemesanan
+                      try {
+                        var pemesananBaru =
+                            await PemesananClient.create(pemesanan);
+                        var pemesananId = pemesananBaru.id!;
 
-                      // Navigasi ke halaman DetailPenumpang
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailPenumpang(
-                            jumlahKursi: widget.jumlahKursi,
-                            idPemesanan: pemesananId,
-                          ),
-                        ),
-                      );
+                        var riwayat = Riwayat(
+                          idUser: userId,
+                          idPemesanan: pemesananId,
+                        );
 
-                      // Show success snackbar
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Row(
-                            children: [
-                              Icon(Icons.check_circle, color: Colors.white),
-                              SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Pemesanan berhasil!',
-                                  style: TextStyle(color: Colors.white),
-                                ),
+                        // Kirim ke server dan tangani exception untuk riwayat
+                        try {
+                          var riwayatBaru = await RiwayatClient.create(riwayat);
+
+                          // Navigasi ke halaman DetailPenumpang
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailPenumpang(
+                                jumlahKursi: widget.jumlahKursi,
+                                idPemesanan: pemesananId,
                               ),
-                            ],
+                            ),
+                          );
+
+                          // Show success snackbar
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  Icon(Icons.check_circle, color: Colors.white),
+                                  SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Pemesanan berhasil!',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 4),
+                            ),
+                          );
+                        } catch (e) {
+                          print("Error saat menyimpan riwayat: $e");
+                          // Show error snackbar untuk riwayat
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  Icon(Icons.error, color: Colors.white),
+                                  SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Gagal menyimpan riwayat: $e',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: Colors.red,
+                              duration: Duration(seconds: 4),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        print("Error saat memesan tiket: $e");
+                        // Show error snackbar untuk pemesanan
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                Icon(Icons.error, color: Colors.white),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Gagal melakukan pemesanan: $e',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            backgroundColor: Colors.red,
+                            duration: Duration(seconds: 4),
                           ),
-                          backgroundColor: Colors.green,
-                          duration: Duration(seconds: 4),
-                        ),
-                      );
+                        );
+                      }
                     } catch (e) {
-                      print("Error saat memesan tiket: $e");
-                      // Show error snackbar
+                      print("Error saat mengambil user ID: $e");
+                      // Show error snackbar untuk user ID
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Row(
@@ -182,7 +238,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                               SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Gagal melakukan pemesanan: $e',
+                                  'Gagal mengambil user ID: $e',
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
