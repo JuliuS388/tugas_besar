@@ -56,7 +56,6 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
     List<String> letters = ['A', 'B', 'C', 'D'];
     int number;
 
-    // Keep generating until we get a unique number
     do {
       String letter = letters[random.nextInt(letters.length)];
       number = random.nextInt(10) + 1; // Random number between 1 and 10
