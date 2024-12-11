@@ -26,5 +26,17 @@ class Profile {
       pass: json['password'],
     );
   }
-}
 
+  String toRawJson() => json.encode(toJson());
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nama': name,
+      'username': username,
+      'email': email,
+      'nomor_telepon': noTelp,
+      'tanggal_lahir': tglUlt,
+      'password': pass,
+    };
+  }
+}

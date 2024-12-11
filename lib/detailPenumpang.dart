@@ -67,12 +67,6 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
     return seatNumber;
   }
 
-  // Function to get the user id from SharedPreferences
-  Future<int?> getUserId() async {
-    final userId = await TokenStorage.getUserId();
-    return userId;
-  }
-
   // Function to create passengers
   Future<List<int>> _buatPenumpang(int pemesananId) async {
     List<int> penumpangIds = [];
@@ -100,6 +94,8 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
         );
         return [];
       }
+
+      print("Pemesanan ID yang didapat: ${widget.idPemesanan}");
 
       var penumpangData = Penumpang(
         namaPenumpang: penumpang['nama'],
