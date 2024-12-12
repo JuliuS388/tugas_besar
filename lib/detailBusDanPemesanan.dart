@@ -144,14 +144,14 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                             await PemesananClient.create(pemesanan);
                         var pemesananId = pemesananBaru.id!;
 
-                        var riwayat = Riwayat(
-                          idUser: userId,
-                          idPemesanan: pemesananId,
-                        );
+                        // var riwayat = Riwayat(
+                        //   idUser: userId,
+                        //   idPemesanan: pemesananId,
+                        // );
 
                         // Kirim ke server dan tangani exception untuk riwayat
                         try {
-                          var riwayatBaru = await RiwayatClient.create(riwayat);
+                          // var riwayatBaru = await RiwayatClient.create(riwayat);
 
                           // Navigasi ke halaman DetailPenumpang
                           Navigator.push(

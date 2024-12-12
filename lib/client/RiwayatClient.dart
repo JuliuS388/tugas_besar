@@ -7,22 +7,90 @@ class RiwayatClient {
   static const String url = '192.168.139.233';
   static const String endpoint = '/Travel_API/public/api/riwayat';
 
-  static Future<List<Riwayat>> fetchAll() async {
+  // static Future<List<Riwayat>> fetchAll() async {
+  //   try {
+  //     String? token = await TokenStorage.getToken(); // Ambil token dari tokenStorage
+  //     var response = await get(
+  //       Uri.http(url, endpoint),
+  //       headers: {
+  //         "Authorization": "Bearer $token", // Tambahkan header Authorization
+  //       },
+  //     );
+
+  //     if (response.statusCode != 200) throw Exception(response.reasonPhrase);
+
+  //     Iterable list = json.decode(response.body)['data'];
+
+  //     return list.map((e) => Riwayat.fromJson(e)).toList();
+  //   } catch (e) {
+  //     return Future.error(e.toString());
+  //   }
+  // }
+
+  // static Future<List<Riwayat>> fetchByUser(int userId) async {
+  //   try {
+  //     String? token = await TokenStorage.getToken(); // Ambil token dari storage
+  //     if (token == null) throw Exception("Token is null");
+
+  //     final response = await get(
+  //       Uri.http(url,
+  //           '$endpoint/user/$userId'), // Endpoint untuk fetch by userId
+  //       headers: {
+  //         "Authorization": "Bearer $token",
+  //         "Content-Type": "application/json",
+  //       },
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       var jsonData = json.decode(response.body);
+  //       Iterable list = jsonData['data'];
+  //       return list.map((e) => Riwayat.fromJson(e)).toList();
+  //     } else {
+  //       throw Exception(
+  //           "Failed to fetch tickets by user: ${response.reasonPhrase}");
+  //     }
+  //   } catch (e) {
+  //     print("Error in fetchByUser: $e");
+  //     return Future.error(e.toString());
+  //   }
+  // }
+
+  static Future<List<Riwayat>> fetchByUser(int userId) async {
     try {
-      String? token = await TokenStorage.getToken(); // Ambil token dari tokenStorage
-      var response = await get(
-        Uri.http(url, endpoint),
+      String? token = await TokenStorage.getToken();
+      if (token == null) throw Exception("Token is null");
+
+      final response = await get(
+        Uri.http(url, '$endpoint/user/$userId'),
         headers: {
-          "Authorization": "Bearer $token", // Tambahkan header Authorization
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
         },
       );
 
-      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
+      // Cetak response body untuk inspeksi
+      print("Raw Response Body: ${response.body}");
 
-      Iterable list = json.decode(response.body)['data'];
+      if (response.statusCode == 200) {
+        var jsonData = json.decode(response.body);
+        
+        // Cetak struktur data
+        print("Parsed JSON Data: $jsonData");
 
-      return list.map((e) => Riwayat.fromJson(e)).toList();
+        Iterable list = jsonData['data'];
+        
+        // Cetak setiap item sebelum konversi
+        list.forEach((e) {
+          print("Individual Item: $e");
+        });
+
+        return list.map((e) => Riwayat.fromJson(e)).toList();
+      } else {
+        throw Exception(
+            "Failed to fetch tickets by user: ${response.reasonPhrase}");
+      }
     } catch (e) {
+      print("Error in fetchByUser: $e");
       return Future.error(e.toString());
     }
   }
@@ -70,7 +138,7 @@ class RiwayatClient {
     try {
       String? token = await TokenStorage.getToken(); // Ambil token dari tokenStorage
       var response = await put(
-        Uri.http(url, '$endpoint/${riwayat.id}'),
+        Uri.http(url, '$endpoint/${riwayat.idRiwayat}'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token", // Tambahkan header Authorization
