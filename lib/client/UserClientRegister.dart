@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:tugas_besar/entity/User.dart';
 
-class UserClient {
-  static final String url = '10.0.2.2:8000';
-  static final String endpoint = '/api/register';
+class UserClientRegister {
+  static final String url = '192.168.100.89';
+  static final String endpoint = '/1_Travel_C_API/public/api/register';
 
   static Future<List<User>> fetchAll() async {
     try {
@@ -55,25 +55,6 @@ class UserClient {
       return response;
     } catch (e) {
       return Future.error(e.toString());
-    }
-  }
-
-  static Future<bool> login(String email, String password) async {
-    final response = await post(
-      Uri.http(url, endpoint),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'email': email,
-        'password': password,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      return true; // Login berhasil
-    } else {
-      return false; // Login gagal
     }
   }
 

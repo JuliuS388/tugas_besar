@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_besar/cetakTiket.dart';
+import 'package:tugas_besar/jadwalList.dart';
 import 'package:tugas_besar/ticketList.dart';
 import 'package:tugas_besar/profile.dart';
 import 'package:tugas_besar/histori_page.dart';
+import 'package:tugas_besar/entity/Jadwal.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -64,13 +65,23 @@ class _HomeViewState extends State<HomeView> {
   }
 }
 
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    TextEditingController dateController = TextEditingController();
+  State<HomeContent> createState() => _HomeContentState();
+}
 
+class _HomeContentState extends State<HomeContent> {
+  TextEditingController asalController = TextEditingController();
+  TextEditingController tujuanController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController seatController = TextEditingController();
+
+  late List<Jadwal> jadwalList = [];
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -82,7 +93,6 @@ class HomeContent extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  // Background bus image
                   Opacity(
                     opacity: 1.0,
                     child: Container(
@@ -99,14 +109,12 @@ class HomeContent extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Overlay logo and search form
                   Positioned(
                     top: 50,
                     left: 20,
                     right: 20,
                     child: Column(
                       children: [
-                        // Atma Travel logo
                         Image.asset(
                           'assets/logoTravel2.png',
                           height: 80,
@@ -115,8 +123,7 @@ class HomeContent extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(16.0),
                           decoration: BoxDecoration(
-                            color: Colors.blue
-                                .shade900, // Background color for better readability
+                            color: Colors.blue.shade900,
                             borderRadius: BorderRadius.circular(25),
                           ),
                           child: Column(
@@ -125,8 +132,8 @@ class HomeContent extends StatelessWidget {
                               Text(
                                 'Cari Tiket',
                                 style: TextStyle(
-                                  color: Colors.white, // Warna teks
-                                  fontSize: 20, // Ukuran font
+                                  color: Colors.white,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -135,6 +142,7 @@ class HomeContent extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: TextField(
+                                      controller: asalController,
                                       decoration: InputDecoration(
                                         hintText: 'Dari',
                                         filled: true,
@@ -149,6 +157,7 @@ class HomeContent extends StatelessWidget {
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: TextField(
+                                      controller: tujuanController,
                                       decoration: InputDecoration(
                                         hintText: 'Tujuan',
                                         filled: true,
@@ -177,7 +186,8 @@ class HomeContent extends StatelessWidget {
                                         );
                                         if (pickedDate != null) {
                                           dateController.text =
-                                              "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                                              "${pickedDate.toLocal()}"
+                                                  .split(' ')[0];
                                         }
                                       },
                                       child: AbsorbPointer(
@@ -201,6 +211,8 @@ class HomeContent extends StatelessWidget {
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: TextField(
+                                      controller: seatController,
+                                      keyboardType: TextInputType.number,
                                       decoration: InputDecoration(
                                         hintText: 'Kursi',
                                         filled: true,
@@ -217,12 +229,55 @@ class HomeContent extends StatelessWidget {
                               const SizedBox(height: 16),
                               Center(
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Cetaktiket()),
-                                    );
+                                  onPressed: () async {
+                                    String asal = asalController.text;
+                                    String tujuan = tujuanController.text;
+                                    String tanggal = dateController.text;
+                                    String kursi = seatController.text;
+
+                                    if (asal.isEmpty ||
+                                        tujuan.isEmpty ||
+                                        tanggal.isEmpty ||
+                                        kursi.isEmpty) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content:
+                                              Text('Semua data harus diisi!'),
+                                        ),
+                                      );
+                                      return;
+                                    }
+
+                                    try {
+                                      // Navigasi ke halaman JadwalList dan kirim data
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => JadwalList(
+                                            asal: asal,
+                                            tujuan: tujuan,
+                                            jumlahKursi: int.parse(kursi),
+                                            tanggal:
+                                                tanggal, // Pass tanggal here
+                                          ),
+                                        ),
+                                      );
+
+                                      // Debugging: print the values being passed
+                                      print('asal: $asal');
+                                      print('tujuan: $tujuan');
+                                      print('jumlahKursi: ${int.parse(kursi)}');
+                                      print('tanggal: $tanggal');
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content:
+                                              Text('Gagal memuat jadwal: $e'),
+                                        ),
+                                      );
+                                    }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.yellow,
@@ -233,7 +288,7 @@ class HomeContent extends StatelessWidget {
                                   child: const Text('Cari',
                                       style: TextStyle(color: Colors.black)),
                                 ),
-                              ),
+                              )
                             ],
                           ),
                         ),

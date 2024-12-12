@@ -1,42 +1,43 @@
 import 'dart:convert';
 
 class Pemesanan {
-  final int id;
-  final int idUser;
-  final int idBus;
-  final String namaDestinasi;
-  final double harga;
-  final DateTime tanggalPemesanan;
+  int? id; // Primary key dari tabel Pemesanan
+  int idUser; // Foreign key dari tabel User
+  int idJadwal; // Foreign key dari tabel Jadwal
+  DateTime tanggalPemesanan; // Tanggal pemesanan
+  double harga; // Harga pemesanan
 
+  // Constructor
   Pemesanan({
-    required this.id,
+    this.id, // Nullable, karena di-generate oleh database
     required this.idUser,
-    required this.idBus,
-    required this.namaDestinasi,
-    required this.harga,
+    required this.idJadwal,
     required this.tanggalPemesanan,
+    required this.harga,
   });
 
-  factory Pemesanan.fromRawJson(String str) =>
-      Pemesanan.fromJson(json.decode(str));
+  // Fungsi untuk mengubah Pemesanan menjadi JSON (untuk dikirim ke API)
+  Map<String, dynamic> toJson() {
+    return {
+      "id_pemesanan": id, // Bisa null saat membuat baru
+      "id_user": idUser,
+      "id_jadwal": idJadwal,
+      "tanggal_pemesanan": tanggalPemesanan.toIso8601String(),
+      "harga": harga,
+    };
+  }
 
-  factory Pemesanan.fromJson(Map<String, dynamic> json) => Pemesanan(
-        id: json["id_pemesanan"],
-        idUser: json["id_user"],
-        idBus: json["id_bus"],
-        namaDestinasi: json["nama_destinasi"],
-        harga: json["harga"].toDouble(),
-        tanggalPemesanan: DateTime.parse(json["tanggal_pemesanan"]),
-      );
+  // Fungsi untuk membuat Pemesanan dari JSON (response dari API)
+  factory Pemesanan.fromJson(Map<String, dynamic> json) {
+    return Pemesanan(
+      id: json["id_pemesanan"], // ID pemesanan dari API
+      idUser: json["id_user"],
+      idJadwal: json["id_jadwal"],
+      tanggalPemesanan: DateTime.parse(json["tanggal_pemesanan"]),
+      harga: json["harga"].toDouble(),
+    );
+  }
 
+  // Fungsi untuk mengubah Pemesanan menjadi raw JSON (string JSON)
   String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        "id_pemesanan": id,
-        "id_user": idUser,
-        "id_bus": idBus,
-        "nama_destinasi": namaDestinasi,
-        "harga": harga,
-        "tanggal_pemesanan": tanggalPemesanan.toIso8601String(),
-      };
 }

@@ -3,6 +3,7 @@ import 'package:tugas_besar/home.dart';
 import 'package:tugas_besar/register.dart';
 import 'package:tugas_besar/form_component.dart';
 import 'package:tugas_besar/client/UserClientLogin.dart';
+import 'package:tugas_besar/tokenStorage.dart'; // Pastikan import ini ada
 
 class LoginView extends StatefulWidget {
   final Map<String, dynamic>? data;
@@ -36,12 +37,16 @@ class _LoginViewState extends State<LoginView> {
       });
 
       try {
-        bool isLoginValid = await UserClient.login(
+        bool isLoginValid = await UserClientlogin.login(
           emailController.text,
           passwordController.text,
         );
 
         if (isLoginValid) {
+          // Ambil user ID setelah login berhasil
+          int? userId = await TokenStorage.getUserId();
+          print('Login Berhasil. User ID: $userId');
+
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -162,14 +167,11 @@ class _LoginViewState extends State<LoginView> {
                                           vertical: 15,
                                         ),
                                       ),
-                                      onPressed: _login,
+                                      onPressed:
+                                          _login, // Gunakan metode _login yang sudah dibuat
                                       child: const Text(
-                                        'MASUK',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
+                                        'Masuk',
+                                        style: TextStyle(color: Colors.white),
                                       ),
                                     ),
                               const SizedBox(height: 10),

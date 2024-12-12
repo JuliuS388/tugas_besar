@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/client/UserClientLogin.dart';
 import 'package:tugas_besar/detailProfil.dart';
 import 'package:tugas_besar/entity/Profile.dart';
 import 'package:tugas_besar/client/profileClient.dart';
+import 'package:tugas_besar/login_page.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -14,11 +16,15 @@ class ProfileScreen extends StatelessWidget {
         future: ProfilClient.getProfile(), // Fetch the profile data
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator()); // Show loading spinner while fetching
+            return const Center(
+                child:
+                    CircularProgressIndicator()); // Show loading spinner while fetching
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}')); // Show error if there was a problem fetching the data
+            return Center(
+                child: Text(
+                    'Error: ${snapshot.error}')); // Show error if there was a problem fetching the data
           }
 
           if (!snapshot.hasData) {
@@ -36,11 +42,13 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 60),
                     CircleAvatar(
                       radius: 50,
-                      backgroundImage: NetworkImage(profile.imageUrl ?? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNuMtV6voiMGgINSW_PbviV6ecO3nMab9uVw&s'), // Use profile image if available
+                      backgroundImage: NetworkImage(profile.imageUrl ??
+                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNuMtV6voiMGgINSW_PbviV6ecO3nMab9uVw&s'), // Use profile image if available
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      profile.username ?? 'Username', // Use profile name if available
+                      profile.username ??
+                          'Username', // Use profile name if available
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -48,7 +56,8 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      profile.email ?? 'Email', // Use profile email if available
+                      profile.email ??
+                          'Email', // Use profile email if available
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[700],
@@ -64,7 +73,8 @@ class ProfileScreen extends StatelessWidget {
                               builder: (context) => ProfileDetailScreen()),
                         );
                       },
-                      icon: const Icon(Icons.person, size: 16, color: Colors.black),
+                      icon: const Icon(Icons.person,
+                          size: 16, color: Colors.black),
                       label: const Text(
                         'Detail Profil',
                         style: TextStyle(
@@ -85,9 +95,12 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       ListTile(
-                        leading: const Icon(Icons.help_outline, color: Colors.black),
-                        title: const Text('Bantuan', style: TextStyle(color: Colors.black)),
-                        trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+                        leading:
+                            const Icon(Icons.help_outline, color: Colors.black),
+                        title: const Text('Bantuan',
+                            style: TextStyle(color: Colors.black)),
+                        trailing:
+                            const Icon(Icons.chevron_right, color: Colors.grey),
                         onTap: () {
                           // Implement action for Bantuan
                         },
@@ -95,9 +108,18 @@ class ProfileScreen extends StatelessWidget {
                       const Divider(),
                       ListTile(
                         leading: const Icon(Icons.logout, color: Colors.black),
-                        title: const Text('Keluar', style: TextStyle(color: Colors.black)),
-                        trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+                        title: const Text('Keluar',
+                            style: TextStyle(color: Colors.black)),
+                        trailing:
+                            const Icon(Icons.chevron_right, color: Colors.grey),
                         onTap: () {
+                          UserClientlogin.logout();
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginView()),
+                            (route) => false,
+                          );
                           // Implement action for Keluar (Logout)
                         },
                       ),
