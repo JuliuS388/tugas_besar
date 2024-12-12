@@ -1,50 +1,43 @@
 import 'dart:convert';
-import 'package:tugas_besar/entity/Bus.dart';
-import 'package:tugas_besar/entity/Jadwal.dart';
-import 'package:tugas_besar/entity/Pemesanan.dart';
-import 'package:tugas_besar/entity/Penumpang.dart';
+import 'User.dart';
+import 'Penumpang.dart';
+import 'Pemesanan.dart';
+import 'Jadwal.dart';
 
-class Tiket {
-  int? idTiket; // ID Tiket
-  int? idUser;
-  Pemesanan pemesanan; // Referensi ke Pemesanan
-  Penumpang penumpang; // Referensi ke Penumpang
-  Jadwal jadwal; // Referensi ke Jadwal
+class Ticket {
+  int? id;
+  User? user;
+  Pemesanan? pemesanan;
+  Jadwal? jadwal;
 
-  // Constructor
-  Tiket({
-    this.idTiket,
-    required this.pemesanan,
-    required this.penumpang,
-    this.idUser,
-    required this.jadwal,
+  Ticket({
+    this.id,
+    this.user,
+    this.pemesanan,
+    this.jadwal,
   });
 
-  // Fungsi untuk membuat Tiket dari JSON (response dari API)
-  factory Tiket.fromJson(Map<String, dynamic> json) {
-    return Tiket(
-      idTiket: json["id_tiket"],
-      pemesanan: Pemesanan.fromJson(json["pemesanan"]),
-      penumpang: Penumpang.fromJson(json["penumpang"]),
-      idUser: json["id_user"],
-      jadwal: Jadwal.fromJson(json["jadwal"]),
+  factory Ticket.fromJson(Map<String, dynamic> json) {
+    return Ticket(
+      id: int.tryParse(json['id_tiket'].toString()), // Convert id_tiket ke int
+      user: json['user'] != null ? User.fromJson(json['user']) : null,
+      pemesanan: json['pemesanan'] != null
+          ? Pemesanan.fromJson(json['pemesanan'])
+          : null,
+      jadwal: json['pemesanan']?['jadwal'] != null
+          ? Jadwal.fromJson(json['pemesanan']['jadwal'])
+          : null, // Mengambil jadwal dari pemesanan
     );
   }
 
-  // Fungsi untuk mengubah Tiket menjadi JSON (untuk dikirim ke API)
   Map<String, dynamic> toJson() {
     return {
-      "id_tiket": idTiket,
-      "pemesanan": pemesanan.toJson(),
-      "penumpang": penumpang.toJson(),
-      "id_user": idUser,
-      "jadwal": jadwal.toJson(),
+      "id_tiket": id,
+      "user": user?.toJson(),
+      "pemesanan": pemesanan?.toJson(),
+      "jadwal": jadwal?.toJson(),
     };
   }
 
-  // Fungsi untuk mengubah Tiket menjadi raw JSON (string JSON)
   String toRawJson() => json.encode(toJson());
-
-  // Fungsi untuk membuat Tiket dari raw JSON (string JSON)
-  factory Tiket.fromRawJson(String str) => Tiket.fromJson(json.decode(str));
 }

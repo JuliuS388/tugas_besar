@@ -5,6 +5,7 @@ import 'package:tugas_besar/entity/Bus.dart';
 import 'package:tugas_besar/entity/Jadwal.dart';
 import 'package:tugas_besar/client/PemesananClient.dart';
 import 'package:intl/intl.dart';
+import 'package:tugas_besar/tokenStorage.dart';
 
 class DetailBusDanPemesanan extends StatefulWidget {
   final Bus bus;
@@ -20,6 +21,12 @@ class DetailBusDanPemesanan extends StatefulWidget {
 
   @override
   _DetailBusDanPemesananState createState() => _DetailBusDanPemesananState();
+}
+
+Future<int?> getUserId() async {
+  final userId = await TokenStorage.getUserId();
+  print("User ID yang didapat: $userId");
+  return userId;
 }
 
 class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
@@ -112,14 +119,24 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
               Center(
                 child: ElevatedButton(
                   onPressed: () async {
-                    var pemesanan = Pemesanan(
-                      idUser: 1, // Akan Terganti di Databases
-                      idJadwal: widget.jadwal.idJadwal,
-                      tanggalPemesanan: DateTime.now(),
-                      harga: totalPrice,
-                    );
-
+                    print("Tombol Pesan Tiket diklik");
                     try {
+                      // Ambil userId
+                      final userId = await getUserId();
+                      print(userId);
+                      if (userId == null) {
+                        throw 'User ID tidak ditemukan. Harap login ulang.';
+                      }
+
+                      // Buat pemesanan
+                      var pemesanan = Pemesanan(
+                        idUser: userId,
+                        idJadwal: widget.jadwal.idJadwal,
+                        tanggalPemesanan: DateTime.now(),
+                        harga: totalPrice,
+                      );
+
+                      // Kirim ke server
                       var pemesananBaru =
                           await PemesananClient.create(pemesanan);
                       var pemesananId = pemesananBaru.id!;
@@ -155,6 +172,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                         ),
                       );
                     } catch (e) {
+                      print("Error saat memesan tiket: $e");
                       // Show error snackbar
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -251,7 +269,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
-                                      'Bus Information',
+                                      'Informasi Bus',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -260,7 +278,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                                     Text(
                                       'Supir: ${widget.bus.supirBus ?? 'Unknown'}',
                                       style:
-                                          const TextStyle(color: Colors.grey),
+                                          const TextStyle(color: Colors.blue),
                                     ),
                                   ],
                                 ),
@@ -293,6 +311,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                               '2. Untuk barang yang melebihi kapasitas yang telah ditentukan akan dikenakan biaya tambahan sesuai peraturan masing-masing agen bus.\n\n'
                               '3. Penumpang diminta untuk menjaga barang pribadi mereka selama perjalanan.',
                         ),
+                        const SizedBox(height: 70),
                       ],
                     ),
                   ),

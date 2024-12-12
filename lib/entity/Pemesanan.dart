@@ -34,7 +34,9 @@ class Pemesanan {
       idUser: json["id_user"],
       idJadwal: json["id_jadwal"],
       tanggalPemesanan: DateTime.parse(json["tanggal_pemesanan"]),
-      harga: json["harga"].toDouble(),
+      harga: json["harga"] is String
+          ? double.tryParse(json["harga"]) ?? 0.0 // Konversi dari string
+          : json["harga"].toDouble(),
     );
   }
 

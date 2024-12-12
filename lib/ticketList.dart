@@ -1,303 +1,39 @@
-// import 'package:flutter/material.dart';
-// import 'package:dotted_line/dotted_line.dart';
-// import 'package:intl/intl.dart';
-
-// class TicketList extends StatefulWidget {
-//   final Map? data;
-//   const TicketList({super.key, this.data});
-
-//   @override
-//   _TicketListState createState() => _TicketListState();
-// }
-
-// class _TicketListState extends State<TicketList> {
-//   final List<Ticket> tickets = [
-//     Ticket(
-//       name: 'Handoyo',
-//       departureTime: '13:00',
-//       departureLocation: 'Grogol',
-//       arrivalTime: '03:00',
-//       arrivalLocation: 'Terminal Giwangan',
-//       price: '200,000',
-//       rating: 4.5,
-//     ),
-//     Ticket(
-//       name: 'Haryanto',
-//       departureTime: '02:00',
-//       departureLocation: 'Grogol',
-//       arrivalTime: '16:00',
-//       arrivalLocation: 'Terminal Jombor',
-//       price: '250,000',
-//       rating: 4.5,
-//     ),
-//     Ticket(
-//       name: 'Pt Sinar Jaya Group',
-//       departureTime: '23:00',
-//       departureLocation: 'Grogol',
-//       arrivalTime: '13:00',
-//       arrivalLocation: 'Agen Prambanan',
-//       price: '198,000',
-//       rating: 4.5,
-//     ),
-//     Ticket(
-//       name: 'Agra Mas',
-//       departureTime: '03:00',
-//       departureLocation: 'Pondok Gede',
-//       arrivalTime: '18:00',
-//       arrivalLocation: 'Jombor',
-//       price: '245,000',
-//       rating: 0,
-//     ),
-//     Ticket(
-//       name: 'Gunung Harta',
-//       departureTime: '04:15',
-//       departureLocation: 'Jatiwaringin',
-//       arrivalTime: '16:00',
-//       arrivalLocation: 'Semarang',
-//       price: '245,000',
-//       rating: 0,
-//     ),
-//     Ticket(
-//       name: 'Muji Jaya',
-//       departureTime: '02:00',
-//       departureLocation: 'Grogol',
-//       arrivalTime: '16:00',
-//       arrivalLocation: 'Terminal Jombor',
-//       price: '250,000',
-//       rating: 4.5,
-//     ),
-//   ];
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       appBar: AppBar(
-//         backgroundColor: Colors.blue,
-//         title: Text(
-//           'Cari Tiket',
-//           style: TextStyle(color: Colors.white),
-//         ),
-//         leading: IconButton(
-//           icon: Icon(Icons.arrow_back, color: Colors.white),
-//           onPressed: () {
-//             Navigator.pop(context);
-//           },
-//         ),
-//       ),
-//       body: ListView.builder(
-//         itemCount: tickets.length,
-//         itemBuilder: (context, index) {
-//           final ticket = tickets[index];
-//           return GestureDetector(
-//             onTap: () {
-//               print("Tiket ${ticket.name} diklik");
-//             },
-//             child: Padding(
-//               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//               child: Material(
-//                 color: Colors.white,
-//                 borderRadius: BorderRadius.circular(12),
-//                 elevation: 3,
-//                 child: InkWell(
-//                   borderRadius: BorderRadius.circular(12),
-//                   onTap: () {
-//                     // Tambahkan aksi ketika tiket diklik
-//                     print("Tiket ${ticket.name} diklik");
-//                   },
-//                   splashColor: Colors.blue.withOpacity(0.2),
-//                   highlightColor: Colors.blue.withOpacity(0.1),
-//                   child: Container(
-//                     padding: const EdgeInsets.all(16),
-//                     decoration: BoxDecoration(
-//                       borderRadius: BorderRadius.circular(12),
-//                     ),
-//                     child: Column(
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       children: [
-//                         Text(
-//                           ticket.name,
-//                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//                         ),
-//                         SizedBox(height: 8),
-//                         Row(
-//                           children: [
-//                             Column(
-//                               crossAxisAlignment: CrossAxisAlignment.start,
-//                               children: [
-//                                 Text(
-//                                   ticket.departureTime,
-//                                   style: TextStyle(
-//                                     fontSize: 16,
-//                                     fontWeight: FontWeight.bold,
-//                                     color: Colors.black,
-//                                   ),
-//                                 ),
-//                                 Text(
-//                                   ticket.departureLocation,
-//                                   style: TextStyle(color: Colors.grey),
-//                                 ),
-//                               ],
-//                             ),
-//                             Expanded(
-//                               child: Padding(
-//                                 padding: const EdgeInsets.symmetric(horizontal: 8),
-//                                 child: Column(
-//                                   children: [
-//                                     DottedLine(
-//                                       dashColor: Colors.grey,
-//                                       lineThickness: 1.5,
-//                                       dashLength: 6,
-//                                       dashGapLength: 4,
-//                                     ),
-//                                     SizedBox(height: 4),
-//                                     Text(
-//                                       'Durasi: ${_calculateDuration(ticket.departureTime, ticket.arrivalTime)} jam',
-//                                       style: TextStyle(color: Colors.grey, fontSize: 12),
-//                                       textAlign: TextAlign.center,
-//                                     ),
-//                                   ],
-//                                 ),
-//                               ),
-//                             ),
-//                             Column(
-//                               crossAxisAlignment: CrossAxisAlignment.end,
-//                               children: [
-//                                 Text(
-//                                   ticket.arrivalTime,
-//                                   style: TextStyle(
-//                                     fontSize: 16,
-//                                     fontWeight: FontWeight.bold,
-//                                     color: Colors.black,
-//                                   ),
-//                                 ),
-//                                 Text(
-//                                   ticket.arrivalLocation,
-//                                   style: TextStyle(color: Colors.grey),
-//                                 ),
-//                               ],
-//                             ),
-//                           ],
-//                         ),
-//                         SizedBox(height: 16),
-//                         Row(
-//                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                           children: [
-//                             Text(
-//                               'IDR ${ticket.price}',
-//                               style: TextStyle(
-//                                 fontSize: 16,
-//                                 color: Colors.blue,
-//                                 fontWeight: FontWeight.bold,
-//                               ),
-//                             ),
-//                             Row(
-//                               children: [
-//                                 Icon(Icons.star, color: Colors.orange, size: 16),
-//                                 SizedBox(width: 4),
-//                                 Text(
-//                                   ticket.rating.toString(),
-//                                   style: TextStyle(
-//                                       fontSize: 14, fontWeight: FontWeight.bold),
-//                                 ),
-//                               ],
-//                             ),
-//                           ],
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
-
-//   // Fungsi untuk menghitung durasi antara waktu keberangkatan dan kedatangan
-//   String _calculateDuration(String departure, String arrival) {
-//     try {
-//       final format = DateFormat("HH:mm");
-//       final departureTime = format.parse(departure);
-//       final arrivalTime = format.parse(arrival);
-//       var duration = arrivalTime.difference(departureTime);
-
-//       // Jika durasi negatif, tambahkan 24 jam untuk menyesuaikan waktu malam hari
-//       if (duration.isNegative) {
-//         duration += Duration(hours: 24);
-//       }
-//       return duration.inHours.toString();
-//     } catch (e) {
-//       return '-';
-//     }
-//   }
-// }
-
-// class Ticket {
-//   final String name;
-//   final String departureTime;
-//   final String departureLocation;
-//   final String arrivalTime;
-//   final String arrivalLocation;
-//   final String price;
-//   final double rating;
-
-//   Ticket({
-//     required this.name,
-//     required this.departureTime,
-//     required this.departureLocation,
-//     required this.arrivalTime,
-//     required this.arrivalLocation,
-//     required this.price,
-//     required this.rating,
-//   });
-// }
-
 import 'package:flutter/material.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:intl/intl.dart';
 import 'package:tugas_besar/client/TicketClient.dart';
-import 'package:tugas_besar/entity/Ticket.dart'; // Menggunakan Tiket untuk entitas tiket
+import 'package:tugas_besar/entity/Ticket.dart';
 
 class TicketList extends StatefulWidget {
-  final int
-      idUser; // Tambahkan userId untuk memfilter tiket berdasarkan pengguna
+  final int idUser;
 
-  TicketList({required this.idUser});
+  const TicketList({Key? key, required this.idUser}) : super(key: key);
 
   @override
   _TicketListState createState() => _TicketListState();
 }
 
 class _TicketListState extends State<TicketList> {
-  final List<Tiket> tickets = [];
+  List<Ticket> tickets = [];
   bool isLoading = true;
 
-  // Fungsi untuk mengambil tiket yang dipesan oleh pengguna tertentu
-  Future<void> _fetchOrderedTickets() async {
+  Future<void> _fetchTickets() async {
     try {
-      // Memanggil API untuk mendapatkan semua tiket
-      List<Tiket> fetchedTickets = await TicketClient.fetchAllTickets();
+      // Fetch tiket berdasarkan userId
+      List<Ticket> fetchedTickets =
+          await TicketClient.fetchByUser(widget.idUser);
 
-      // Filter tiket berdasarkan userId dari pemesanan
-      List<Tiket> userTickets = fetchedTickets
-          .where((ticket) => ticket.pemesanan.idUser == widget.idUser)
-          .toList();
+      print(
+          "Fetched Tickets: ${fetchedTickets.length}"); // Log data yang diterima
 
       setState(() {
-        tickets.clear();
-        tickets.addAll(userTickets);
-        isLoading = false; // Berhenti menampilkan loader setelah data diambil
+        tickets = fetchedTickets; // Update list tickets
+        isLoading = false; // Pastikan loading selesai
       });
     } catch (e) {
       print("Error fetching tickets: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to fetch tickets: $e")),
-      );
       setState(() {
-        isLoading = false;
+        isLoading = false; // Pastikan loading selesai meskipun ada error
       });
     }
   }
@@ -305,172 +41,120 @@ class _TicketListState extends State<TicketList> {
   @override
   void initState() {
     super.initState();
-    _fetchOrderedTickets();
+    _fetchTickets();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade900,
-        title: Text(
-          'Tiket Saya',
-          style: TextStyle(color: Colors.white),
+    if (isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (tickets.isEmpty) {
+      return Center(
+        child: Text(
+          "Tidak ada tiket yang ditemukan",
+          style: TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: tickets.length,
+      itemBuilder: (context, index) {
+        return TicketCard(ticket: tickets[index]);
+      },
+    );
+  }
+}
+
+class TicketCard extends StatelessWidget {
+  final Ticket ticket;
+
+  const TicketCard({Key? key, required this.ticket}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Material(
+        elevation: 3,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TicketDetailPage(ticket: ticket),
+              ),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Bus: ${ticket.jadwal?.bus?.namaBus ?? "N/A"}',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                Row(
+                  children: [
+                    _buildInfo("Asal", ticket.jadwal?.asal ?? "N/A"),
+                    Spacer(),
+                    _buildInfo("Tujuan", ticket.jadwal?.tujuan ?? "N/A"),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
       ),
-      body: isLoading
-          ? Center(
-              child: CircularProgressIndicator()) // Loader saat data dimuat
-          : tickets.isEmpty
-              ? Center(child: Text("Tidak ada tiket yang dipesan"))
-              : ListView.builder(
-                  itemCount: tickets.length,
-                  itemBuilder: (context, index) {
-                    final ticket = tickets[index];
-                    return GestureDetector(
-                      onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   // Arahkan ke halaman detail tiket (misalnya TicketPreview)
-                        //   MaterialPageRoute(
-                        //     builder: (context) =>
-                        //         TicketPreview(ticket: ticket),
-                        //   ),
-                        // );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        child: Material(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          elevation: 3,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(12),
-                            splashColor: Colors.blue.withOpacity(0.2),
-                            highlightColor: Colors.blue.withOpacity(0.1),
-                            child: Container(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    ticket.jadwal.bus.namaBus,
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  SizedBox(height: 8),
-                                  Row(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            DateFormat('HH:mm').format(
-                                                ticket.jadwal.keberangkatan),
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                          Text(
-                                            ticket.jadwal.asal,
-                                            style:
-                                                TextStyle(color: Colors.grey),
-                                          ),
-                                        ],
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8),
-                                          child: Column(
-                                            children: [
-                                              DottedLine(
-                                                dashColor: Colors.grey,
-                                                lineThickness: 1.5,
-                                                dashLength: 6,
-                                                dashGapLength: 4,
-                                              ),
-                                              SizedBox(height: 4),
-                                              Text(
-                                                'Durasi: ${_calculateDuration(ticket.jadwal.keberangkatan, ticket.jadwal.kedatangan)} jam',
-                                                style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 12),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            DateFormat('HH:mm').format(
-                                                ticket.jadwal.kedatangan),
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                          Text(
-                                            ticket.jadwal.tujuan,
-                                            style:
-                                                TextStyle(color: Colors.grey),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 16),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'IDR ${ticket.jadwal.harga.toStringAsFixed(0)}',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.blue.shade900,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Nomor Kursi: ${ticket.penumpang.nomorKursi}',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
     );
   }
 
-  // Fungsi untuk menghitung durasi antara waktu keberangkatan dan kedatangan
-  String _calculateDuration(DateTime departure, DateTime arrival) {
-    var duration = arrival.difference(departure);
+  Widget _buildInfo(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(color: Colors.grey)),
+        Text(value, style: TextStyle(fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
+}
 
-    // Jika durasi negatif, tambahkan 24 jam untuk menyesuaikan waktu malam hari
-    if (duration.isNegative) {
-      duration += Duration(hours: 24);
-    }
-    return duration.inHours.toString();
+class TicketDetailPage extends StatelessWidget {
+  final Ticket ticket;
+
+  const TicketDetailPage({Key? key, required this.ticket}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Detail Tiket'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Detail Tiket',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            Text('ID Tiket: ${ticket.id}'),
+            Text('Nama Bus: ${ticket.jadwal?.bus?.namaBus ?? "N/A"}'),
+            Text('Asal: ${ticket.jadwal?.asal ?? "N/A"}'),
+            Text('Tujuan: ${ticket.jadwal?.tujuan ?? "N/A"}'),
+            Text('Keberangkatan: ${ticket.jadwal?.keberangkatan ?? "N/A"}'),
+            Text('Kedatangan: ${ticket.jadwal?.kedatangan ?? "N/A"}'),
+          ],
+        ),
+      ),
+    );
   }
 }
