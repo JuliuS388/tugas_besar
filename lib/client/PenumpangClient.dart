@@ -4,8 +4,8 @@ import 'package:tugas_besar/entity/Penumpang.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 
 class PenumpangClient {
-  static const String url = '192.168.100.89';
-  static const String endpoint = '/1_Travel_C_API/public/api/penumpang';
+  static const String url = '10.0.2.2:8000';
+  static const String endpoint = '/api/penumpang';
 
   // Fetch All Penumpang
   static Future<List<Penumpang>> fetchAll() async {

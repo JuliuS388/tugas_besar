@@ -1,24 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:tugas_besar/client/UserClientLogin.dart';
-import 'package:tugas_besar/detailProfil.dart';
-import 'package:tugas_besar/entity/Profile.dart';
-import 'package:tugas_besar/client/profileClient.dart';
+import 'package:tugas_besar/detailProfil.dart'; // Ensure you have the ProfileDetailScreen imported
+import 'package:tugas_besar/entity/Profile.dart'; // Import the Profile class
+import 'package:tugas_besar/client/profileClient.dart'; // Import the ProfilClient
 import 'package:tugas_besar/login_page.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late Future<Profile> _profileFuture; // To hold the future profile data
+
+  @override
+  void initState() {
+    super.initState();
+    _profileFuture = ProfilClient.getProfile(); // Fetch profile data on initialization
+  }
+
+  Future<void> _refreshProfile() async {
+    setState(() {
+      _profileFuture = ProfilClient.getProfile(); // Refresh profile data
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue[50],
       body: FutureBuilder<Profile>(
-        future: ProfilClient.getProfile(), // Fetch the profile data
+        future: _profileFuture, // Fetch the profile data
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-                child:
-                    CircularProgressIndicator()); // Show loading spinner while fetching
+                child: CircularProgressIndicator()); // Show loading spinner while fetching
           }
 
           if (snapshot.hasError) {
@@ -42,13 +60,12 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 60),
                     CircleAvatar(
                       radius: 50,
-                      backgroundImage: NetworkImage(profile.imageUrl ??
+                      backgroundImage: NetworkImage(profile.profileImage ??
                           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNuMtV6voiMGgINSW_PbviV6ecO3nMab9uVw&s'), // Use profile image if available
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      profile.username ??
-                          'Username', // Use profile name if available
+                      profile.username ?? 'Username', // Use profile name if available
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -56,8 +73,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      profile.email ??
-                          'Email', // Use profile email if available
+                      profile.email ?? 'Email', // Use profile email if available
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[700],
@@ -65,13 +81,16 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     TextButton.icon(
-                      onPressed: () {
+                      onPressed: () async {
                         // Navigate to profile detail screen
-                        Navigator.push(
+                        final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => ProfileDetailScreen()),
                         );
+                        if (result != true) {
+                          _refreshProfile(); // Refresh the profile data upon return
+                        }
                       },
                       icon: const Icon(Icons.person,
                           size: 16, color: Colors.black),
@@ -95,12 +114,10 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       ListTile(
-                        leading:
-                            const Icon(Icons.help_outline, color: Colors.black),
+                        leading: const Icon(Icons.help_outline, color: Colors.black),
                         title: const Text('Bantuan',
                             style: TextStyle(color: Colors.black)),
-                        trailing:
-                            const Icon(Icons.chevron_right, color: Colors.grey),
+                        trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                         onTap: () {
                           // Implement action for Bantuan
                         },
@@ -110,8 +127,7 @@ class ProfileScreen extends StatelessWidget {
                         leading: const Icon(Icons.logout, color: Colors.black),
                         title: const Text('Keluar',
                             style: TextStyle(color: Colors.black)),
-                        trailing:
-                            const Icon(Icons.chevron_right, color: Colors.grey),
+                        trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                         onTap: () {
                           UserClientlogin.logout();
                           Navigator.pushAndRemoveUntil(
