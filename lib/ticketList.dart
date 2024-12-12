@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:intl/intl.dart';
 import 'package:tugas_besar/client/TicketClient.dart';
+import 'package:tugas_besar/detailBusDanPemesanan.dart';
 import 'package:tugas_besar/entity/Ticket.dart';
+import 'package:tugas_besar/ticket_preview.dart';
 
 class TicketList extends StatefulWidget {
   final int idUser;
@@ -146,12 +148,26 @@ class TicketDetailPage extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
+            Text('Pemesan: ${ticket.user?.nama}'),
             Text('ID Tiket: ${ticket.id}'),
             Text('Nama Bus: ${ticket.jadwal?.bus?.namaBus ?? "N/A"}'),
             Text('Asal: ${ticket.jadwal?.asal ?? "N/A"}'),
             Text('Tujuan: ${ticket.jadwal?.tujuan ?? "N/A"}'),
             Text('Keberangkatan: ${ticket.jadwal?.keberangkatan ?? "N/A"}'),
             Text('Kedatangan: ${ticket.jadwal?.kedatangan ?? "N/A"}'),
+            Spacer(),
+            ElevatedButton(
+              onPressed: () {
+                // Navigasi ke halaman TicketPreview
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TicketPreview(ticket: ticket),
+                  ),
+                );
+              },
+              child: Text("Cetak PDF"),
+            ),
           ],
         ),
       ),

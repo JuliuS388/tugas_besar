@@ -8,7 +8,7 @@ class Jadwal {
   double harga;
   String asal;
   String tujuan;
-  Bus bus; // Add bus as an object
+  Bus bus;
 
   Jadwal({
     this.idJadwal = 0,
@@ -17,7 +17,7 @@ class Jadwal {
     this.harga = 0.0,
     this.asal = 'Asal Tidak Tersedia',
     this.tujuan = 'Tujuan Tidak Tersedia',
-    required this.bus, // Required bus object
+    required this.bus,
   })  : keberangkatan = keberangkatan ?? DateTime.now(),
         kedatangan = kedatangan ?? DateTime.now();
 
@@ -26,14 +26,12 @@ class Jadwal {
   factory Jadwal.fromJson(Map<String, dynamic> json) {
     return Jadwal(
       idJadwal: json["id_jadwal"] ?? 0,
-      keberangkatan:
-          DateTime.parse(json["keberangkatan"] ?? DateTime.now().toString()),
-      kedatangan:
-          DateTime.parse(json["kedatangan"] ?? DateTime.now().toString()),
+      keberangkatan: _parseDateTime(json["keberangkatan"]),
+      kedatangan: _parseDateTime(json["kedatangan"]),
       harga: double.tryParse(json["harga"].toString()) ?? 0.0,
       asal: json["asal"] ?? 'Asal Tidak Tersedia',
       tujuan: json["tujuan"] ?? 'Tujuan Tidak Tersedia',
-      bus: Bus.fromJson(json["bus"]), // Create bus object from JSON
+      bus: Bus.fromJson(json["bus"]),
     );
   }
 
@@ -46,6 +44,15 @@ class Jadwal {
         "harga": harga,
         "asal": asal,
         "tujuan": tujuan,
-        "bus": bus.toJson(), // Convert bus object to JSON
+        "bus": bus.toJson(),
       };
+
+  static DateTime _parseDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+    try {
+      return DateTime.parse(value.toString());
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
 }

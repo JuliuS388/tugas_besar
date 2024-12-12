@@ -64,7 +64,15 @@ class PemesananClient {
       if (response.statusCode != 201) throw Exception(response.reasonPhrase);
 
       var responseData = jsonDecode(response.body);
-      return Pemesanan.fromJson(responseData);
+
+      // Ambil id_pemesanan dari response
+      var idPemesanan = responseData['id_pemesanan'];
+
+      // Setelah mendapatkan id_pemesanan, Anda bisa mengembalikan objek Pemesanan baru
+      // Mungkin Anda ingin meng-update objek pemesanan dengan id_pemesanan yang baru
+      pemesanan.id = idPemesanan;
+
+      return pemesanan; // Mengembalikan objek Pemesanan dengan id_pemesanan
     } catch (e) {
       return Future.error(e.toString());
     }

@@ -46,4 +46,23 @@ class JadwalClient {
       rethrow;
     }
   }
+
+  static Future<Jadwal> find(int id) async {
+    try {
+      String? token =
+          await TokenStorage.getToken(); // Ambil token dari tokenStorage
+      var response = await http.get(
+        Uri.http(url, '$endpoint/$id'),
+        headers: {
+          "Authorization": "Bearer $token", // Tambahkan header Authorization
+        },
+      );
+
+      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
+
+      return Jadwal.fromJson(json.decode(response.body)['data']);
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+  }
 }
