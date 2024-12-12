@@ -266,7 +266,7 @@ class _MyWidgetState extends State<Pembayarannext> {
                               borderRadius: BorderRadius.circular(10),
                               color: const Color.fromARGB(255, 213, 213, 213)),
                           width: 245,
-                          child: Text("IDR 200.000"),
+                          child: Text("IDR ${jadwal!.harga!}"),
                         ),
                         Container(
                           margin: EdgeInsets.only(top: 10),

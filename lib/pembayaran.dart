@@ -159,7 +159,7 @@ class _PembayaranState extends State<Pembayaran> {
                           margin: EdgeInsets.only(bottom: 1),
                           child: Align(
                             alignment: Alignment.centerLeft,
-                            child: Text("IDR 200.000"),
+                            child: Text("IDR ${data!.harga!}"),
                           ),
                         ),
                         // Tombol Bayar Sekarang

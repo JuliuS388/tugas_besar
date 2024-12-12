@@ -67,6 +67,12 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
     return seatNumber;
   }
 
+  // Function to get the user id from SharedPreferences
+  Future<int?> getUserId() async {
+    final userId = await TokenStorage.getUserId();
+    return userId;
+  }
+
   // Function to create passengers
   Future<List<int>> _buatPenumpang(int pemesananId) async {
   List<int> penumpangIds = [];
@@ -76,38 +82,6 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
     if (penumpang['nama'] == null || penumpang['nama'].isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Nama penumpang tidak boleh kosong')),
-    for (var penumpang in _penumpangs) {
-      // Validate passenger data
-      if (penumpang['nama'] == null || penumpang['nama'].isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Nama penumpang tidak boleh kosong')),
-        );
-        return [];
-      }
-
-      if (penumpang['jenisKelamin'] == null ||
-          penumpang['jenisKelamin'].isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Jenis kelamin harus dipilih')),
-        );
-        return [];
-      }
-
-      if (penumpang['umur'] == null || penumpang['umur'] <= 0) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Umur penumpang tidak valid')),
-        );
-        return [];
-      }
-
-      print("Pemesanan ID yang didapat: ${widget.idPemesanan}");
-
-      var penumpangData = Penumpang(
-        namaPenumpang: penumpang['nama'],
-        jenisKelamin: penumpang['jenisKelamin'],
-        umur: penumpang['umur'],
-        idPemesanan: pemesananId,
-        nomorKursi: penumpang['nomorKursi'],
       );
       return []; // Return empty list if validation fails
     }
