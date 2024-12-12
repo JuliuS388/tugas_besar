@@ -3,7 +3,8 @@ import 'package:tugas_besar/home.dart';
 import 'package:tugas_besar/register.dart';
 import 'package:tugas_besar/form_component.dart';
 import 'package:tugas_besar/client/UserClientLogin.dart';
-import 'package:tugas_besar/tokenStorage.dart'; // Pastikan import ini ada
+import 'package:tugas_besar/tokenStorage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginView extends StatefulWidget {
   final Map<String, dynamic>? data;
@@ -20,6 +21,7 @@ class _LoginViewState extends State<LoginView> {
 
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+  late FToast fToast;
 
   @override
   void initState() {
@@ -28,8 +30,10 @@ class _LoginViewState extends State<LoginView> {
       emailController.text = widget.data?['email'] ?? '';
       passwordController.text = widget.data?['password'] ?? '';
     }
+    fToast = FToast();
   }
 
+  // Fungsi Login
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -47,6 +51,34 @@ class _LoginViewState extends State<LoginView> {
           int? userId = await TokenStorage.getUserId();
           print('Login Berhasil. User ID: $userId');
 
+          // Toast Berhasil Login
+          fToast.showToast(
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 12.0,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25.0),
+                color: Colors.green,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.check_circle, color: Colors.white),
+                  SizedBox(width: 12.0),
+                  Text(
+                    "Login Berhasil!",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+            gravity: ToastGravity.TOP,
+            toastDuration: const Duration(seconds: 3),
+          );
+
+          // Direct ke halaman login
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -66,6 +98,7 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 
+  // Alert Gagal
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -84,6 +117,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    fToast.init(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -144,7 +178,7 @@ class _LoginViewState extends State<LoginView> {
                                 controller: passwordController,
                                 hintTxt: "Password",
                                 iconData: Icons.lock,
-                                obscureText: !_isPasswordVisible,
+                                obscureText: true,
                                 isVisible: _isPasswordVisible,
                                 onToggleVisibility: () {
                                   setState(() {
@@ -167,11 +201,14 @@ class _LoginViewState extends State<LoginView> {
                                           vertical: 15,
                                         ),
                                       ),
-                                      onPressed:
-                                          _login, // Gunakan metode _login yang sudah dibuat
+                                      onPressed: _login,
                                       child: const Text(
                                         'Masuk',
-                                        style: TextStyle(color: Colors.white),
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                               const SizedBox(height: 10),

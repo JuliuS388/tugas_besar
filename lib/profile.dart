@@ -3,7 +3,7 @@ import 'package:tugas_besar/client/UserClientLogin.dart';
 import 'package:tugas_besar/detailProfil.dart';
 import 'package:tugas_besar/entity/Profile.dart';
 import 'package:tugas_besar/client/profileClient.dart';
-import 'package:tugas_besar/login_page.dart';
+import 'package:tugas_besar/login.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
