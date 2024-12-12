@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tugas_besar/client/UserClientLogin.dart';
-import 'package:tugas_besar/detailProfil.dart'; // Ensure you have the ProfileDetailScreen imported
-import 'package:tugas_besar/entity/Profile.dart'; // Import the Profile class
-import 'package:tugas_besar/client/profileClient.dart'; // Import the ProfilClient
-import 'package:tugas_besar/login_page.dart';
+import 'package:tugas_besar/detailProfil.dart';
+import 'package:tugas_besar/entity/Profile.dart';
+import 'package:tugas_besar/client/profileClient.dart';
+import 'package:tugas_besar/login.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

@@ -13,7 +13,7 @@ Widget inputForm(
   return TextFormField(
     controller: controller,
     validator: validator,
-    obscureText: obscureText && !isVisible,
+    obscureText: obscureText ? !isVisible : false,
     keyboardType: keyboardType,
     decoration: InputDecoration(
       hintText: hintTxt,
