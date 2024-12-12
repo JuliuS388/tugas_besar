@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tugas_besar/entity/pembayaran.entity.dart';
 import 'dart:async';
 
 import 'package:tugas_besar/home.dart';
 
 class Pembayarannext extends StatefulWidget {
   final String? selectedBank;
+  final Jadwal jadwal;
 
-  Pembayarannext({Key? key, this.selectedBank}) : super(key: key);
+  Pembayarannext({Key? key, this.selectedBank, required this.jadwal})
+      : super(key: key);
   @override
   State<Pembayarannext> createState() => _MyWidgetState();
 }
@@ -79,14 +82,10 @@ class _CountdownContainerState extends State<CountdownContainer> {
 }
 
 class _MyWidgetState extends State<Pembayarannext> {
-  final List<String> dateTimes = [
-    "Pergi Rabu, 16 Okt 2024 - 14:55",
-    "Yogyakarta -> Jakarta",
-    "Handoyo Bus"
-  ];
-
+  
   @override
   Widget build(BuildContext context) {
+    final jadwal = widget.jadwal;
     return MaterialApp(
         home: Scaffold(
       backgroundColor: const Color.fromARGB(255, 198, 237, 255),
@@ -130,20 +129,34 @@ class _MyWidgetState extends State<Pembayarannext> {
               padding: EdgeInsets.all(5),
               margin: EdgeInsets.only(top: 20),
               child: Column(
-                children: dateTimes.map((dateTime) {
-                  return Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color.fromARGB(255, 213, 213, 213)),
-                    width: 245,
-                    margin: EdgeInsets.all(5),
-                    child: Center(
-                      // Menambahkan Center untuk meratakan teks
-                      child: Text(dateTime),
-                    ),
-                  );
-                }).toList(), // Mengonversi iterable ke list
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Asal: ${jadwal.asal}",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Tujuan: ${jadwal.tujuan}",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Keberangkatan: ${jadwal.keberangkatan}",
+                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Kedatangan: ${jadwal.kedatangan}",
+                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Harga: Rp ${jadwal.harga}",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ),
             Container(
@@ -451,8 +464,4 @@ class _MyWidgetState extends State<Pembayarannext> {
       ),
     ));
   }
-}
-
-void main() {
-  runApp(Pembayarannext());
 }

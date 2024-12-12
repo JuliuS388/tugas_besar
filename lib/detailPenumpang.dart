@@ -215,9 +215,12 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
             ),
             ElevatedButton(
               onPressed: () async {
-                Navigator.of(context).pop(); // Close the dialog first
+            
                 List<int> penumpangIds = await _buatPenumpang(widget.idPemesanan);
+                print('masuk keisni ');
+               
                 if (penumpangIds.isNotEmpty) {
+                  
                   Navigator.push(
                     context,
                     MaterialPageRoute(
