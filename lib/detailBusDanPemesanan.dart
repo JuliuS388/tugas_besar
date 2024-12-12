@@ -121,16 +121,13 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
               Center(
                 child: ElevatedButton(
                   onPressed: () async {
-                    print("Tombol Pesan Tiket diklik");
                     try {
-                      // Ambil userId
                       final userId = await getUserId();
-                      print(userId);
                       if (userId == null) {
-                        throw 'User  ID tidak ditemukan. Harap login ulang.';
+                        throw 'User ID tidak ditemukan. Harap login ulang.';
                       }
 
-                      // Buat pemesanan
+                      // 1. Buat pemesanan
                       var pemesanan = Pemesanan(
                         idUser: userId,
                         idJadwal: widget.jadwal.idJadwal,
@@ -138,22 +135,26 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                         harga: totalPrice,
                       );
 
-                      // Kirim ke server dan tangani exception untuk pemesanan
                       try {
-                        var pemesananBaru =
-                            await PemesananClient.create(pemesanan);
+                        // 2. Kirim pemesanan ke server
+                        var pemesananBaru = await PemesananClient.create(pemesanan);
                         var pemesananId = pemesananBaru.id!;
 
-                        // var riwayat = Riwayat(
-                        //   idUser: userId,
-                        //   idPemesanan: pemesananId,
-                        // );
+                        // 3. Buat riwayat
+                        var riwayat = Riwayat(
+                          idUser: userId,
+                          idPemesanan: pemesananId,
+                          tanggalTransaksi: DateTime.now().toIso8601String(),
+                          pemesanan: pemesananBaru,
+                        );
 
-                        // Kirim ke server dan tangani exception untuk riwayat
                         try {
-                          // var riwayatBaru = await RiwayatClient.create(riwayat);
+                          await RiwayatClient.create(riwayat);
 
-                          // Navigasi ke halaman DetailPenumpang
+                          // Tutup bottom sheet terlebih dahulu
+                          Navigator.pop(context);
+
+                          // 5. Navigasi ke halaman DetailPenumpang
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -164,7 +165,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                             ),
                           );
 
-                          // Show success snackbar
+                          // 6. Tampilkan notifikasi sukses
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Row(
@@ -184,8 +185,14 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                             ),
                           );
                         } catch (e) {
+                          // Error handling untuk riwayat
                           print("Error saat menyimpan riwayat: $e");
-                          // Show error snackbar untuk riwayat
+                          
+                          // Jika gagal membuat riwayat, hapus pemesanan
+                          await PemesananClient.destroy(pemesananId);
+                          
+                          Navigator.pop(context); // Tutup bottom sheet
+                          
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Row(
@@ -206,8 +213,11 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                           );
                         }
                       } catch (e) {
+                        // Error handling untuk pemesanan
                         print("Error saat memesan tiket: $e");
-                        // Show error snackbar untuk pemesanan
+                        
+                        Navigator.pop(context); // Tutup bottom sheet
+                        
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Row(
@@ -228,8 +238,11 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                         );
                       }
                     } catch (e) {
+                      // Error handling untuk user ID
                       print("Error saat mengambil user ID: $e");
-                      // Show error snackbar untuk user ID
+                      
+                      Navigator.pop(context); // Tutup bottom sheet
+                      
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Row(

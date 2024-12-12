@@ -7,54 +7,6 @@ class RiwayatClient {
   static const String url = '192.168.139.233';
   static const String endpoint = '/Travel_API/public/api/riwayat';
 
-  // static Future<List<Riwayat>> fetchAll() async {
-  //   try {
-  //     String? token = await TokenStorage.getToken(); // Ambil token dari tokenStorage
-  //     var response = await get(
-  //       Uri.http(url, endpoint),
-  //       headers: {
-  //         "Authorization": "Bearer $token", // Tambahkan header Authorization
-  //       },
-  //     );
-
-  //     if (response.statusCode != 200) throw Exception(response.reasonPhrase);
-
-  //     Iterable list = json.decode(response.body)['data'];
-
-  //     return list.map((e) => Riwayat.fromJson(e)).toList();
-  //   } catch (e) {
-  //     return Future.error(e.toString());
-  //   }
-  // }
-
-  // static Future<List<Riwayat>> fetchByUser(int userId) async {
-  //   try {
-  //     String? token = await TokenStorage.getToken(); // Ambil token dari storage
-  //     if (token == null) throw Exception("Token is null");
-
-  //     final response = await get(
-  //       Uri.http(url,
-  //           '$endpoint/user/$userId'), // Endpoint untuk fetch by userId
-  //       headers: {
-  //         "Authorization": "Bearer $token",
-  //         "Content-Type": "application/json",
-  //       },
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       var jsonData = json.decode(response.body);
-  //       Iterable list = jsonData['data'];
-  //       return list.map((e) => Riwayat.fromJson(e)).toList();
-  //     } else {
-  //       throw Exception(
-  //           "Failed to fetch tickets by user: ${response.reasonPhrase}");
-  //     }
-  //   } catch (e) {
-  //     print("Error in fetchByUser: $e");
-  //     return Future.error(e.toString());
-  //   }
-  // }
-
   static Future<List<Riwayat>> fetchByUser(int userId) async {
     try {
       String? token = await TokenStorage.getToken();
@@ -68,26 +20,18 @@ class RiwayatClient {
         },
       );
 
-      // Cetak response body untuk inspeksi
-      print("Raw Response Body: ${response.body}");
-
       if (response.statusCode == 200) {
         var jsonData = json.decode(response.body);
         
-        // Cetak struktur data
-        print("Parsed JSON Data: $jsonData");
-
-        Iterable list = jsonData['data'];
-        
-        // Cetak setiap item sebelum konversi
-        list.forEach((e) {
-          print("Individual Item: $e");
-        });
-
-        return list.map((e) => Riwayat.fromJson(e)).toList();
+        // Pastikan data lengkap dengan relasi
+        if (jsonData['data'] != null) {
+          return (jsonData['data'] as List)
+              .map((e) => Riwayat.fromJson(e))
+              .toList();
+        }
+        return [];
       } else {
-        throw Exception(
-            "Failed to fetch tickets by user: ${response.reasonPhrase}");
+        throw Exception("Failed to fetch riwayat: ${response.reasonPhrase}");
       }
     } catch (e) {
       print("Error in fetchByUser: $e");
@@ -115,35 +59,43 @@ class RiwayatClient {
 
   static Future<Riwayat> create(Riwayat riwayat) async {
     try {
-      String? token = await TokenStorage.getToken(); // Ambil token dari tokenStorage
+      String? token = await TokenStorage.getToken();
+      print('Sending riwayat data: ${jsonEncode(riwayat.toJson())}'); // Debug print
+
       var response = await post(
         Uri.http(url, endpoint),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token", // Tambahkan header Authorization
+          "Authorization": "Bearer $token",
         },
-        body: riwayat.toRawJson(),
+        body: jsonEncode(riwayat.toJson()),
       );
 
-      if (response.statusCode != 201) throw Exception(response.reasonPhrase);
+      print('Response status: ${response.statusCode}'); // Debug print
+      print('Response body: ${response.body}'); // Debug print
 
-      var responseData = jsonDecode(response.body);
-      return Riwayat.fromJson(responseData);
+      if (response.statusCode == 201) {
+        var responseData = jsonDecode(response.body);
+        return Riwayat.fromJson(responseData['data']);
+      } else {
+        throw Exception(jsonDecode(response.body)['message'] ?? 'Failed to create riwayat');
+      }
     } catch (e) {
+      print('Error in create riwayat: $e'); // Debug print
       return Future.error(e.toString());
     }
   }
 
   static Future<Response> update(Riwayat riwayat) async {
     try {
-      String? token = await TokenStorage.getToken(); // Ambil token dari tokenStorage
+      String? token = await TokenStorage.getToken();
       var response = await put(
         Uri.http(url, '$endpoint/${riwayat.idRiwayat}'),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token", // Tambahkan header Authorization
+          "Authorization": "Bearer $token",
         },
-        body: riwayat.toRawJson(),
+        body: jsonEncode(riwayat.toJson()),
       );
 
       if (response.statusCode != 200) throw Exception(response.reasonPhrase);

@@ -24,9 +24,13 @@ class _HistoriPageState extends State<HistoriPage> {
     });
 
     try {
-      // Fetch riwayat berdasarkan userId
       List<Riwayat> fetchedRiwayat = 
           await RiwayatClient.fetchByUser(widget.idUser);
+      
+      print("Fetched Riwayat: ${fetchedRiwayat.map((r) => {
+        'jadwal': r.pemesanan?.jadwal,
+        'bus': r.pemesanan?.jadwal?.bus
+      }).toList()}");
 
       setState(() {
         riwayatList = fetchedRiwayat;
@@ -108,157 +112,61 @@ class RiwayatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header Riwayat
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    riwayat.bus?['nama'] ?? 'Nama Bus Tidak Tersedia',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UlasanPage(
-                            // idRiwayat: riwayat.idRiwayat,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'Beri Ulasan',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+    // Get nested data safely
+    final pemesanan = riwayat.pemesanan;
+    final jadwal = pemesanan?.jadwal;
+    final bus = jadwal?.bus;
+
+    return Card(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Bus Information
+            Text(
+              bus?.namaBus ?? 'Nama Bus Tidak Tersedia',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              SizedBox(height: 10),
-
-              // Informasi Perjalanan
-              Row(
-                children: [
-                  // Keberangkatan
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        riwayat.jadwal?['waktu_keberangkatan'] ?? 'N/A',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.circle,
-                            size: 8,
-                            color: const Color.fromARGB(255, 0, 5, 163),
-                          ),
-                          SizedBox(width: 5),
-                          Text(riwayat.jadwal?['asal'] ?? 'N/A'),
-                        ],
-                      ),
-                    ],
+            ),
+            SizedBox(height: 8),
+            
+            // Journey Details
+            Row(
+              children: [
+                Icon(Icons.location_on, size: 16),
+                SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    '${jadwal?.asal ?? 'N/A'} → ${jadwal?.tujuan ?? 'N/A'}',
+                    style: TextStyle(fontSize: 16),
                   ),
-                  SizedBox(width: 20),
-
-                  // Durasi
-                  Column(
-                    children: [
-                      Text(_hitungDurasi(
-                        riwayat.jadwal?['waktu_keberangkatan'],
-                        riwayat.jadwal?['waktu_kedatangan'],
-                      )),
-                      SizedBox(
-                        height: 20,
-                        child: VerticalDivider(
-                          thickness: 1,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: 20),
-
-                  // Kedatangan
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        riwayat.jadwal?['waktu_kedatangan'] ?? 'N/A',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.circle,
-                            size: 8,
-                            color: Colors.grey,
-                          ),
-                          SizedBox(width: 5),
-                          Text(riwayat.jadwal?['tujuan'] ?? 'N/A'),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+                ),
+              ],
+            ),
+            
+            // Schedule
+            SizedBox(height: 8),
+            Text(
+              'Keberangkatan: ${jadwal?.keberangkatan ?? 'N/A'}',
+              style: TextStyle(fontSize: 14),
+            ),
+            
+            // Transaction Date
+            SizedBox(height: 8),
+            Text(
+              'Tanggal Transaksi: ${riwayat.tanggalTransaksi ?? 'N/A'}',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
               ),
-              SizedBox(height: 10),
-
-              // Footer Riwayat
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    riwayat.jadwal?['tanggal'] ?? 'Tanggal Tidak Tersedia',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  Text(
-                    'Kode Kursi: ${riwayat.jadwal?['kursi'] ?? 'N/A'}', // Perbaiki typo 'k ursi'
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  String _hitungDurasi(String? waktuKeberangkatan, String? waktuKedatangan) {
-    // Implementasi logika untuk menghitung durasi perjalanan
-    // Misalnya, jika waktu dalam format "HH:mm", Anda bisa menghitung selisihnya
-    return 'Durasi: 14 jam'; // Placeholder, ganti dengan logika yang sesuai
   }
 }
