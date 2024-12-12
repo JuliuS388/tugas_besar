@@ -4,8 +4,8 @@ import 'package:tugas_besar/tokenStorage.dart';
 import 'package:tugas_besar/entity/Jadwal.dart'; // Gantilah ke entitas Jadwal yang sesuai
 
 class JadwalClient {
-  static const String url = '10.0.2.2:8000';
-  static const String endpoint = '/api/jadwal/search';
+  static const String url = '192.168.100.89';
+  static const String endpoint = '/1_Travel_C_API/public/api/search';
 
   static Future<List<Jadwal>> fetchFiltered(
       String asal, String tujuan, String keberangkatan) async {
