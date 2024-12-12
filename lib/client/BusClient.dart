@@ -4,8 +4,8 @@ import 'package:tugas_besar/tokenStorage.dart';
 import 'package:tugas_besar/entity/Bus.dart';
 
 class BusClient {
-  static const String url = '192.168.100.89';
-  static const String endpoint = '/1_Travel_C_API/public/api/bus';
+  static const String url = '10.0.2.2:8000';
+  static const String endpoint = '/api/bus';
 
   // Fetch all buses
   static Future<List<Bus>> fetchAll() async {

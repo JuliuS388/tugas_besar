@@ -4,8 +4,27 @@ import 'package:tugas_besar/entity/Profile.dart'; // Import the Profile class
 import 'package:tugas_besar/client/ProfileClient.dart'; // Import the ProfilClient
 import 'package:intl/intl.dart';
 
-class ProfileDetailScreen extends StatelessWidget {
+class ProfileDetailScreen extends StatefulWidget {
   const ProfileDetailScreen({super.key});
+
+  @override
+  _ProfileDetailScreenState createState() => _ProfileDetailScreenState();
+}
+
+class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
+  late Future<Profile> _profileFuture; // To hold the future profile data
+
+  @override
+  void initState() {
+    super.initState();
+    _profileFuture = ProfilClient.getProfile(); // Fetch profile data on initialization
+  }
+
+  Future<void> _refreshProfile() async {
+    setState(() {
+      _profileFuture = ProfilClient.getProfile(); // Refresh profile data
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +35,7 @@ class ProfileDetailScreen extends StatelessWidget {
         title: const Text('Detail Profil'),
       ),
       body: FutureBuilder<Profile>(
-        future: ProfilClient.getProfile(), // Fetch profile data
+        future: _profileFuture, // Fetch profile data
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -46,7 +65,7 @@ class ProfileDetailScreen extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 60,
-                          backgroundImage: NetworkImage(profile.imageUrl ?? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNuMtV6voiMGgINSW_PbviV6ecO3nMab9uVw&s'),
+                          backgroundImage: NetworkImage(profile.profileImage ?? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNuMtV6voiMGgINSW_PbviV6ecO3nMab9uVw&s'),
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -100,13 +119,16 @@ class ProfileDetailScreen extends StatelessWidget {
                   // Edit Profile Button
                   Center(
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.push(
+                      onPressed: () async {
+                        final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => const EditProfileScreen(),
                           ),
                         );
+                        if (result == true) {
+                          _refreshProfile(); // Refresh the profile data upon return
+                        }
                       },
                       icon: const Icon(Icons.edit),
                       label: const Text('Edit Profil'),
