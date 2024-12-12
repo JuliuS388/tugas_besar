@@ -6,8 +6,7 @@ class Penumpang {
   String jenisKelamin; // Jenis kelamin penumpang
   int umur; // Umur penumpang
   int idPemesanan;
-  String
-      nomorKursi; // Foreign key untuk menghubungkan penumpang dengan pemesanan
+  String nomorKursi; // Foreign key untuk menghubungkan penumpang dengan pemesanan
 
   // Constructor
   Penumpang(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tugas_besar/entity/Penumpang.dart';
 import 'package:tugas_besar/client/PenumpangClient.dart';
 import 'package:tugas_besar/client/PemesananClient.dart';
+import 'package:tugas_besar/pembayaran.dart';
 import 'package:tugas_besar/home.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 import 'dart:ui';
@@ -55,7 +56,6 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
     List<String> letters = ['A', 'B', 'C', 'D'];
     int number;
 
-    // Keep generating until we get a unique number
     do {
       String letter = letters[random.nextInt(letters.length)];
       number = random.nextInt(10) + 1; // Random number between 1 and 10
@@ -69,8 +69,13 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
 
   // Function to create passengers
   Future<List<int>> _buatPenumpang(int pemesananId) async {
-    List<int> penumpangIds = [];
+  List<int> penumpangIds = [];
 
+  for (var penumpang in _penumpangs) {
+    // Validate penumpang data
+    if (penumpang['nama'] == null || penumpang['nama'].isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Nama penumpang tidak boleh kosong')),
     for (var penumpang in _penumpangs) {
       // Validate passenger data
       if (penumpang['nama'] == null || penumpang['nama'].isEmpty) {
@@ -104,22 +109,39 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
         idPemesanan: pemesananId,
         nomorKursi: penumpang['nomorKursi'],
       );
-
-      try {
-        // Call the create method to create passenger
-        var createdPenumpang = await PenumpangClient.create(penumpangData);
-        penumpangIds.add(createdPenumpang.id!);
-      } catch (e) {
-        print("Exception occurred: $e");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saat membuat penumpang: $e')),
-        );
-        return [];
-      }
+      return []; // Return empty list if validation fails
     }
 
-    return penumpangIds;
+    // Create penumpang object
+    var penumpangData = Penumpang(
+      namaPenumpang: penumpang['nama'],
+      jenisKelamin: penumpang['jenisKelamin'],
+      umur: penumpang['umur'],
+      idPemesanan: pemesananId,
+      nomorKursi: penumpang['nomorKursi'],
+    );
+
+    try {
+      // Call the API to create penumpang
+      var createdPenumpang = await PenumpangClient.create(penumpangData);
+      if (createdPenumpang.id != null) {
+        penumpangIds.add(createdPenumpang.id!);
+      } else {
+        throw Exception("Failed to create penumpang");
+      }
+    } catch (e) {
+      // Handle error during penumpang creation
+      print("Exception occurred: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error saat membuat penumpang: $e')),
+      );
+      return [];
+    }
   }
+
+  return penumpangIds; // Return list of created penumpang IDs
+}
+
 
   // Function to show confirmation dialog before payment
   void _showConfirmationDialog(
@@ -219,18 +241,18 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
             ),
             ElevatedButton(
               onPressed: () async {
-                Navigator.of(context).pop();
-                List<int> penumpangIds =
-                    await _buatPenumpang(widget.idPemesanan);
+            
+                List<int> penumpangIds = await _buatPenumpang(widget.idPemesanan);
+                print('masuk keisni ');
+               
                 if (penumpangIds.isNotEmpty) {
-                  // Navigate to PembayaranScreen with idPemesanan
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         PembayaranScreen(idPemesanan: widget.idPemesanan),
-                  //   ),
-                  // );
+                  
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Pembayaran(idPemesanan: widget.idPemesanan),
+                    ),
+                  );
                 }
               },
               child: Text('Lanjut Pembayaran'),
