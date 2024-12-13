@@ -4,8 +4,7 @@ import 'package:tugas_besar/entity/Pemesanan.dart';
 import 'package:tugas_besar/entity/Ticket.dart';
 import 'package:tugas_besar/client/PenumpangClient.dart';
 import 'package:tugas_besar/client/PemesananClient.dart';
-import 'package:tugas_besar/client/TicketClient.dart';
-import 'package:tugas_besar/home.dart';
+import 'package:tugas_besar/client/TicketClient.dart';import 'package:tugas_besar/home.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 import 'dart:ui';
 import 'dart:math';
@@ -67,7 +66,7 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
     List<String> letters = ['A', 'B', 'C', 'D'];
     int number;
 
-    // Keep generating until we get a unique number
+  // Keep generating until we get a unique number
     do {
       String letter = letters[random.nextInt(letters.length)];
       number = random.nextInt(10) + 1; // Random number between 1 and 10
@@ -78,11 +77,9 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
     generatedSeatNumbers.add(seatNumber);
     return seatNumber;
   }
-
   // Function to create passengers
   Future<List<int>> _buatPenumpang(int pemesananId) async {
     List<int> penumpangIds = [];
-
     for (var penumpang in _penumpangs) {
       // Validasi data penumpang
       if (penumpang['nama'] == null || penumpang['nama'].isEmpty) {
@@ -118,10 +115,8 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
       try {
         // Panggil API untuk membuat penumpang
         var createdPenumpang = await PenumpangClient.create(penumpangData);
-
         // Simpan ID penumpang
         penumpangIds.add(createdPenumpang.id!);
-
         // Dapatkan `idUser` dari token storage
         final userId = await getUserId();
 
@@ -154,7 +149,6 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
         return [];
       }
     }
-
     return penumpangIds;
   }
 
