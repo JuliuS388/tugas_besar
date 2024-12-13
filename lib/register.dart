@@ -229,6 +229,12 @@ class _RegisterViewState extends State<RegisterView> {
                             if (value == null || value.isEmpty) {
                               return "Username tidak boleh kosong";
                             }
+                            if (value != value.toLowerCase()) {
+                              return "Username harus menggunakan huruf kecil";
+                            }
+                            if (value.contains(' ')) {
+                              return "Username tidak boleh mengandung spasi";
+                            }
                             return null;
                           },
                           controller: usernameController,
@@ -281,7 +287,7 @@ class _RegisterViewState extends State<RegisterView> {
                             if (value == null || value.isEmpty) {
                               return "Konfirmasi Password tidak boleh kosong";
                             } else if (value != passwordController.text) {
-                              return "Password tidak cocok";
+                              return "Password tidak sesuai";
                             }
                             return null;
                           },
@@ -307,8 +313,8 @@ class _RegisterViewState extends State<RegisterView> {
                             final phoneRegex = RegExp(r'^[0-9]{10,13}$');
                             if (!phoneRegex.hasMatch(value)) {
                               return "Nomor Telepon tidak valid";
-                            } else if (value.length < 12) {
-                              return "Nomor Telepon minimal 12 digit";
+                            } else if (value.length != 12) {
+                              return "Nomor Telepon harus 12 digit";
                             }
                             return null;
                           },

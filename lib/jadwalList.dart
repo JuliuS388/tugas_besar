@@ -99,7 +99,7 @@ class _JadwalListState extends State<JadwalList> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Tidak ada bus tersedia untuk rute ${widget.asal} - ${widget.tujuan}',
+                        'Saat ini tidak tersedia bus untuk rute ${widget.asal} - ${widget.tujuan} pada tanggal ${widget.tanggal}. Silakan coba lagi nanti.',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
