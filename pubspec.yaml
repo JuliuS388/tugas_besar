@@ -9,6 +9,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  dotted_line: ^3.0.1
+  intl: ^0.18.1
+  shared_preferences: ^2.1.0
+
+  provider: ^6.0.0
+  camera: ^0.10.5+2
+  path_provider: ^2.0.15
+  image_picker: ^1.1.2
+  pdf: ^3.10.0
+  printing: ^5.10.1
+  fluttertoast: ^8.2.8
+
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +29,17 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+
+    - assets/images/BCA.png
+    - assets/images/Mandiri.png
+    - assets/images/BRI.png
+    - assets/logoTravel2.png
+    - assets/bus-picture.jpg
+    - assets/promo1.jpg
+    - assets/promo2.jpg
+    - assets/promo3.jpg
+    - assets/tips1.jpg
+    - assets/tips2.jpg
+    - assets/tips3.jpg
+    - assets/default_profile.jpg
