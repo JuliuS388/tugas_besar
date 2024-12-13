@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:tugas_besar/tokenStorage.dart';
-import 'package:tugas_besar/entity/Jadwal.dart'; // Gantilah ke entitas Jadwal yang sesuai
+import 'package:tugas_besar/entity/Jadwal.dart';
 
 class JadwalClient {
   static const String url = '192.168.175.22';
@@ -19,7 +19,7 @@ class JadwalClient {
         Uri.http(url, endpoint, {
           'asal': asal, // Menambahkan asal
           'tujuan': tujuan, // Menambahkan tujuan
-          'keberangkatan': keberangkatan, // Menambahkan tanggal keberangkatan
+          'tanggal': keberangkatan, // Menambahkan tanggal keberangkatan
         }),
         headers: {
           "Authorization": "Bearer $token",
@@ -29,7 +29,7 @@ class JadwalClient {
 
       if (response.statusCode == 200) {
         var decoded = json.decode(response.body);
-        // Pastikan data yang diterima memiliki struktur yang sesuai
+
         if (decoded != null && decoded['data'] != null) {
           return (decoded['data'] as List)
               .map<Jadwal>((e) => Jadwal.fromJson(e))

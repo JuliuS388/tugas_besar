@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_besar/login_page.dart';
+import 'package:tugas_besar/login.dart';
 import 'package:tugas_besar/form_component.dart';
 import 'package:tugas_besar/client/UserClientRegister.dart';
 import 'package:tugas_besar/entity/User.dart';
@@ -32,9 +32,7 @@ class _RegisterViewState extends State<RegisterView> {
       });
 
       try {
-        // Create a new User object with the input data
         User newUser = User(
-          id: 0, // The backend will likely generate the ID
           nama: nameController.text,
           username: usernameController.text,
           email: emailController.text,
@@ -42,17 +40,47 @@ class _RegisterViewState extends State<RegisterView> {
           nomorTelepon: phoneController.text,
         );
 
-        // Use UserClient to create the user
         await UserClientRegister.create(newUser);
 
-        // Show success dialog
+        // Alert Sukses Registrasi
         await showDialog(
+          // ignore: use_build_context_synchronously
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Registrasi Berhasil'),
-            content: const Text('Akun Anda telah terdaftar. Silakan login.'),
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            title: const Row(
+              children: [
+                Icon(
+                  Icons.check_circle_outline,
+                  color: Colors.green,
+                  size: 30,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Registrasi Berhasil!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+              ],
+            ),
+            content: const Text(
+              'Akun Anda telah berhasil terdaftar. Silakan login untuk melanjutkan.',
+              style: TextStyle(fontSize: 16),
+            ),
             actions: [
-              TextButton(
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                   Navigator.pushReplacement(
@@ -67,24 +95,63 @@ class _RegisterViewState extends State<RegisterView> {
                     ),
                   );
                 },
-                child: const Text('OK'),
+                child: const Text(
+                  'OK',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
               ),
             ],
           ),
         );
       } catch (e) {
-        // Show error dialog if registration fails
+        // Alert Gagal
         await showDialog(
+          // ignore: use_build_context_synchronously
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Registrasi Gagal'),
-            content: Text('Terjadi kesalahan: ${e.toString()}'),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            title: const Row(
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 30,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Registrasi Gagal!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+            content: Text(
+              'Terjadi kesalahan: ${e.toString()}',
+              style: const TextStyle(fontSize: 16),
+            ),
             actions: [
-              TextButton(
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('OK'),
+                child: const Text(
+                  'Tutup',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),
@@ -162,6 +229,12 @@ class _RegisterViewState extends State<RegisterView> {
                             if (value == null || value.isEmpty) {
                               return "Username tidak boleh kosong";
                             }
+                            if (value != value.toLowerCase()) {
+                              return "Username harus menggunakan huruf kecil";
+                            }
+                            if (value.contains(' ')) {
+                              return "Username tidak boleh mengandung spasi";
+                            }
                             return null;
                           },
                           controller: usernameController,
@@ -192,15 +265,15 @@ class _RegisterViewState extends State<RegisterView> {
                             if (value == null || value.isEmpty) {
                               return "Password tidak boleh kosong";
                             }
-                            if (value.length < 6) {
-                              return "Password minimal 6 karakter";
+                            if (value.length < 8) {
+                              return "Password minimal 8 karakter";
                             }
                             return null;
                           },
                           controller: passwordController,
                           hintTxt: "Password",
                           iconData: Icons.lock,
-                          obscureText: !_isPasswordVisible,
+                          obscureText: true,
                           isVisible: _isPasswordVisible,
                           onToggleVisibility: () {
                             setState(() {
@@ -214,14 +287,14 @@ class _RegisterViewState extends State<RegisterView> {
                             if (value == null || value.isEmpty) {
                               return "Konfirmasi Password tidak boleh kosong";
                             } else if (value != passwordController.text) {
-                              return "Password tidak cocok";
+                              return "Password tidak sesuai";
                             }
                             return null;
                           },
                           controller: confirmPasswordController,
                           hintTxt: "Konfirmasi Password",
                           iconData: Icons.lock_outline,
-                          obscureText: !_isConfirmPasswordVisible,
+                          obscureText: true,
                           isVisible: _isConfirmPasswordVisible,
                           onToggleVisibility: () {
                             setState(() {
@@ -240,6 +313,8 @@ class _RegisterViewState extends State<RegisterView> {
                             final phoneRegex = RegExp(r'^[0-9]{10,13}$');
                             if (!phoneRegex.hasMatch(value)) {
                               return "Nomor Telepon tidak valid";
+                            } else if (value.length != 12) {
+                              return "Nomor Telepon harus 12 digit";
                             }
                             return null;
                           },

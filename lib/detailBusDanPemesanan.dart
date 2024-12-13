@@ -31,12 +31,11 @@ Future<int?> getUserId() async {
 }
 
 class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
-  // Method to handle ticket booking
+  // Fungsi Booking
   void _confirmBooking(BuildContext context) async {
-    // Calculate total price
     double totalPrice = widget.jadwal.harga * widget.jumlahKursi;
 
-    // Show confirmation dialog
+    // Modal Dialog
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -45,7 +44,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
           width: double.infinity,
           padding: const EdgeInsets.all(20.0),
           height: MediaQuery.of(context).size.height * 0.6,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(25.0),
@@ -55,7 +54,6 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Section
               Text(
                 'Konfirmasi Pemesanan',
                 style: TextStyle(
@@ -64,18 +62,18 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                   color: Colors.blue.shade900,
                 ),
               ),
-              SizedBox(height: 15),
-              Divider(),
+              const SizedBox(height: 15),
+              const Divider(),
 
-              // Ticket Details Section
+              // Detail Tiket yang Dipesan
               Row(
                 children: [
                   Icon(Icons.directions_bus, color: Colors.blue.shade900),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'Bus: ${widget.bus.namaBus}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                       ),
@@ -83,24 +81,24 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                   ),
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Icon(Icons.location_on, color: Colors.blue.shade900),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'Jadwal: ${widget.jadwal.asal} to ${widget.jadwal.tujuan}',
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Icon(Icons.attach_money, color: Colors.blue.shade900),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'Harga: Rp. ${totalPrice.toStringAsFixed(0)}',
@@ -114,13 +112,12 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                 ],
               ),
 
-              Spacer(),
+              const Spacer(),
 
-              // Button Section
+              // Konfirmasi Pemesanan
               Center(
                 child: ElevatedButton(
                   onPressed: () async {
-                    print("Tombol Pesan Tiket diklik");
                     try {
                       // Ambil userId
                       final userId = await getUserId();
@@ -155,8 +152,9 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                       );
 
                       // Show success snackbar
+                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Row(
                             children: [
                               Icon(Icons.check_circle, color: Colors.white),
@@ -176,22 +174,23 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                     } catch (e) {
                       print("Error saat memesan tiket: $e");
                       // Show error snackbar
+                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Row(
                             children: [
-                              Icon(Icons.error, color: Colors.white),
-                              SizedBox(width: 8),
+                              const Icon(Icons.error, color: Colors.white),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   'Gagal melakukan pemesanan: $e',
-                                  style: TextStyle(color: Colors.white),
+                                  style: const TextStyle(color: Colors.white),
                                 ),
                               ),
                             ],
                           ),
                           backgroundColor: Colors.red,
-                          duration: Duration(seconds: 4),
+                          duration: const Duration(seconds: 4),
                         ),
                       );
                     }
@@ -221,12 +220,6 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
         );
       },
     );
-  }
-
-  // Function to format the date and time
-  String _formatDate(DateTime date) {
-    return DateFormat('MMMM d, yyyy, HH:mm')
-        .format(date); // Format: Bulan dd, yyyy, jam:mm
   }
 
   @override
@@ -297,7 +290,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                         ),
                         const SizedBox(height: 24),
                         const SectionTitle(title: 'Keberangkatan'),
-                        InformationCard(
+                        const InformationCard(
                           content:
                               '1. Penumpang sudah siap setidaknya 60 menit sebelum keberangkatan di titik keberangkatan yang telah ditentukan oleh agen. '
                               'Keterlambatan penumpang dapat menyebabkan tiket dibatalkan secara sepihak dan tidak mendapatkan pengembalian dana.\n\n'
@@ -306,7 +299,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                         ),
                         const SizedBox(height: 16),
                         const SectionTitle(title: 'Barang Bawaan'),
-                        InformationCard(
+                        const InformationCard(
                           content:
                               '1. Penumpang dilarang membawa barang terlarang/ilegal dan menyertakan seperti senjata tajam, bahan terbakar, dan obat-obatan terlarang. '
                               'Barang-barang ini akan ditolak oleh pihak keperluan angkutan.\n\n'
@@ -369,7 +362,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
 class SectionTitle extends StatelessWidget {
   final String title;
 
-  const SectionTitle({required this.title});
+  const SectionTitle({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -389,7 +382,7 @@ class SectionTitle extends StatelessWidget {
 class InformationCard extends StatelessWidget {
   final String content;
 
-  const InformationCard({required this.content});
+  const InformationCard({super.key, required this.content});
 
   @override
   Widget build(BuildContext context) {

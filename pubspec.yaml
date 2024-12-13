@@ -19,6 +19,7 @@ dependencies:
   image_picker: ^1.1.2
   pdf: ^3.10.0
   printing: ^5.10.1
+  fluttertoast: ^8.2.8
 
 
 dev_dependencies:
@@ -41,3 +42,4 @@ flutter:
     - assets/tips1.jpg
     - assets/tips2.jpg
     - assets/tips3.jpg
+    - assets/default_profile.jpg
