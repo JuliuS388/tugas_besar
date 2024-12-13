@@ -1,35 +1,50 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http; // Menggunakan alias untuk http
+import 'package:http/http.dart';
 import 'package:tugas_besar/entity/Ticket.dart';
-import 'package:tugas_besar/tokenStorage.dart';
+import 'package:tugas_besar/tokenStorage.dart'; // Impor TokenStorage
 
 class TicketClient {
-  static const String baseUrl = '192.168.1.9'; // Base URL server
-  static const String endpoint =
-      '/Travel_API/public/api/tiket'; // Endpoint API tiket
+  static const String url = '192.168.175.22';
+  static const String endpoint = '/Travel_API/public/api/tiket';
 
-  // Fetch All Tickets
   static Future<List<Ticket>> fetchByUser(int userId) async {
     try {
-      String? token = await TokenStorage.getToken(); // Ambil token dari storage
+      String? token = await TokenStorage.getToken();
       if (token == null) throw Exception("Token is null");
 
-      final response = await http.get(
-        Uri.http(baseUrl,
-            '$endpoint/user/$userId'), // Endpoint untuk fetch by userId
+      print('Fetching tickets for user: $userId');
+      print('URL: ${Uri.http(url, '$endpoint/user/$userId')}');
+
+      final response = await get(
+        Uri.http(url, '$endpoint/user/$userId'),
         headers: {
           "Authorization": "Bearer $token",
           "Content-Type": "application/json",
+          "Accept": "application/json",
         },
       );
 
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
       if (response.statusCode == 200) {
         var jsonData = json.decode(response.body);
-        Iterable list = jsonData['data'];
-        return list.map((e) => Ticket.fromJson(e)).toList();
+        if (jsonData['data'] != null) {
+          try {
+            var tickets = (jsonData['data'] as List).map((e) {
+              print('Processing ticket data: $e'); // Debug print
+              return Ticket.fromJson(e);
+            }).toList();
+            print('Successfully parsed ${tickets.length} tickets');
+            return tickets;
+          } catch (e) {
+            print('Error parsing ticket data: $e');
+            throw Exception('Error parsing ticket data: $e');
+          }
+        }
+        return [];
       } else {
-        throw Exception(
-            "Failed to fetch tickets by user: ${response.reasonPhrase}");
+        throw Exception("Failed to fetch tiket: ${response.reasonPhrase}");
       }
     } catch (e) {
       print("Error in fetchByUser: $e");
@@ -37,106 +52,109 @@ class TicketClient {
     }
   }
 
-  // Find a Ticket by ID
   static Future<Ticket> find(int id) async {
     try {
-      String? token = await TokenStorage.getToken();
-      if (token == null) throw Exception("Token is null");
-
-      final response = await http.get(
-        Uri.http(baseUrl, '$endpoint/$id'),
+      String? token =
+          await TokenStorage.getToken(); // Ambil token dari tokenStorage
+      var response = await get(
+        Uri.http(url, '$endpoint/$id'),
         headers: {
-          "Authorization": "Bearer $token",
-          "Content-Type": "application/json",
+          "Authorization": "Bearer $token", // Tambahkan header Authorization
         },
       );
 
-      if (response.statusCode != 200) {
-        throw Exception('Failed to fetch ticket: ${response.statusCode}');
-      }
-
-      final decoded = json.decode(response.body);
-      return Ticket.fromJson(decoded['data']);
-    } catch (e) {
-      print("Error in find: $e");
-      return Future.error(e.toString());
-    }
-  }
-
-  // Create a new Ticket
-  static Future<Ticket> create(Ticket ticket) async {
-    try {
-      String? token = await TokenStorage.getToken();
-      if (token == null) throw Exception("Token is null");
-
-      final response = await http.post(
-        Uri.http(baseUrl, endpoint),
-        headers: {
-          "Authorization": "Bearer $token",
-          "Content-Type": "application/json",
-        },
-        body: ticket.toRawJson(),
-      );
-
-      if (response.statusCode != 201) {
-        throw Exception('Failed to create ticket: ${response.statusCode}');
-      }
+      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
 
       return Ticket.fromJson(json.decode(response.body)['data']);
     } catch (e) {
-      print("Error in create: $e");
       return Future.error(e.toString());
     }
   }
 
-  // Update an existing Ticket
-  static Future<bool> update(Ticket ticket) async {
+  static Future<Ticket> create(Ticket ticket) async {
     try {
       String? token = await TokenStorage.getToken();
-      if (token == null) throw Exception("Token is null");
 
-      final response = await http.put(
-        Uri.http(baseUrl, '$endpoint/${ticket.id}'),
+      // Debug prints
+      print('Creating ticket with URL: ${Uri.http(url, endpoint)}');
+      print('Request body: ${jsonEncode(ticket.toJson())}');
+      print('Token: $token');
+
+      var response = await post(
+        Uri.http(url, endpoint),
         headers: {
-          "Authorization": "Bearer $token",
           "Content-Type": "application/json",
+          "Accept": "application/json", // Tambahkan header Accept
+          "Authorization": "Bearer $token",
         },
-        body: ticket.toRawJson(),
+        body: jsonEncode(ticket.toJson()),
       );
 
-      if (response.statusCode != 200) {
-        throw Exception('Failed to update ticket: ${response.statusCode}');
-      }
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
-      return true;
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        try {
+          var responseData = jsonDecode(response.body);
+          return Ticket.fromJson(responseData['data']);
+        } catch (e) {
+          print('Error parsing response: $e');
+          throw Exception('Invalid response format from server');
+        }
+      } else {
+        print('Server error response: ${response.body}');
+        throw Exception(
+            'Failed to create ticket. Status: ${response.statusCode}, Body: ${response.body}');
+      }
     } catch (e) {
-      print("Error in update: $e");
+      print('Error in create ticket: $e');
       return Future.error(e.toString());
     }
   }
 
-  // Delete a Ticket
-  static Future<bool> destroy(int id) async {
+  static Future<Response> update(Ticket ticket) async {
     try {
       String? token = await TokenStorage.getToken();
-      if (token == null) throw Exception("Token is null");
-
-      final response = await http.delete(
-        Uri.http(baseUrl, '$endpoint/$id'),
+      var response = await put(
+        Uri.http(url, '$endpoint/${ticket.id}'),
         headers: {
-          "Authorization": "Bearer $token",
           "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(ticket.toJson()),
+      );
+
+      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
+
+      return response;
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+  }
+
+  static Future<Response> destroy(int id) async {
+    try {
+      String? token =
+          await TokenStorage.getToken(); // Ambil token dari tokenStorage
+      var response = await delete(
+        Uri.http(url, '$endpoint/$id'),
+        headers: {
+          "Authorization": "Bearer $token", // Tambahkan header Authorization
         },
       );
 
-      if (response.statusCode != 200) {
-        throw Exception('Failed to delete ticket: ${response.statusCode}');
-      }
+      print("Response Status: ${response.statusCode}");
+      print("Response Body: ${response.body}");
 
-      return true;
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        print("Error: ${response.statusCode} - ${response.body}");
+        throw Exception('Failed to delete tiket');
+      }
     } catch (e) {
-      print("Error in destroy: $e");
-      return Future.error(e.toString());
+      print("Exception caught: $e");
+      return Future.error('Error during tiket deletion: $e');
     }
   }
 }

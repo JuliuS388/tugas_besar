@@ -5,6 +5,7 @@ import 'package:tugas_besar/entity/Bus.dart';
 import 'package:tugas_besar/entity/Jadwal.dart';
 import 'package:tugas_besar/client/PemesananClient.dart';
 import 'package:intl/intl.dart';
+import 'package:tugas_besar/entity/Ticket.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 
 class DetailBusDanPemesanan extends StatefulWidget {
@@ -148,6 +149,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                           builder: (context) => DetailPenumpang(
                             jumlahKursi: widget.jumlahKursi,
                             idPemesanan: pemesananId,
+                            pemesanan: pemesananBaru,
                           ),
                         ),
                       );

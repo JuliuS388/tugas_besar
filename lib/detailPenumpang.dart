@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tugas_besar/entity/Penumpang.dart';
+import 'package:tugas_besar/entity/Pemesanan.dart';
+import 'package:tugas_besar/entity/Ticket.dart';
 import 'package:tugas_besar/client/PenumpangClient.dart';
 import 'package:tugas_besar/client/PemesananClient.dart';
+import 'package:tugas_besar/client/TicketClient.dart';
 import 'package:tugas_besar/home.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 import 'dart:ui';
@@ -10,15 +13,23 @@ import 'dart:math';
 class DetailPenumpang extends StatefulWidget {
   final int idPemesanan;
   final int jumlahKursi;
+  final Pemesanan pemesanan;
 
   const DetailPenumpang({
     super.key,
+    required this.pemesanan,
     required this.idPemesanan,
     required this.jumlahKursi,
   });
 
   @override
   _DetailPenumpangState createState() => _DetailPenumpangState();
+}
+
+Future<int?> getUserId() async {
+  final userId = await TokenStorage.getUserId();
+  print("User ID yang didapat: $userId");
+  return userId;
 }
 
 class _DetailPenumpangState extends State<DetailPenumpang> {
@@ -78,7 +89,7 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
     List<int> penumpangIds = [];
 
     for (var penumpang in _penumpangs) {
-      // Validate passenger data
+      // Validasi data penumpang
       if (penumpang['nama'] == null || penumpang['nama'].isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Nama penumpang tidak boleh kosong')),
@@ -101,6 +112,7 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
         return [];
       }
 
+      // Buat objek penumpang
       var penumpangData = Penumpang(
         namaPenumpang: penumpang['nama'],
         jenisKelamin: penumpang['jenisKelamin'],
@@ -110,13 +122,40 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
       );
 
       try {
-        // Call the create method to create passenger
+        // Panggil API untuk membuat penumpang
         var createdPenumpang = await PenumpangClient.create(penumpangData);
+
+        // Simpan ID penumpang
         penumpangIds.add(createdPenumpang.id!);
+
+        // Dapatkan `idUser` dari token storage
+        final userId = await getUserId();
+
+        // Buat tiket berdasarkan penumpang yang berhasil dibuat
+        var tiket = Ticket(
+          user_id: userId!,
+          pemesanan_id: widget.idPemesanan,
+          penumpang_id: createdPenumpang.id!,
+          pemesanan: widget.pemesanan,
+          penumpang: createdPenumpang,
+        );
+
+        // Debug print sebelum membuat ticket
+        print('Creating ticket with data: ${tiket.toJson()}');
+
+        try {
+          await TicketClient.create(tiket);
+        } catch (e) {
+          print("Error creating ticket: $e");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error saat membuat tiket: $e')),
+          );
+        }
       } catch (e) {
         print("Exception occurred: $e");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saat membuat penumpang: $e')),
+          SnackBar(
+              content: Text('Error saat membuat penumpang atau tiket: $e')),
         );
         return [];
       }

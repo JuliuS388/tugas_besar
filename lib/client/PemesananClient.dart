@@ -4,7 +4,7 @@ import 'package:tugas_besar/entity/Pemesanan.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 
 class PemesananClient {
-  static const String url = '192.168.1.9';
+  static const String url = '192.168.175.22';
   static const String endpoint = '/Travel_API/public/api/pemesanan';
 
   // Fetch All Pemesanan

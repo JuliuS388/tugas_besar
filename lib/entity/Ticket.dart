@@ -2,40 +2,55 @@ import 'dart:convert';
 import 'User.dart';
 import 'Penumpang.dart';
 import 'Pemesanan.dart';
-import 'Jadwal.dart';
 
 class Ticket {
   int? id;
-  User? user;
+  int? pemesanan_id;
+  int? user_id;
+  int? penumpang_id;
   Pemesanan? pemesanan;
-  Jadwal? jadwal;
+  Penumpang? penumpang;
 
   Ticket({
     this.id,
-    this.user,
+    this.pemesanan_id,
+    this.user_id,
+    this.penumpang_id,
     this.pemesanan,
-    this.jadwal,
+    this.penumpang,
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) {
     return Ticket(
-      id: int.tryParse(json['id_tiket'].toString()), // Convert id_tiket ke int
-      user: json['user'] != null ? User.fromJson(json['user']) : null,
+      id: json['id_tiket'] != null
+          ? int.parse(json['id_tiket'].toString())
+          : null,
+      pemesanan_id: json['id_pemesanan'] != null
+          ? int.parse(json['id_pemesanan'].toString())
+          : null,
+      user_id: json['id_user'] != null
+          ? int.parse(json['id_user'].toString())
+          : null,
+      penumpang_id: json['id_penumpang'] != null
+          ? int.parse(json['id_penumpang'].toString())
+          : null,
       pemesanan: json['pemesanan'] != null
           ? Pemesanan.fromJson(json['pemesanan'])
           : null,
-      jadwal: json['pemesanan']?['jadwal'] != null
-          ? Jadwal.fromJson(json['pemesanan']['jadwal'])
-          : null, // Mengambil jadwal dari pemesanan
+      penumpang: json['penumpang'] != null
+          ? Penumpang.fromJson(json['penumpang'])
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "id_tiket": id,
-      "user": user?.toJson(),
-      "pemesanan": pemesanan?.toJson(),
-      "jadwal": jadwal?.toJson(),
+      'id_tiket': id,
+      'id_pemesanan': pemesanan_id,
+      'id_user': user_id,
+      'id_penumpang': penumpang_id,
+      'pemesanan': pemesanan?.toJson(),
+      'penumpang': penumpang?.toJson(),
     };
   }
 
