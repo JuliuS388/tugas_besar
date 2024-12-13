@@ -118,7 +118,8 @@ class RiwayatCard extends StatelessWidget {
     final bus = jadwal?.bus;
 
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 4,
+      margin: EdgeInsets.symmetric(vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -163,6 +164,36 @@ class RiwayatCard extends StatelessWidget {
                 fontSize: 14,
                 color: Colors.grey,
               ),
+            ),
+            
+            // Add spacing before the button
+            SizedBox(height: 16),
+            
+            // Add Review Button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UlasanPage(
+                          idPemesanan: riwayat.idPemesanan ?? 0,
+                          idUser: riwayat.idUser ?? 0,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.rate_review),
+                  label: Text('Beri Ulasan'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

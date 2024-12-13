@@ -20,12 +20,12 @@ class Ulasan {
   factory Ulasan.fromRawJson(String str) => Ulasan.fromJson(json.decode(str));
 
   factory Ulasan.fromJson(Map<String, dynamic> json) => Ulasan(
-        id: json["id_ulasan"],
-        idUser: json["id_user"],
-        idPemesanan: json["id_pemesanan"],
-        rating: json["rating"].toDouble(),
-        isiUlasan: json["isi_ulasan"],
-        jenisUlasan: json["jenis_ulasan"],
+        id: json["id_ulasan"] ?? 0,
+        idUser: json["id_user"] ?? 0,
+        idPemesanan: json["id_pemesanan"] ?? 0,
+        rating: (json["rating"] ?? 0).toDouble(),
+        isiUlasan: json["isi_ulasan"] ?? '',
+        jenisUlasan: json["jenis_ulasan"] ?? '',
       );
 
   String toRawJson() => json.encode(toJson());
