@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_besar/login_page.dart';
-
+import 'package:tugas_besar/login.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
