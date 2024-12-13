@@ -431,7 +431,7 @@ class _MyWidgetState extends State<Pembayarannext> {
                             alignment: Alignment
                                 .centerLeft, // Mengatur posisi teks ke kiri
                             child: Text(
-                              "6. Masukkan PIN dan transaksi berhasil ",
+                              "6. Masukkan PIN dan transaksi berhasil",
                               style: TextStyle(
                                   fontSize:
                                       10), // Anda dapat menambahkan gaya teks di sini
