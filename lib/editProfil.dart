@@ -20,8 +20,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   XFile? _image;
   Profile? _profile; // To hold the fetched profile data
-  final String apiUrl =
-      'http://192.168.100.89/1_Travel_C_API/public/api/user/update';
+  final String apiUrl = 'http://10.0.2.2:8000/api/user/update';
 
   final _namaLengkapController = TextEditingController();
   final _tanggalLahirController = TextEditingController();
@@ -162,9 +161,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       // Handle image upload separately if an image is selected
       if (_image != null) {
         var imageUploadRequest = http.MultipartRequest(
-            'POST',
-            Uri.parse(
-                'http://192.168.100.89/1_Travel_C_API/public/api/user/upload-image'));
+            'POST', Uri.parse('http://10.0.2.2:8000/api/user/upload-image'));
         imageUploadRequest.headers['Authorization'] = 'Bearer $token';
         var file =
             await http.MultipartFile.fromPath('profile_image', _image!.path);
@@ -213,26 +210,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-    ),
-    body: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Form(
-        key: _formKey,
-        child: ListView(
-          children: [
-            // Avatar Image Picker
-            Center(
-              child: Stack(
-                children: [
-                  GestureDetector(
-                    onTap: () => _pickImage(ImageSource.gallery),
-                    child: CircleAvatar(
-                      radius: 60,
-                      backgroundImage: _image != null
-                          ? FileImage(File(_image!.path))
-                          : (_profile?.profileImage != null
-                              ? NetworkImage(_profile!.profileImage!)
-                              : const AssetImage('assets/default_profile.jpg')) as ImageProvider,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              // Avatar Image Picker
+              Center(
+                child: Stack(
+                  children: [
+                    GestureDetector(
+                      onTap: () => _pickImage(ImageSource.gallery),
+                      child: CircleAvatar(
+                        radius: 60,
+                        backgroundImage: _image != null
+                            ? FileImage(File(_image!.path))
+                            : (_profile?.profileImage != null
+                                    ? NetworkImage(_profile!.profileImage!)
+                                    : const AssetImage(
+                                        'assets/default_profile.jpg'))
+                                as ImageProvider,
+                      ),
                     ),
                     Positioned(
                       bottom: 0,
