@@ -9,6 +9,7 @@ import 'package:tugas_besar/home.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 import 'dart:ui';
 import 'dart:math';
+import 'package:tugas_besar/pembayaran.dart';
 
 class DetailPenumpang extends StatefulWidget {
   final int idPemesanan;
@@ -255,20 +256,21 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
             ),
             ElevatedButton(
               onPressed: () async {
-                Navigator.of(context).pop();
-                List<int> penumpangIds =
-                    await _buatPenumpang(widget.idPemesanan);
+            
+                List<int> penumpangIds = await _buatPenumpang(widget.idPemesanan);
+                print('masuk keisni ');
+               
                 if (penumpangIds.isNotEmpty) {
-                  // Navigate to PembayaranScreen with idPemesanan
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         PembayaranScreen(idPemesanan: widget.idPemesanan),
-                  //   ),
-                  // );
+                  
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Pembayaran(idPemesanan: widget.idPemesanan),
+                    ),
+                  );
                 }
               },
+              child: Text('Lanjut Pembayaran'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -276,7 +278,6 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Lanjut Pembayaran'),
             )
           ],
         );

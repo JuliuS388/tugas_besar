@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:tugas_besar/entity/Pembayaran.dart';
+import 'package:tugas_besar/entity/pembayaran.entity.dart';
+import 'package:tugas_besar/tokenStorage.dart';
 
 class PembayaranClient {
   static final String url = '10.0.2.2:8000';
@@ -8,6 +10,7 @@ class PembayaranClient {
 
   static Future<List<Pembayaran>> fetchAll() async {
     try {
+      
       var response = await get(Uri.http(url, endpoint));
 
       if (response.statusCode != 200) throw Exception(response.reasonPhrase);
@@ -20,27 +23,42 @@ class PembayaranClient {
     }
   }
 
-  static Future<Pembayaran> find(int id) async {
+  static Future<GetPembayaranResponse> find(int id) async {
     try {
-      var response = await get(Uri.http(url, '$endpoint/$id'));
+      String? token =
+          await TokenStorage.getToken();
+      var response = await get(
+        Uri.http(url, '${endpoint}/$id'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
 
       if (response.statusCode != 200) throw Exception(response.reasonPhrase);
 
-      return Pembayaran.fromJson(json.decode(response.body)['data']);
+      return GetPembayaranResponse.fromJson(json.decode(response.body));
     } catch (e) {
       return Future.error(e.toString());
     }
   }
 
-  static Future<Response> create(Pembayaran pembayaran) async {
+  static Future<PembayaranRes> create(PembayaranReq pembayaran) async {
+    print("ini pembayaran");
     try {
-      var response = await post(Uri.http(url, endpoint),
-          headers: {"Content-Type": "application/json"},
-          body: pembayaran.toRawJson());
+      String? token =
+          await TokenStorage.getToken();
+      var response = await post(
+        Uri.http(url, endpoint),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+          body: json.encode(pembayaran));
 
       if (response.statusCode != 201) throw Exception(response.reasonPhrase);
 
-      return response;
+      return PembayaranRes.fromJson(json.decode(response.body));
     } catch (e) {
       return Future.error(e.toString());
     }
@@ -70,6 +88,24 @@ class PembayaranClient {
       return response;
     } catch (e) {
       return Future.error(e.toString());
+    }
+  }
+
+  static Future<GetDetailPembayaranResponse> searchJadwalbyIdJadwal(int id) async {
+    try {
+      String? token =
+          await TokenStorage.getToken();
+      var response = await get(
+        Uri.http(url, 'api/pemesanan/jadwal/$id'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      return GetDetailPembayaranResponse.fromJson(json.decode(response.body));
+    }catch (e) {
+      throw e;
     }
   }
 }

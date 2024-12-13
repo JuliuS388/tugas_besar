@@ -63,6 +63,7 @@ class _TicketListState extends State<TicketList> {
       appBar: AppBar(
         title: Text('Tiket', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.blue.shade900,
+        foregroundColor: Colors.white,
       ),
       body: RefreshIndicator(
         onRefresh: _fetchRiwayat,

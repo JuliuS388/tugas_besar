@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/client/RiwayatClient.dart';
 import 'package:tugas_besar/detailPenumpang.dart';
 import 'package:tugas_besar/entity/Pemesanan.dart';
+import 'package:tugas_besar/entity/Riwayat.dart';
 import 'package:tugas_besar/entity/Bus.dart';
 import 'package:tugas_besar/entity/Jadwal.dart';
 import 'package:tugas_besar/client/PemesananClient.dart';
 import 'package:intl/intl.dart';
-import 'package:tugas_besar/entity/Ticket.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 
 class DetailBusDanPemesanan extends StatefulWidget {
@@ -31,11 +32,12 @@ Future<int?> getUserId() async {
 }
 
 class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
-  // Fungsi Booking
+  // Method to handle ticket booking
   void _confirmBooking(BuildContext context) async {
+    // Calculate total price
     double totalPrice = widget.jadwal.harga * widget.jumlahKursi;
 
-    // Modal Dialog
+    // Show confirmation dialog
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -44,7 +46,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
           width: double.infinity,
           padding: const EdgeInsets.all(20.0),
           height: MediaQuery.of(context).size.height * 0.6,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(25.0),
@@ -54,6 +56,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Header Section
               Text(
                 'Konfirmasi Pemesanan',
                 style: TextStyle(
@@ -62,18 +65,18 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                   color: Colors.blue.shade900,
                 ),
               ),
-              const SizedBox(height: 15),
-              const Divider(),
+              SizedBox(height: 15),
+              Divider(),
 
-              // Detail Tiket yang Dipesan
+              // Ticket Details Section
               Row(
                 children: [
                   Icon(Icons.directions_bus, color: Colors.blue.shade900),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'Bus: ${widget.bus.namaBus}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                       ),
@@ -81,24 +84,24 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Row(
                 children: [
                   Icon(Icons.location_on, color: Colors.blue.shade900),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'Jadwal: ${widget.jadwal.asal} to ${widget.jadwal.tujuan}',
-                      style: const TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 16),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Row(
                 children: [
                   Icon(Icons.attach_money, color: Colors.blue.shade900),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'Harga: Rp. ${totalPrice.toStringAsFixed(0)}',
@@ -112,21 +115,19 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                 ],
               ),
 
-              const Spacer(),
+              Spacer(),
 
-              // Konfirmasi Pemesanan
+              // Button Section
               Center(
                 child: ElevatedButton(
                   onPressed: () async {
                     try {
-                      // Ambil userId
                       final userId = await getUserId();
-                      print(userId);
                       if (userId == null) {
                         throw 'User ID tidak ditemukan. Harap login ulang.';
                       }
 
-                      // Buat pemesanan
+                      // 1. Buat pemesanan
                       var pemesanan = Pemesanan(
                         idUser: userId,
                         idJadwal: widget.jadwal.idJadwal,
@@ -134,63 +135,131 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                         harga: totalPrice,
                       );
 
-                      // Kirim ke server
-                      var pemesananBaru =
-                          await PemesananClient.create(pemesanan);
-                      var pemesananId = pemesananBaru.id!;
+                      try {
+                        // 2. Kirim pemesanan ke server
+                        var pemesananBaru = await PemesananClient.create(pemesanan);
+                        var pemesananId = pemesananBaru.id!;
 
-                      // Navigasi ke halaman DetailPenumpang
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailPenumpang(
-                            jumlahKursi: widget.jumlahKursi,
-                            idPemesanan: pemesananId,
-                            pemesanan: pemesananBaru,
+                        // 3. Buat riwayat
+                        var riwayat = Riwayat(
+                          idUser: userId,
+                          idPemesanan: pemesananId,
+                          tanggalTransaksi: DateTime.now().toIso8601String(),
+                          pemesanan: pemesananBaru,
+                        );
+
+                        try {
+                          await RiwayatClient.create(riwayat);
+
+                          // Tutup bottom sheet terlebih dahulu
+                          Navigator.pop(context);
+
+                          // 5. Navigasi ke halaman DetailPenumpang
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailPenumpang(
+                                jumlahKursi: widget.jumlahKursi,
+                                idPemesanan: pemesananId,
+                                pemesanan: pemesananBaru,
+                              ),
+                            ),
+                          );
+
+                          // 6. Tampilkan notifikasi sukses
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  Icon(Icons.check_circle, color: Colors.white),
+                                  SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Pemesanan berhasil!',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 4),
+                            ),
+                          );
+                        } catch (e) {
+                          // Error handling untuk riwayat
+                          print("Error saat menyimpan riwayat: $e");
+                          
+                          // Jika gagal membuat riwayat, hapus pemesanan
+                          await PemesananClient.destroy(pemesananId);
+                          
+                          Navigator.pop(context); // Tutup bottom sheet
+                          
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  Icon(Icons.error, color: Colors.white),
+                                  SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Gagal menyimpan riwayat: $e',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: Colors.red,
+                              duration: Duration(seconds: 4),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        // Error handling untuk pemesanan
+                        print("Error saat memesan tiket: $e");
+                        
+                        Navigator.pop(context); // Tutup bottom sheet
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                Icon(Icons.error, color: Colors.white),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Gagal melakukan pemesanan: $e',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            backgroundColor: Colors.red,
+                            duration: Duration(seconds: 4),
                           ),
-                        ),
-                      );
-
-                      // Show success snackbar
-                      // ignore: use_build_context_synchronously
+                        );
+                      }
+                    } catch (e) {
+                      // Error handling untuk user ID
+                      print("Error saat mengambil user ID: $e");
+                      
+                      Navigator.pop(context); // Tutup bottom sheet
+                      
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Row(
                             children: [
-                              Icon(Icons.check_circle, color: Colors.white),
+                              Icon(Icons.error, color: Colors.white),
                               SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Pemesanan berhasil!',
+                                  'Gagal mengambil user ID: $e',
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
                             ],
                           ),
-                          backgroundColor: Colors.green,
-                          duration: Duration(seconds: 4),
-                        ),
-                      );
-                    } catch (e) {
-                      print("Error saat memesan tiket: $e");
-                      // Show error snackbar
-                      // ignore: use_build_context_synchronously
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Row(
-                            children: [
-                              const Icon(Icons.error, color: Colors.white),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Gagal melakukan pemesanan: $e',
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ],
-                          ),
                           backgroundColor: Colors.red,
-                          duration: const Duration(seconds: 4),
+                          duration: Duration(seconds: 4),
                         ),
                       );
                     }
@@ -220,6 +289,12 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
         );
       },
     );
+  }
+
+  // Function to format the date and time
+  String _formatDate(DateTime date) {
+    return DateFormat('MMMM d, yyyy, HH:mm')
+        .format(date); // Format: Bulan dd, yyyy, jam:mm
   }
 
   @override
@@ -264,7 +339,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
-                                      'Informasi Bus',
+                                      'Bus Information',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -273,7 +348,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                                     Text(
                                       'Supir: ${widget.bus.supirBus ?? 'Unknown'}',
                                       style:
-                                          const TextStyle(color: Colors.blue),
+                                          const TextStyle(color: Colors.grey),
                                     ),
                                   ],
                                 ),
@@ -290,7 +365,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                         ),
                         const SizedBox(height: 24),
                         const SectionTitle(title: 'Keberangkatan'),
-                        const InformationCard(
+                        InformationCard(
                           content:
                               '1. Penumpang sudah siap setidaknya 60 menit sebelum keberangkatan di titik keberangkatan yang telah ditentukan oleh agen. '
                               'Keterlambatan penumpang dapat menyebabkan tiket dibatalkan secara sepihak dan tidak mendapatkan pengembalian dana.\n\n'
@@ -299,14 +374,13 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                         ),
                         const SizedBox(height: 16),
                         const SectionTitle(title: 'Barang Bawaan'),
-                        const InformationCard(
+                        InformationCard(
                           content:
                               '1. Penumpang dilarang membawa barang terlarang/ilegal dan menyertakan seperti senjata tajam, bahan terbakar, dan obat-obatan terlarang. '
                               'Barang-barang ini akan ditolak oleh pihak keperluan angkutan.\n\n'
                               '2. Untuk barang yang melebihi kapasitas yang telah ditentukan akan dikenakan biaya tambahan sesuai peraturan masing-masing agen bus.\n\n'
                               '3. Penumpang diminta untuk menjaga barang pribadi mereka selama perjalanan.',
                         ),
-                        const SizedBox(height: 70),
                       ],
                     ),
                   ),
@@ -362,7 +436,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
 class SectionTitle extends StatelessWidget {
   final String title;
 
-  const SectionTitle({super.key, required this.title});
+  const SectionTitle({required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -382,7 +456,7 @@ class SectionTitle extends StatelessWidget {
 class InformationCard extends StatelessWidget {
   final String content;
 
-  const InformationCard({super.key, required this.content});
+  const InformationCard({required this.content});
 
   @override
   Widget build(BuildContext context) {

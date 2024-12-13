@@ -45,7 +45,24 @@ class _HomeViewState extends State<HomeView> {
         }
       },
     ),
-    HistoriPage(),
+    FutureBuilder<int?>(
+      future: getUserId(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        } else if (snapshot.hasData) {
+          return HistoriPage(
+              idUser: snapshot
+                  .data!); // Mengarah ke TicketCard secara tidak langsung
+        } else {
+          return Center(child: Text("No data available"));
+        }
+      },
+    ),
+
+    
     const ProfileScreen(),
 
     // Add any additional views here as needed

@@ -9,6 +9,7 @@ import 'package:tugas_besar/client/ProfileClient.dart';
 import 'package:tugas_besar/camera.dart';
 import 'package:camera/camera.dart';
 
+
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
 
@@ -20,8 +21,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   XFile? _image;
   Profile? _profile; // To hold the fetched profile data
-  final String apiUrl =
-      'http://192.168.100.89/1_Travel_C_API/public/api/user/update';
+  final String apiUrl = 'http://10.0.2.2:8000/api/user/update';
 
   final _namaLengkapController = TextEditingController();
   final _tanggalLahirController = TextEditingController();
@@ -127,8 +127,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<bool> updateProfile() async {
     try {
-      final String? token = await TokenStorage
-          .getToken(); // Replace with actual token from storage
+      final String? token = await TokenStorage.getToken(); // Replace with actual token from storage
 
       if (token == null) {
         print("Token is missing");
@@ -148,8 +147,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer $token', // Include the token for authentication
+          'Authorization': 'Bearer $token', // Include the token for authentication
         },
         body: json.encode(profileData),
       );
@@ -161,13 +159,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       // Handle image upload separately if an image is selected
       if (_image != null) {
-        var imageUploadRequest = http.MultipartRequest(
-            'POST',
-            Uri.parse(
-                'http://192.168.100.89/1_Travel_C_API/public/api/user/upload-image'));
+        var imageUploadRequest = http.MultipartRequest('POST', Uri.parse('http://10.0.2.2:8000/api/user/upload-image'));
         imageUploadRequest.headers['Authorization'] = 'Bearer $token';
-        var file =
-            await http.MultipartFile.fromPath('profile_image', _image!.path);
+        var file = await http.MultipartFile.fromPath('profile_image', _image!.path);
         imageUploadRequest.files.add(file);
 
         var imageUploadResponse = await imageUploadRequest.send();
@@ -201,17 +195,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade900,
-        foregroundColor: Colors.white,
-        title: const Text('Profile Update'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      backgroundColor: Colors.blue.shade900,
+      foregroundColor: Colors.white,
+      title: const Text('Profile Update'),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => Navigator.pop(context),
       ),
     ),
     body: Padding(
@@ -234,125 +227,126 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ? NetworkImage(_profile!.profileImage!)
                               : const AssetImage('assets/default_profile.jpg')) as ImageProvider,
                     ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: _showImageSourceOptions,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          padding: const EdgeInsets.all(4),
-                          child: const Icon(
-                            Icons.camera_alt,
-                            color: Colors.black,
-                            size: 20,
-                          ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: _showImageSourceOptions,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(4),
+                        child: const Icon(
+                          Icons.camera_alt,
+                          color: Colors.black,
+                          size: 20,
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Name Input
-              _buildTextFormField(
-                controller: _namaLengkapController,
-                label: 'Name',
-                icon: Icons.person,
-              ),
-              const SizedBox(height: 20),
-
-              // Username Input
-              _buildTextFormField(
-                controller: _usernameController,
-                label: 'Username',
-                icon: Icons.person,
-              ),
-              const SizedBox(height: 20),
-
-              // Phone Number Input
-              _buildTextFormField(
-                controller: _nomorTeleponController,
-                label: 'Phone Number',
-                icon: Icons.phone,
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 20),
-
-              // Date of Birth Input
-              TextFormField(
-                controller: _tanggalLahirController,
-                decoration: InputDecoration(
-                  labelText: 'Date of Birth (YYYY-MM-DD)',
-                  prefixIcon: const Icon(Icons.calendar_today),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
                   ),
-                ),
-                readOnly: true,
-                onTap: () async {
-                  final DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                  );
-                  if (picked != null) {
-                    setState(() {
-                      _tanggalLahirController.text = picked.toIso8601String();
-                    });
-                  }
-                },
+                ],
               ),
-              const SizedBox(height: 20),
-              // Update Profile Button
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade900,
-                  foregroundColor: Colors.white,
+            ),
+            const SizedBox(height: 20),
+            
+            // Name Input
+            _buildTextFormField(
+              controller: _namaLengkapController,
+              label: 'Name',
+              icon: Icons.person,
+            ),
+            const SizedBox(height: 20),
+
+            // Username Input
+            _buildTextFormField(
+              controller: _usernameController,
+              label: 'Username',
+              icon: Icons.person,
+            ),
+            const SizedBox(height: 20),
+
+            // Phone Number Input
+            _buildTextFormField(
+              controller: _nomorTeleponController,
+              label: 'Phone Number',
+              icon: Icons.phone,
+              keyboardType: TextInputType.phone,
+            ),
+            const SizedBox(height: 20),
+
+            // Date of Birth Input
+            TextFormField(
+              controller: _tanggalLahirController,
+              decoration: InputDecoration(
+                labelText: 'Date of Birth (YYYY-MM-DD)',
+                prefixIcon: const Icon(Icons.calendar_today),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
-                onPressed: () async {
-                  bool success = await updateProfile();
-                  String message =
-                      success ? 'Profile Updated!' : 'Profile Update Failed!';
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                      title: Text(message),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            if (success) {
-                              Navigator.pop(context, true);
-                            }
-                          },
-                          child: Text('OK'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: const Text('Update Profile'),
               ),
-            ],
-          ),
+              readOnly: true,
+              onTap: () async {
+                final DateTime? picked = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime.now(),
+                );
+                if (picked != null) {
+                  setState(() {
+                    _tanggalLahirController.text = picked.toIso8601String();
+                  });
+                }
+              },
+            ),
+            const SizedBox(height: 20),
+            // Update Profile Button
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade900,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () async {
+                bool success = await updateProfile();
+                String message = success ? 'Profile Updated!' : 'Profile Update Failed!';
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: Text(message),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          if (success) {
+                            Navigator.pop(context, true);
+                          }
+                        },
+                        child: Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: const Text('Update Profile'),
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildTextFormField({
     required TextEditingController controller,

@@ -4,8 +4,8 @@ import 'package:tugas_besar/entity/Ticket.dart';
 import 'package:tugas_besar/tokenStorage.dart'; // Impor TokenStorage
 
 class TicketClient {
-  static const String url = '192.168.175.22';
-  static const String endpoint = '/Travel_API/public/api/tiket';
+  static const String url = '10.0.2.2:8000';
+  static const String endpoint = '/api/tiket';
 
   static Future<List<Ticket>> fetchByUser(int userId) async {
     try {
