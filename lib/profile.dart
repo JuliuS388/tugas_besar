@@ -60,8 +60,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 60),
                     CircleAvatar(
                       radius: 50,
-                      backgroundImage: NetworkImage(profile.profileImage ??
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNuMtV6voiMGgINSW_PbviV6ecO3nMab9uVw&s'), // Use profile image if available
+                      backgroundImage: profile.profileImage != null
+                          ? NetworkImage(profile.profileImage!)
+                          : AssetImage('assets/default_profile.jpg') as ImageProvider,
                     ),
                     const SizedBox(height: 10),
                     Text(

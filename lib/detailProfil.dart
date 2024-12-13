@@ -64,8 +64,10 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                     child: Column(
                       children: [
                         CircleAvatar(
-                          radius: 60,
-                          backgroundImage: NetworkImage(profile.profileImage ?? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNuMtV6voiMGgINSW_PbviV6ecO3nMab9uVw&s'),
+                          radius: 50,
+                          backgroundImage: profile.profileImage != null
+                              ? NetworkImage(profile.profileImage!)
+                              : AssetImage('assets/default_profile.jpg') as ImageProvider,
                         ),
                         const SizedBox(height: 16),
                         Text(
