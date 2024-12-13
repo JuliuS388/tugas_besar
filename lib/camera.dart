@@ -53,15 +53,10 @@ class _CameraViewState extends State<CameraView> {
   void _switchCamera() async {
     if (widget.cameras.length > 1) {
       try {
-        if (_cameraController != null &&
-            _cameraController!.value.isStreamingImages) {
-          await _cameraController?.stopImageStream();
-        }
+        await _cameraController?.dispose();
       } catch (e) {
-        print('Error stopping image stream: $e');
+        print('Error stopping camera: $e');
       }
-
-      await _cameraController?.dispose();
 
       _currentCameraIndex = (_currentCameraIndex + 1) % widget.cameras.length;
 
@@ -78,10 +73,9 @@ class _CameraViewState extends State<CameraView> {
       try {
         await newController.initialize();
 
-        _cameraController = newController;
-
         if (mounted) {
           setState(() {
+            _cameraController = newController;
             _isInitialized = true;
           });
         }
@@ -129,7 +123,7 @@ class _CameraViewState extends State<CameraView> {
         children: [
           _buildCameraPreview(),
           Positioned(
-            bottom: 20, // Ubah ke 20 untuk lebih turun
+            bottom: 20, // Posisi tombol lebih rendah
             left: 0,
             right: 0,
             child: Center(
@@ -149,17 +143,7 @@ class _CameraViewState extends State<CameraView> {
     return Center(
       child: AspectRatio(
         aspectRatio: 1.0,
-        child: OverflowBox(
-          alignment: Alignment.center,
-          child: FittedBox(
-            fit: BoxFit.cover,
-            child: SizedBox(
-              width: _cameraController!.value.previewSize!.height,
-              height: _cameraController!.value.previewSize!.width,
-              child: CameraPreview(_cameraController!),
-            ),
-          ),
-        ),
+        child: CameraPreview(_cameraController!),
       ),
     );
   }
@@ -212,60 +196,9 @@ class _CameraViewState extends State<CameraView> {
 
     try {
       final image = await _cameraController!.takePicture();
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => DisplayPictureScreen(
-            imagePath: image.path,
-          ),
-        ),
-      );
+      Navigator.pop(context, image);
     } catch (e) {
       print('Error taking picture: $e');
     }
-  }
-}
-
-class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
-
-  const DisplayPictureScreen({Key? key, required this.imagePath})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        title: const Text('Display the Picture'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AspectRatio(
-              aspectRatio: 1.0,
-              child: Image.file(
-                File(imagePath),
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(height: 100),
-            IconButton(
-              icon: const Icon(Icons.check_circle,
-                  color: Color.fromARGB(255, 255, 255, 255), size: 80),
-              onPressed: () {
-                // Logika untuk mengonfirmasi foto sebagai profil
-                print('Foto dijadikan profil: $imagePath');
-                Navigator.of(context)
-                    .pop(); // Kembali ke layar sebelumnya setelah konfirmasi
-              },
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

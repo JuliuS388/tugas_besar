@@ -225,7 +225,7 @@ Widget build(BuildContext context) {
                           ? FileImage(File(_image!.path))
                           : (_profile?.profileImage != null
                               ? NetworkImage(_profile!.profileImage!)
-                              : const NetworkImage('https://example.com/default-avatar.png')) as ImageProvider,
+                              : const AssetImage('assets/default_profile.jpg')) as ImageProvider,
                     ),
                   ),
                   Positioned(
