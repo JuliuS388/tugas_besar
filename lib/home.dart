@@ -258,13 +258,12 @@ class _HomeContentState extends State<HomeContent> {
                                             asal: asal,
                                             tujuan: tujuan,
                                             jumlahKursi: int.parse(kursi),
-                                            tanggal:
-                                                tanggal, // Pass tanggal here
+                                            tanggal: tanggal,
                                           ),
                                         ),
                                       );
 
-                                      // Debugging: print the values being passed
+                                      // Debugging
                                       print('asal: $asal');
                                       print('tujuan: $tujuan');
                                       print('jumlahKursi: ${int.parse(kursi)}');
