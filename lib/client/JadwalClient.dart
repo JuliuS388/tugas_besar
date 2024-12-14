@@ -4,8 +4,8 @@ import 'package:tugas_besar/tokenStorage.dart';
 import 'package:tugas_besar/entity/Jadwal.dart';
 
 class JadwalClient {
-  static const String url = '192.168.100.89';
-  static const String endpoint = '/1_Travel_C_API/public/api/jadwal/search';
+  static const String url = '10.0.2.2:8000';
+  static const String endpoint = '/api/jadwal/search';
 
   static Future<List<Jadwal>> fetchFiltered(
       String asal, String tujuan, String keberangkatan) async {
@@ -44,6 +44,25 @@ class JadwalClient {
     } catch (e) {
       print('Error fetching schedules: $e');
       rethrow;
+    }
+  }
+
+  static Future<Jadwal> find(int id) async {
+    try {
+      String? token =
+          await TokenStorage.getToken(); // Ambil token dari tokenStorage
+      var response = await http.get(
+        Uri.http(url, '$endpoint/$id'),
+        headers: {
+          "Authorization": "Bearer $token", // Tambahkan header Authorization
+        },
+      );
+
+      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
+
+      return Jadwal.fromJson(json.decode(response.body)['data']);
+    } catch (e) {
+      return Future.error(e.toString());
     }
   }
 }

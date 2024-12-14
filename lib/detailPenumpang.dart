@@ -1,24 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:tugas_besar/entity/Penumpang.dart';
+import 'package:tugas_besar/entity/Pemesanan.dart';
+import 'package:tugas_besar/entity/Ticket.dart';
 import 'package:tugas_besar/client/PenumpangClient.dart';
 import 'package:tugas_besar/client/PemesananClient.dart';
-import 'package:tugas_besar/home.dart';
+import 'package:tugas_besar/client/TicketClient.dart';import 'package:tugas_besar/home.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 import 'dart:ui';
 import 'dart:math';
+import 'package:tugas_besar/pembayaran.dart';
 
 class DetailPenumpang extends StatefulWidget {
   final int idPemesanan;
   final int jumlahKursi;
+  final Pemesanan pemesanan;
 
   const DetailPenumpang({
     super.key,
+    required this.pemesanan,
     required this.idPemesanan,
     required this.jumlahKursi,
   });
 
   @override
   _DetailPenumpangState createState() => _DetailPenumpangState();
+}
+
+Future<int?> getUserId() async {
+  final userId = await TokenStorage.getUserId();
+  print("User ID yang didapat: $userId");
+  return userId;
 }
 
 class _DetailPenumpangState extends State<DetailPenumpang> {
@@ -55,7 +66,7 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
     List<String> letters = ['A', 'B', 'C', 'D'];
     int number;
 
-    // Keep generating until we get a unique number
+  // Keep generating until we get a unique number
     do {
       String letter = letters[random.nextInt(letters.length)];
       number = random.nextInt(10) + 1; // Random number between 1 and 10
@@ -66,13 +77,11 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
     generatedSeatNumbers.add(seatNumber);
     return seatNumber;
   }
-
   // Function to create passengers
   Future<List<int>> _buatPenumpang(int pemesananId) async {
     List<int> penumpangIds = [];
-
     for (var penumpang in _penumpangs) {
-      // Validate passenger data
+      // Validasi data penumpang
       if (penumpang['nama'] == null || penumpang['nama'].isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Nama penumpang tidak boleh kosong')),
@@ -95,8 +104,6 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
         return [];
       }
 
-      print("Pemesanan ID yang didapat: ${widget.idPemesanan}");
-
       var penumpangData = Penumpang(
         namaPenumpang: penumpang['nama'],
         jenisKelamin: penumpang['jenisKelamin'],
@@ -106,18 +113,42 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
       );
 
       try {
-        // Call the create method to create passenger
+        // Panggil API untuk membuat penumpang
         var createdPenumpang = await PenumpangClient.create(penumpangData);
+        // Simpan ID penumpang
         penumpangIds.add(createdPenumpang.id!);
+        // Dapatkan `idUser` dari token storage
+        final userId = await getUserId();
+
+        // Buat tiket berdasarkan penumpang yang berhasil dibuat
+        var tiket = Ticket(
+          user_id: userId!,
+          pemesanan_id: widget.idPemesanan,
+          penumpang_id: createdPenumpang.id!,
+          pemesanan: widget.pemesanan,
+          penumpang: createdPenumpang,
+        );
+
+        // Debug print sebelum membuat ticket
+        print('Creating ticket with data: ${tiket.toJson()}');
+
+        try {
+          await TicketClient.create(tiket);
+        } catch (e) {
+          print("Error creating ticket: $e");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error saat membuat tiket: $e')),
+          );
+        }
       } catch (e) {
         print("Exception occurred: $e");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saat membuat penumpang: $e')),
+          SnackBar(
+              content: Text('Error saat membuat penumpang atau tiket: $e')),
         );
         return [];
       }
     }
-
     return penumpangIds;
   }
 
@@ -219,20 +250,21 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
             ),
             ElevatedButton(
               onPressed: () async {
-                Navigator.of(context).pop();
-                List<int> penumpangIds =
-                    await _buatPenumpang(widget.idPemesanan);
+            
+                List<int> penumpangIds = await _buatPenumpang(widget.idPemesanan);
+                print('masuk keisni ');
+               
                 if (penumpangIds.isNotEmpty) {
-                  // Navigate to PembayaranScreen with idPemesanan
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         PembayaranScreen(idPemesanan: widget.idPemesanan),
-                  //   ),
-                  // );
+                  
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Pembayaran(idPemesanan: widget.idPemesanan),
+                    ),
+                  );
                 }
               },
+              child: Text('Lanjut Pembayaran'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -240,7 +272,6 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Lanjut Pembayaran'),
             )
           ],
         );

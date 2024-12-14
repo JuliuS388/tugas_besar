@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:tugas_besar/tokenStorage.dart';
+import 'package:tugas_besar/entity/User.dart';
 
 class UserClientlogin {
-  static const String url = '192.168.100.89';
-  static const String loginEndpoint = '/1_Travel_C_API/public/api/login';
+  static const String url = '10.0.2.2:8000';
+  static const String loginEndpoint = '/api/login';
 
   static Future<bool> login(String email, String password) async {
     try {
@@ -25,6 +26,9 @@ class UserClientlogin {
         await TokenStorage.saveUserId(data['id_user']); // Simpan ID user
         print("ID User tersimpan: ${data['id_user']}");
 
+        await TokenStorage.saveUserId(data['id_user']); // Simpan ID user
+        print("ID User tersimpan: ${data['id_user']}");
+
         return true;
       } else {
         print('Login failed: ${response.body}');
@@ -42,6 +46,25 @@ class UserClientlogin {
       print('Logout successful');
     } catch (e) {
       print('Error Logout');
+    }
+  }
+
+  static Future<User> find(int id) async {
+    try {
+      String? token =
+          await TokenStorage.getToken(); // Ambil token dari tokenStorage
+      var response = await http.get(
+        Uri.http(url, '$loginEndpoint/$id'),
+        headers: {
+          "Authorization": "Bearer $token", // Tambahkan header Authorization
+        },
+      );
+
+      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
+
+      return User.fromJson(json.decode(response.body)['data']);
+    } catch (e) {
+      return Future.error(e.toString());
     }
   }
 }
