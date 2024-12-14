@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/client/UlasanClient.dart';
+import 'package:tugas_besar/home.dart';
 
 class UlasanPage extends StatefulWidget {
+  final int idPemesanan;
+  final int idUser;
+
+  const UlasanPage({
+    Key? key,
+    required this.idPemesanan,
+    required this.idUser,
+  }) : super(key: key);
+
   @override
   _UlasanPageState createState() => _UlasanPageState();
 }
 
 class _UlasanPageState extends State<UlasanPage> {
-  int ratingSupir = 4; // Default rating supir
-  int ratingFasilitas = 4; // Default rating fasilitas
-  final TextEditingController ulasanSupirController = TextEditingController();
-  final TextEditingController ulasanFasilitasController =
-      TextEditingController();
+  double rating = 4.0;
+  final TextEditingController isiUlasanController = TextEditingController();
+  String jenisUlasan = 'supir'; // Default value
 
-  Widget buildRatingRow(int currentRating, Function(int) onRatingSelected) {
+  Widget buildRatingRow(double currentRating, Function(double) onRatingSelected) {
     return Row(
       children: List.generate(5, (index) {
         return IconButton(
           onPressed: () {
-            onRatingSelected(index + 1); // Update rating saat bintang diklik
+            onRatingSelected((index + 1).toDouble());
           },
           icon: Icon(
             index < currentRating ? Icons.star : Icons.star_border,
@@ -27,6 +36,58 @@ class _UlasanPageState extends State<UlasanPage> {
         );
       }),
     );
+  }
+
+  Future<void> submitUlasan() async {
+    if (isiUlasanController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Mohon isi ulasan terlebih dahulu')),
+      );
+      return;
+    }
+
+    try {
+      final Map<String, dynamic> data = {
+        'id_user': widget.idUser,
+        'id_pemesanan': widget.idPemesanan,
+        'rating': rating.toInt(),
+        'isi_ulasan': isiUlasanController.text.trim(),
+        'jenis_ulasan': jenisUlasan,
+      };
+
+      await UlasanClient.create(data);
+      
+      if (!mounted) return;
+      
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: const Text('Berhasil'),
+          content: const Text('Ulasan berhasil dikirim'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const HomeView()),
+                  ); // Return to previous screen
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal mengirim ulasan: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -39,9 +100,7 @@ class _UlasanPageState extends State<UlasanPage> {
         ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
         backgroundColor: Colors.blue.shade900,
       ),
@@ -51,7 +110,6 @@ class _UlasanPageState extends State<UlasanPage> {
           padding: const EdgeInsets.all(16.0),
           child: ListView(
             children: [
-              // Supir Bus
               Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
@@ -61,63 +119,50 @@ class _UlasanPageState extends State<UlasanPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Supir Bus',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      buildRatingRow(ratingSupir, (rating) {
-                        setState(() {
-                          ratingSupir = rating;
-                        });
-                      }),
-                      SizedBox(height: 10),
-                      TextField(
-                        controller: ulasanSupirController,
+                      // Jenis Ulasan Dropdown
+                      DropdownButtonFormField<String>(
+                        value: jenisUlasan,
                         decoration: InputDecoration(
-                          hintText: 'Tulis ulasan Anda',
+                          labelText: 'Jenis Ulasan',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                         ),
-                        maxLines: 3,
+                        items: ['supir', 'fasilitas'].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value.toUpperCase()),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            jenisUlasan = newValue!;
+                          });
+                        },
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
+                      SizedBox(height: 20),
 
-              // Fasilitas Bus
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                      // Rating
                       Text(
-                        'Fasilitas Bus',
+                        'Rating',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       SizedBox(height: 10),
-                      buildRatingRow(ratingFasilitas, (rating) {
+                      buildRatingRow(rating, (newRating) {
                         setState(() {
-                          ratingFasilitas = rating;
+                          rating = newRating;
                         });
                       }),
-                      SizedBox(height: 10),
+                      SizedBox(height: 20),
+
+                      // Isi Ulasan
                       TextField(
-                        controller: ulasanFasilitasController,
+                        controller: isiUlasanController,
                         decoration: InputDecoration(
+                          labelText: 'Isi Ulasan',
                           hintText: 'Tulis ulasan Anda',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
@@ -140,26 +185,7 @@ class _UlasanPageState extends State<UlasanPage> {
                   ),
                   padding: EdgeInsets.symmetric(vertical: 16.0),
                 ),
-                onPressed: () {
-                  // Menampilkan dialog pop-up
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Berhasil Memberi Ulasan'),
-                      content: Text('Terima kasih atas ulasan Anda.'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context); // Tutup dialog
-                            Navigator.pop(
-                                context); // Kembali ke halaman sebelumnya
-                          },
-                          child: Text('OK'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                onPressed: submitUlasan,
                 child: Text(
                   'Submit',
                   style: TextStyle(fontSize: 16, color: Colors.white),

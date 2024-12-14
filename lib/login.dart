@@ -3,8 +3,15 @@ import 'package:tugas_besar/home.dart';
 import 'package:tugas_besar/register.dart';
 import 'package:tugas_besar/form_component.dart';
 import 'package:tugas_besar/client/UserClientLogin.dart';
-import 'package:tugas_besar/tokenStorage.dart';
+import 'package:tugas_besar/tokenStorage.dart'; // Pastikan import ini ada
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+// Menyimpan idUser
+Future<void> saveUserId(int idUser) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setInt('userId', idUser);
+}
 
 class LoginView extends StatefulWidget {
   final Map<String, dynamic>? data;

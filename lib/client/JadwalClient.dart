@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:tugas_besar/tokenStorage.dart';
-import 'package:tugas_besar/entity/Jadwal.dart'; // Gantilah ke entitas Jadwal yang sesuai
+import 'package:tugas_besar/entity/Jadwal.dart';
 
 class JadwalClient {
   static const String url = '10.0.2.2:8000';
@@ -19,7 +19,7 @@ class JadwalClient {
         Uri.http(url, endpoint, {
           'asal': asal, // Menambahkan asal
           'tujuan': tujuan, // Menambahkan tujuan
-          'keberangkatan': keberangkatan, // Menambahkan tanggal keberangkatan
+          'tanggal': keberangkatan, // Menambahkan tanggal keberangkatan
         }),
         headers: {
           "Authorization": "Bearer $token",
@@ -29,7 +29,7 @@ class JadwalClient {
 
       if (response.statusCode == 200) {
         var decoded = json.decode(response.body);
-        // Pastikan data yang diterima memiliki struktur yang sesuai
+
         if (decoded != null && decoded['data'] != null) {
           return (decoded['data'] as List)
               .map<Jadwal>((e) => Jadwal.fromJson(e))
@@ -44,6 +44,25 @@ class JadwalClient {
     } catch (e) {
       print('Error fetching schedules: $e');
       rethrow;
+    }
+  }
+
+  static Future<Jadwal> find(int id) async {
+    try {
+      String? token =
+          await TokenStorage.getToken(); // Ambil token dari tokenStorage
+      var response = await http.get(
+        Uri.http(url, '$endpoint/$id'),
+        headers: {
+          "Authorization": "Bearer $token", // Tambahkan header Authorization
+        },
+      );
+
+      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
+
+      return Jadwal.fromJson(json.decode(response.body)['data']);
+    } catch (e) {
+      return Future.error(e.toString());
     }
   }
 }

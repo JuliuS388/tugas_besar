@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/entity/User.dart';
 import 'package:tugas_besar/jadwalList.dart';
 import 'package:tugas_besar/ticketList.dart';
 import 'package:tugas_besar/profile.dart';
 import 'package:tugas_besar/histori_page.dart';
 import 'package:tugas_besar/entity/Jadwal.dart';
+import 'package:tugas_besar/tokenStorage.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -21,10 +23,46 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  static Future<int?> getUserId() async {
+    return await TokenStorage.getUserId();
+  }
+
   static List<Widget> _widgetOptions = <Widget>[
     const HomeContent(),
-    TicketList(),
-    HistoriPage(),
+    FutureBuilder<int?>(
+      future: getUserId(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        } else if (snapshot.hasData) {
+          return TicketList(
+              idUser: snapshot
+                  .data!); // Mengarah ke TicketCard secara tidak langsung
+        } else {
+          return Center(child: Text("No data available"));
+        }
+      },
+    ),
+    FutureBuilder<int?>(
+      future: getUserId(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        } else if (snapshot.hasData) {
+          return HistoriPage(
+              idUser: snapshot
+                  .data!); // Mengarah ke TicketCard secara tidak langsung
+        } else {
+          return Center(child: Text("No data available"));
+        }
+      },
+    ),
+
+    
     const ProfileScreen(),
 
     // Add any additional views here as needed
@@ -258,13 +296,12 @@ class _HomeContentState extends State<HomeContent> {
                                             asal: asal,
                                             tujuan: tujuan,
                                             jumlahKursi: int.parse(kursi),
-                                            tanggal:
-                                                tanggal, // Pass tanggal here
+                                            tanggal: tanggal,
                                           ),
                                         ),
                                       );
 
-                                      // Debugging: print the values being passed
+                                      // Debugging
                                       print('asal: $asal');
                                       print('tujuan: $tujuan');
                                       print('jumlahKursi: ${int.parse(kursi)}');
