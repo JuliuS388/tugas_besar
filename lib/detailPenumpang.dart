@@ -4,11 +4,11 @@ import 'package:tugas_besar/entity/Pemesanan.dart';
 import 'package:tugas_besar/entity/Ticket.dart';
 import 'package:tugas_besar/client/PenumpangClient.dart';
 import 'package:tugas_besar/client/PemesananClient.dart';
-import 'package:tugas_besar/client/TicketClient.dart';
-import 'package:tugas_besar/home.dart';
+import 'package:tugas_besar/client/TicketClient.dart';import 'package:tugas_besar/home.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 import 'dart:ui';
 import 'dart:math';
+import 'package:tugas_besar/pembayaran.dart';
 
 class DetailPenumpang extends StatefulWidget {
   final int idPemesanan;
@@ -66,7 +66,7 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
     List<String> letters = ['A', 'B', 'C', 'D'];
     int number;
 
-    // Keep generating until we get a unique number
+  // Keep generating until we get a unique number
     do {
       String letter = letters[random.nextInt(letters.length)];
       number = random.nextInt(10) + 1; // Random number between 1 and 10
@@ -77,17 +77,9 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
     generatedSeatNumbers.add(seatNumber);
     return seatNumber;
   }
-
-  // Function to get the user id from SharedPreferences
-  Future<int?> getUserId() async {
-    final userId = await TokenStorage.getUserId();
-    return userId;
-  }
-
   // Function to create passengers
   Future<List<int>> _buatPenumpang(int pemesananId) async {
     List<int> penumpangIds = [];
-
     for (var penumpang in _penumpangs) {
       // Validasi data penumpang
       if (penumpang['nama'] == null || penumpang['nama'].isEmpty) {
@@ -112,7 +104,6 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
         return [];
       }
 
-      // Buat objek penumpang
       var penumpangData = Penumpang(
         namaPenumpang: penumpang['nama'],
         jenisKelamin: penumpang['jenisKelamin'],
@@ -124,10 +115,8 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
       try {
         // Panggil API untuk membuat penumpang
         var createdPenumpang = await PenumpangClient.create(penumpangData);
-
         // Simpan ID penumpang
         penumpangIds.add(createdPenumpang.id!);
-
         // Dapatkan `idUser` dari token storage
         final userId = await getUserId();
 
@@ -160,7 +149,6 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
         return [];
       }
     }
-
     return penumpangIds;
   }
 
@@ -200,7 +188,7 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                             color: Colors.blue.shade700,
                             size: 30,
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -211,17 +199,17 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.blue.shade700),
                               ),
-                              SizedBox(height: 6),
+                              const SizedBox(height: 6),
                               Row(
                                 children: [
-                                  SizedBox(width: 5),
+                                  const SizedBox(width: 5),
                                   Text('Nama: ${penumpang['nama']}',
                                       style: TextStyle(
                                           fontSize: 14,
                                           color: Colors.blue.shade600)),
                                 ],
                               ),
-                              SizedBox(height: 6),
+                              const SizedBox(height: 6),
                               Row(
                                 children: [
                                   SizedBox(width: 5),
@@ -232,10 +220,10 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                                           color: Colors.blue.shade600)),
                                 ],
                               ),
-                              SizedBox(height: 6),
+                              const SizedBox(height: 6),
                               Row(
                                 children: [
-                                  SizedBox(width: 5),
+                                  const SizedBox(width: 5),
                                   Text('Umur: ${penumpang['umur']}',
                                       style: TextStyle(
                                           fontSize: 14,
@@ -262,18 +250,18 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
             ),
             ElevatedButton(
               onPressed: () async {
-                Navigator.of(context).pop();
-                List<int> penumpangIds =
-                    await _buatPenumpang(widget.idPemesanan);
+            
+                List<int> penumpangIds = await _buatPenumpang(widget.idPemesanan);
+                print('masuk keisni ');
+               
                 if (penumpangIds.isNotEmpty) {
-                  // Navigate to PembayaranScreen with idPemesanan
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         PembayaranScreen(idPemesanan: widget.idPemesanan),
-                  //   ),
-                  // );
+                  
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Pembayaran(idPemesanan: widget.idPemesanan),
+                    ),
+                  );
                 }
               },
               child: Text('Lanjut Pembayaran'),
@@ -302,7 +290,7 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          title: Row(
+          title: const Row(
             children: [
               Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 30),
               SizedBox(width: 10),
@@ -312,7 +300,7 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
               ),
             ],
           ),
-          content: Text(
+          content: const Text(
             'Apakah Anda yakin ingin membatalkan pemesanan ini? Tindakan ini tidak dapat dibatalkan.',
             style: TextStyle(fontSize: 16),
           ),
@@ -321,7 +309,7 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text(
+              child: const Text(
                 'Batal',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
@@ -330,6 +318,24 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
               onPressed: () {
                 try {
                   PemesananClient.destroy(widget.idPemesanan);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Row(
+                        children: [
+                          Icon(Icons.check_circle, color: Colors.white),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Pemesanan Dibatalkan!',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 4),
+                    ),
+                  );
                   Navigator.of(context).pop();
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (context) => const HomeView()),
@@ -345,7 +351,7 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Ya, Batalkan',
                 style: TextStyle(fontSize: 16),
               ),
@@ -369,11 +375,11 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
       child: Scaffold(
         backgroundColor: Colors.blue[50],
         appBar: AppBar(
-          title: Text('Detail Penumpang'),
+          title: const Text('Detail Penumpang'),
           backgroundColor: Colors.blue.shade900,
           foregroundColor: Colors.white,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               _showCancelDialog(context);
             },
@@ -403,7 +409,7 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                         child: Column(
                           children: List.generate(_jumlahPenumpang, (index) {
                             return Card(
-                              margin: EdgeInsets.symmetric(vertical: 10),
+                              margin: const EdgeInsets.symmetric(vertical: 10),
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
@@ -411,12 +417,12 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                                   children: [
                                     Text(
                                       'Detail Penumpang ${index + 1}',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    SizedBox(height: 10),
-                                    Text('Nama:',
+                                    const SizedBox(height: 10),
+                                    const Text('Nama:',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold)),
                                     TextFormField(
@@ -438,8 +444,8 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                                         });
                                       },
                                     ),
-                                    SizedBox(height: 10),
-                                    Text('Jenis Kelamin:',
+                                    const SizedBox(height: 10),
+                                    const Text('Jenis Kelamin:',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold)),
                                     Row(
@@ -455,7 +461,7 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                                             });
                                           },
                                         ),
-                                        Text('Laki-laki'),
+                                        const Text('Laki-laki'),
                                         Radio<String>(
                                           value: 'Perempuan',
                                           groupValue: _penumpangs[index]
@@ -467,11 +473,11 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                                             });
                                           },
                                         ),
-                                        Text('Perempuan'),
+                                        const Text('Perempuan'),
                                       ],
                                     ),
-                                    SizedBox(height: 10),
-                                    Text('Umur:',
+                                    const SizedBox(height: 10),
+                                    const Text('Umur:',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold)),
                                     TextFormField(
@@ -495,10 +501,10 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                                         });
                                       },
                                     ),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Text(
                                         'Nomor Kursi: ${_penumpangs[index]['nomorKursi']}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold)),
                                   ],
                                 ),
@@ -530,10 +536,10 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 30),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Lanjut Pembayaran',
                       style: TextStyle(
                         fontSize: 16,
@@ -555,7 +561,7 @@ class _DetailPenumpangState extends State<DetailPenumpang> {
                         color: Colors.black.withOpacity(0.3),
                       ),
                     ),
-                    Center(
+                    const Center(
                       child: CircularProgressIndicator(),
                     ),
                   ],

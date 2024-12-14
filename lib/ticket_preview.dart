@@ -16,6 +16,7 @@ class TicketPreview extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Preview Tiket"),
         backgroundColor: Colors.blue.shade900,
+        foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

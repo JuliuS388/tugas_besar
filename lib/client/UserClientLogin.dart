@@ -4,8 +4,8 @@ import 'package:tugas_besar/tokenStorage.dart';
 import 'package:tugas_besar/entity/User.dart';
 
 class UserClientlogin {
-  static const String url = '192.168.175.22';
-  static const String loginEndpoint = '/Travel_API/public/api/login';
+  static const String url = '10.0.2.2:8000';
+  static const String loginEndpoint = '/api/login';
 
   static Future<bool> login(String email, String password) async {
     try {
@@ -23,6 +23,8 @@ class UserClientlogin {
         String token = data['token']; // Misalkan token ada di respons API
         await TokenStorage.saveToken(token); // Simpan token
         print('Login successful, token and user ID saved');
+        await TokenStorage.saveUserId(data['id_user']); // Simpan ID user
+        print("ID User tersimpan: ${data['id_user']}");
 
         await TokenStorage.saveUserId(data['id_user']); // Simpan ID user
         print("ID User tersimpan: ${data['id_user']}");

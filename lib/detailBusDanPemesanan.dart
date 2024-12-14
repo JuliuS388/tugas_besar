@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_besar/client/RiwayatClient.dart';
 import 'package:tugas_besar/detailPenumpang.dart';
 import 'package:tugas_besar/entity/Pemesanan.dart';
+import 'package:tugas_besar/entity/Riwayat.dart';
 import 'package:tugas_besar/entity/Bus.dart';
 import 'package:tugas_besar/entity/Jadwal.dart';
 import 'package:tugas_besar/client/PemesananClient.dart';
 import 'package:intl/intl.dart';
-import 'package:tugas_besar/entity/Ticket.dart';
 import 'package:tugas_besar/tokenStorage.dart';
 
 class DetailBusDanPemesanan extends StatefulWidget {
@@ -120,16 +121,13 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
               Center(
                 child: ElevatedButton(
                   onPressed: () async {
-                    print("Tombol Pesan Tiket diklik");
                     try {
-                      // Ambil userId
                       final userId = await getUserId();
-                      print(userId);
                       if (userId == null) {
                         throw 'User ID tidak ditemukan. Harap login ulang.';
                       }
 
-                      // Buat pemesanan
+                      // 1. Buat pemesanan
                       var pemesanan = Pemesanan(
                         idUser: userId,
                         idJadwal: widget.jadwal.idJadwal,
@@ -137,45 +135,115 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                         harga: totalPrice,
                       );
 
-                      // Kirim ke server
-                      var pemesananBaru =
-                          await PemesananClient.create(pemesanan);
-                      var pemesananId = pemesananBaru.id!;
+                      try {
+                        // 2. Kirim pemesanan ke server
+                        var pemesananBaru = await PemesananClient.create(pemesanan);
+                        var pemesananId = pemesananBaru.id!;
 
-                      // Navigasi ke halaman DetailPenumpang
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailPenumpang(
-                            jumlahKursi: widget.jumlahKursi,
-                            idPemesanan: pemesananId,
-                            pemesanan: pemesananBaru,
-                          ),
-                        ),
-                      );
+                        // 3. Buat riwayat
+                        var riwayat = Riwayat(
+                          idUser: userId,
+                          idPemesanan: pemesananId,
+                          tanggalTransaksi: DateTime.now().toIso8601String(),
+                          pemesanan: pemesananBaru,
+                        );
 
-                      // Show success snackbar
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Row(
-                            children: [
-                              Icon(Icons.check_circle, color: Colors.white),
-                              SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Pemesanan berhasil!',
-                                  style: TextStyle(color: Colors.white),
-                                ),
+                        try {
+                          await RiwayatClient.create(riwayat);
+
+                          // Tutup bottom sheet terlebih dahulu
+                          Navigator.pop(context);
+
+                          // 5. Navigasi ke halaman DetailPenumpang
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailPenumpang(
+                                jumlahKursi: widget.jumlahKursi,
+                                idPemesanan: pemesananId,
+                                pemesanan: pemesananBaru,
                               ),
-                            ],
+                            ),
+                          );
+
+                          // 6. Tampilkan notifikasi sukses
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  Icon(Icons.check_circle, color: Colors.white),
+                                  SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Pemesanan berhasil!',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 4),
+                            ),
+                          );
+                        } catch (e) {
+                          // Error handling untuk riwayat
+                          print("Error saat menyimpan riwayat: $e");
+                          
+                          // Jika gagal membuat riwayat, hapus pemesanan
+                          await PemesananClient.destroy(pemesananId);
+                          
+                          Navigator.pop(context); // Tutup bottom sheet
+                          
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  Icon(Icons.error, color: Colors.white),
+                                  SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Gagal menyimpan riwayat: $e',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: Colors.red,
+                              duration: Duration(seconds: 4),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        // Error handling untuk pemesanan
+                        print("Error saat memesan tiket: $e");
+                        
+                        Navigator.pop(context); // Tutup bottom sheet
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                Icon(Icons.error, color: Colors.white),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Gagal melakukan pemesanan: $e',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            backgroundColor: Colors.red,
+                            duration: Duration(seconds: 4),
                           ),
-                          backgroundColor: Colors.green,
-                          duration: Duration(seconds: 4),
-                        ),
-                      );
+                        );
+                      }
                     } catch (e) {
-                      print("Error saat memesan tiket: $e");
-                      // Show error snackbar
+                      // Error handling untuk user ID
+                      print("Error saat mengambil user ID: $e");
+                      
+                      Navigator.pop(context); // Tutup bottom sheet
+                      
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Row(
@@ -184,7 +252,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                               SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Gagal melakukan pemesanan: $e',
+                                  'Gagal mengambil user ID: $e',
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
@@ -271,7 +339,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
-                                      'Informasi Bus',
+                                      'Bus Information',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -280,7 +348,7 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                                     Text(
                                       'Supir: ${widget.bus.supirBus ?? 'Unknown'}',
                                       style:
-                                          const TextStyle(color: Colors.blue),
+                                          const TextStyle(color: Colors.grey),
                                     ),
                                   ],
                                 ),
@@ -313,7 +381,6 @@ class _DetailBusDanPemesananState extends State<DetailBusDanPemesanan> {
                               '2. Untuk barang yang melebihi kapasitas yang telah ditentukan akan dikenakan biaya tambahan sesuai peraturan masing-masing agen bus.\n\n'
                               '3. Penumpang diminta untuk menjaga barang pribadi mereka selama perjalanan.',
                         ),
-                        const SizedBox(height: 70),
                       ],
                     ),
                   ),

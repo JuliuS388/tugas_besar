@@ -60,6 +60,13 @@ class _JadwalListState extends State<JadwalList> {
     }
   }
 
+  String _calculateDuration(DateTime start, DateTime end) {
+    final duration = end.difference(start);
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+    return '${hours}j ${minutes}m';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +99,7 @@ class _JadwalListState extends State<JadwalList> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Tidak ada bus tersedia untuk rute ${widget.asal} - ${widget.tujuan}',
+                        'Saat ini tidak tersedia bus untuk rute ${widget.asal} - ${widget.tujuan} pada tanggal ${widget.tanggal}. Silakan coba lagi nanti.',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
@@ -103,15 +110,20 @@ class _JadwalListState extends State<JadwalList> {
                   itemCount: jadwalList.length,
                   itemBuilder: (context, index) {
                     final jadwal = jadwalList[index];
+                    final duration = _calculateDuration(
+                      jadwal.keberangkatan,
+                      jadwal.kedatangan,
+                    );
+
                     return InkWell(
                       onTap: () {
-                        // Navigate to the detail bus page when tapped
+                        // Navigate to the detail page on tap
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => DetailBusDanPemesanan(
                               jadwal: jadwal,
-                              bus: jadwal.bus, // Pass the entire bus object
+                              bus: jadwal.bus,
                               jumlahKursi: widget.jumlahKursi,
                             ),
                           ),
@@ -126,84 +138,98 @@ class _JadwalListState extends State<JadwalList> {
                           elevation: 3,
                           child: Container(
                             padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Stack(
                               children: [
-                                Text(
-                                  jadwal.bus?.namaBus ??
-                                      'Nama Bus Tidak Tersedia',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 8),
-                                Row(
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          DateFormat('HH:mm')
-                                              .format(jadwal.keberangkatan),
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          jadwal.asal,
-                                          style: TextStyle(color: Colors.grey),
-                                        ),
-                                      ],
+                                    Text(
+                                      jadwal.bus?.namaBus ??
+                                          'Nama Bus Tidak Tersedia',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8),
-                                        child: Column(
+                                    SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            DottedLine(dashColor: Colors.grey),
-                                            SizedBox(height: 4),
                                             Text(
-                                              'Harga: Rp ${jadwal.harga.toStringAsFixed(0)}',
+                                              DateFormat('HH:mm')
+                                                  .format(jadwal.keberangkatan),
                                               style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 12),
-                                              textAlign: TextAlign.center,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              jadwal.asal,
+                                              style:
+                                                  TextStyle(color: Colors.grey),
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          DateFormat('HH:mm')
-                                              .format(jadwal.kedatangan),
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8),
+                                            child: Column(
+                                              children: [
+                                                DottedLine(
+                                                    dashColor: Colors.grey),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  duration,
+                                                  style: TextStyle(
+                                                    color: Colors.grey.shade700,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                         ),
-                                        Text(
-                                          jadwal.tujuan,
-                                          style: TextStyle(color: Colors.grey),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              DateFormat('HH:mm')
+                                                  .format(jadwal.kedatangan),
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              jadwal.tujuan,
+                                              style:
+                                                  TextStyle(color: Colors.grey),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
+                                    SizedBox(height: 16),
+                                    // Facilities section
+                                    Text(
+                                      'Fasilitas: ${jadwal.bus?.fasilitasBus ?? 'Fasilitas Tidak Tersedia'}',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
                                   ],
                                 ),
-                                SizedBox(height: 16),
-                                // Display bus details (driver, facilities)
-                                Text(
-                                  'Supir: ${jadwal.bus?.supirBus ?? 'Nama Supir Tidak Tersedia'}',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'Fasilitas: ${jadwal.bus?.fasilitasBus ?? 'Fasilitas Tidak Tersedia'}',
-                                  style: TextStyle(color: Colors.grey),
+                                Positioned(
+                                  bottom: 0, // Increased the bottom value
+                                  right: 0, // Increased the right value
+                                  child: Text(
+                                    'Rp ${jadwal.harga.toStringAsFixed(0)}',
+                                    style: TextStyle(
+                                      color: Colors.blue.shade700,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_besar/home.dart';
-import 'package:tugas_besar/login_page.dart';
-import 'package:tugas_besar/register.dart';
-import 'package:tugas_besar/ticket_preview.dart';
-import 'package:tugas_besar/ticketList.dart';
-import 'package:tugas_besar/histori_page.dart';
-import 'package:tugas_besar/home.dart';
+import 'package:tugas_besar/login.dart';
 
 void main() {
   runApp(MainApp());
@@ -16,9 +10,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: RegisterView(),
+    return const MaterialApp(
+      home: LoginView(),
     );
   }
 }

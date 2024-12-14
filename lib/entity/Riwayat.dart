@@ -1,33 +1,41 @@
-import 'dart:convert';
+import 'package:tugas_besar/entity/Bus.dart';
+import 'package:tugas_besar/entity/Jadwal.dart';
+import 'package:tugas_besar/entity/Pemesanan.dart';
 
 class Riwayat {
-  final int id;
-  final int idUser;
-  final int idPemesanan;
-  final String tanggalTransaksi;
+  final int? idRiwayat;
+  final int? idUser;
+  final int? idPemesanan;
+  final String? tanggalTransaksi;
+  final Pemesanan? pemesanan;
 
   Riwayat({
-    required this.id,
-    required this.idUser,
-    required this.idPemesanan,
-    required this.tanggalTransaksi,
+    this.idRiwayat,
+    this.idUser,
+    this.idPemesanan,
+    this.tanggalTransaksi,
+    this.pemesanan,
   });
 
-  factory Riwayat.fromRawJson(String str) => Riwayat.fromJson(json.decode(str));
+  factory Riwayat.fromJson(Map<String, dynamic> json) {
+    return Riwayat(
+      idRiwayat: json['id_riwayat'],
+      idUser: json['id_user'],
+      idPemesanan: json['id_pemesanan'],
+      tanggalTransaksi: json['tanggal_transaksi'],
+      pemesanan: json['pemesanan'] != null 
+          ? Pemesanan.fromJson(json['pemesanan']) 
+          : null,
+    );
+  }
 
-  factory Riwayat.fromJson(Map<String, dynamic> json) => Riwayat(
-        id: json["id_riwayat"],
-        idUser: json["id_user"],
-        idPemesanan: json["id_pemesanan"],
-        tanggalTransaksi: json["tanggal_transaksi"],
-      );
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        "id_riwayat": id,
-        "id_user": idUser,
-        "id_pemesanan": idPemesanan,
-        "tanggal_transaksi": tanggalTransaksi,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      'id_riwayat': idRiwayat,
+      'id_user': idUser,
+      'id_pemesanan': idPemesanan,
+      'tanggal_transaksi': tanggalTransaksi,
+      'pemesanan': pemesanan?.toJson(),
+    };
+  }
 }
